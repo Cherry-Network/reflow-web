@@ -29,10 +29,10 @@ const formConfig = [
 export default function DetailPage() {
   return (
     <>
-      NavBar SideBar
+      <p className="text-black">Navbar SideBar</p>
       <div className="p-8">
         <div className="max-w-lg mx-auto">
-          <h1 className="text-3xl font-bold mb-8 text-left">
+          <h1 className="text-black text-3xl font-bold mb-8 text-left">
             Fill the details
           </h1>
           <FormContainer config={formConfig} />

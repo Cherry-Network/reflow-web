@@ -11,7 +11,7 @@ const Dropdown = ({ options, onChange, value, label, name }) => {
         value={value}
       >
         {options.map((option, index) => (
-          <option key={index} value={option.value}>
+          <option key={index} value={option.value} className="text-black">
             {option.label}
           </option>
         ))}
