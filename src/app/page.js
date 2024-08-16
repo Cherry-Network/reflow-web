@@ -1,10 +1,10 @@
-import DetailPage from "@/components/DetailPage";
+import Form from '@/components/forms';
 
 export default function Home() {
   return (
     <>
       <main className="p-8">
-        {/* <DetailPage></DetailPage> */}
+        {/* <Form></Form> */}
       </main>
     </>
   );
