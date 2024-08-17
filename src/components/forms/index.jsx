@@ -46,7 +46,7 @@ const Form = () => {
 
   return (
     <main className="flex flex-col items-start p-10">
-      <h1 className="text-3xl font-bold mb-8">Dynamic Form</h1>
+      <h1 className="text-3xl font-bold mb-8">Fill the details</h1>
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-6 w-full max-w-3xl p-10 bg-[#F0F0F0] rounded-md shadow-md"
