@@ -2,7 +2,13 @@
 import Form from "@/components/forms";
 import Navbar from "@/components/navbar";
 import { useState } from "react";
-import AddProject from "@/components/add-project";
+import AddProjectButtons from "@/components/add-project";
+
+const projects = [
+  { project_id: '1', project_name: 'Project One' },
+  { project_id: '2', project_name: 'Project Two' },
+];
+
 export default function Home() {
   const sidebarItems = [
     { name: "Add Project", icon: "/icons/add.svg" },
@@ -15,7 +21,8 @@ export default function Home() {
   const dispatchComponent = (action) => {
     switch (action) {
       case "Add Project":
-        return <Form />;
+        return <AddProjectButtons projects={projects} />;
+      // return <Form></Form>
       case "Ai Analytics":
         return <div>Analytics</div>;
       case "Subscription":
@@ -48,11 +55,10 @@ export default function Home() {
               <div className="mt-7 grid grid-cols-1 items-start gap-4 px-5">
                 {sidebarItems.map((item, index) => (
                   <button
-                    className={`${
-                      activeButton.includes(item.name)
-                        ? "bg-white text-[#1B1B1B]"
-                        : "bg-[#1B1B1B] text-white"
-                    } flex justify-center items-center gap-3 rounded-full w-full py-2`}
+                    className={`${activeButton.includes(item.name)
+                      ? "bg-white text-[#1B1B1B]"
+                      : "bg-[#1B1B1B] text-white"
+                      } flex justify-center items-center gap-3 rounded-full w-full py-2`}
                     key={index}
                     onClick={() => setActiveButton(item.name)}
                   >
@@ -69,11 +75,10 @@ export default function Home() {
                   </button>
                 ))}
                 <button
-                  className={`${
-                    activeButton.includes("Settings")
-                      ? "bg-white text-[#1B1B1B]"
-                      : "bg-[#1B1B1B] text-white"
-                  } flex justify-center items-center gap-3 rounded-full w-full py-2`}
+                  className={`${activeButton.includes("Settings")
+                    ? "bg-white text-[#1B1B1B]"
+                    : "bg-[#1B1B1B] text-white"
+                    } flex justify-center items-center gap-3 rounded-full w-full py-2`}
                   onClick={() => setActiveButton("Settings")}
                 >
                   <span className="">
