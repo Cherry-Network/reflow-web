@@ -3,6 +3,7 @@ import Form from "@/components/forms";
 import Navbar from "@/components/navbar";
 import { useState } from "react";
 import AddProjectButtons from "@/components/add-project";
+import DeviceConfig from "@/components/analytics/device-config";
 
 const projects = [
   { project_id: '1', project_name: 'Project One' },
@@ -24,7 +25,7 @@ export default function Home() {
       case "Add Project":
         return <AddProjectButtons projects={projects} />;
       case "Analytics":
-        return <div>Analytics</div>;
+        return <DeviceConfig />;
       case "Ai Analytics":
         return <div>Analytics seasoned with AI masala</div>;
       case "Subscription":
@@ -113,7 +114,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex-1 overflow-y-auto">
-            <div className="p-10">{dispatchComponent(activeButton)}</div>
+            <div className="p-5">{dispatchComponent(activeButton)}</div>
           </div>
         </div>
       </div>
