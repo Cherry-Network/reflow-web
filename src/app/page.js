@@ -12,6 +12,7 @@ const projects = [
 export default function Home() {
   const sidebarItems = [
     { name: "Add Project", icon: "/icons/add.svg" },
+    { name: "Analytics", icon: "/icons/analytics.svg" },
     { name: "Ai Analytics", icon: "/icons/analytics.svg" },
     { name: "Subscription", icon: "/icons/subscription.svg" },
     { name: "Provide Access", icon: "/icons/access.svg" },
@@ -22,9 +23,10 @@ export default function Home() {
     switch (action) {
       case "Add Project":
         return <AddProjectButtons projects={projects} />;
-      // return <Form></Form>
-      case "Ai Analytics":
+      case "Analytics":
         return <div>Analytics</div>;
+      case "Ai Analytics":
+        return <div>Analytics seasoned with AI masala</div>;
       case "Subscription":
         return <div>Subscription</div>;
       case "Provide Access":
@@ -37,7 +39,7 @@ export default function Home() {
   };
   return (
     <>
-      <div className="flex flex-col h-screen">
+      <div className="flex flex-col h-screen overflow-hidden">
         <Navbar />
         <div className="flex w-full h-full">
           <div className="">
@@ -55,7 +57,7 @@ export default function Home() {
               <div className="mt-7 grid grid-cols-1 items-start gap-4 px-5">
                 {sidebarItems.map((item, index) => (
                   <button
-                    className={`${activeButton.includes(item.name)
+                    className={`${(activeButton === item.name)
                       ? "bg-white text-[#1B1B1B]"
                       : "bg-[#1B1B1B] text-white"
                       } flex justify-center items-center gap-3 rounded-full w-full py-2`}
@@ -110,7 +112,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 overflow-y-auto">
             <div className="p-10">{dispatchComponent(activeButton)}</div>
           </div>
         </div>
