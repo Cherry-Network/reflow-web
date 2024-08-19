@@ -130,9 +130,14 @@ const DeviceConfig = () => {
         return "";
     }
   };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(deviceInput);
+    if (deviceInput.CAL1 < 0 || deviceInput.CAL2 < 0 || deviceInput.CAL3 < 0) {
+      alert("Calibration value cannot be negative");
+    } else {
+      console.log(deviceInput);
+    }
   };
   const tableCellStyle = "py-5 px-2 border-r border-b text-center";
   return (
