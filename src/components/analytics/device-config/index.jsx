@@ -2,22 +2,23 @@ import { useState } from "react";
 
 const DeviceConfig = () => {
   const [deviceInput, setDeviceInput] = useState({
-    MIN1: 100,
+    MIN1: 10,
     MAX1: 50,
-    FAC1: 1.9,
+    FAC1: 0,
     CAL1: 1.0,
     SNO1: "A123",
     MIN2: 5,
     MAX2: 30,
-    FAC2: 2.0,
+    FAC2: 1,
     CAL2: 1.0,
     SNO2: "B456",
     MIN3: 20,
     MAX3: 80,
-    FAC3: 1.8,
+    FAC3: 2,
     CAL3: 1.0,
     SNO3: "C789",
   });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     if (e.target.type === "text") {
@@ -75,6 +76,44 @@ const DeviceConfig = () => {
       readings: { name: "", value: "" },
       calibratedReadings: { name: "", value: "" },
     },
+    {
+      name: { name: "SNO2", value: deviceInput.SNO2 },
+      range: {
+        value: [
+          { name: "MIN2", value: deviceInput.MIN2 },
+          { name: "MAX2", value: deviceInput.MAX2 },
+        ],
+      },
+      calibration: { name: "CAL2", value: deviceInput.CAL2 },
+      factor: { name: "FAC2", value: deviceInput.FAC2 },
+      alert: {
+        value: [
+          { name: "min", value: "" },
+          { name: "max", value: "" },
+        ],
+      },
+      readings: { name: "", value: "" },
+      calibratedReadings: { name: "", value: "" },
+    },
+    {
+      name: { name: "SNO3", value: deviceInput.SNO3 },
+      range: {
+        value: [
+          { name: "MIN3", value: deviceInput.MIN3 },
+          { name: "MAX3", value: deviceInput.MAX3 },
+        ],
+      },
+      calibration: { name: "CAL3", value: deviceInput.CAL3 },
+      factor: { name: "FAC3", value: deviceInput.FAC3 },
+      alert: {
+        value: [
+          { name: "min", value: "" },
+          { name: "max", value: "" },
+        ],
+      },
+      readings: { name: "", value: "" },
+      calibratedReadings: { name: "", value: "" },
+    },
   ];
 
   const displayFactorValue = (value) => {
@@ -91,17 +130,6 @@ const DeviceConfig = () => {
         return "";
     }
   };
-
-  const submitAllowed =
-    deviceData.CAL1 >= 0 &&
-    deviceData.CAL2 >= 0 &&
-    deviceData.CAL3 >= 0 &&
-    deviceData.MIN1 < deviceData.MAX1 &&
-    deviceData.MIN2 < deviceData.MAX2 &&
-    deviceData.MIN3 < deviceData.MAX3;
-
-  console.log(submitAllowed);
-
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(deviceInput);
@@ -173,7 +201,6 @@ const DeviceConfig = () => {
                   type={device.type ? "text" : "number"}
                   name={device.calibration.name}
                   value={device.calibration.value}
-                  min={"0"}
                   onChange={handleInputChange}
                   className={`text-center w-11/12  ${
                     device.type && "bg-theme_black text-lg text-theme_white"
@@ -243,11 +270,10 @@ const DeviceConfig = () => {
         </div>
         <div className="flex justify-end gap-6">
           <button
-            className={`${submitAllowed ? "bg-theme_black text-theme_white" : "bg-theme_white text-theme_black"} text-center w-36 py-3 rounded-full text-lg border border-theme_black`}
+            className={`bg-theme_black text-theme_white text-center w-36 py-3 rounded-full text-lg border border-theme_black`}
             onClick={handleSubmit}
-            disabled={!submitAllowed}
           >
-            {submitAllowed ? "Save" : "Invalid"}
+            Save
           </button>
           <button className="bg-theme_black/40 text-theme_white border border-theme_black/30 text-center w-36 py-3 rounded-full text-lg">
             Close
