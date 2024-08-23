@@ -9,9 +9,9 @@ const Navbar = () => {
           <img src="/assets/nav-logo.svg" alt="logo" className="h-16 w-auto" />
         </div>
         <div className="flex gap-10 justify-center items-center">
-          <buttton className="bg-[#1B1B1B] text-white text-lg tracking-wide rounded-full px-5 py-3">
+          <button className="bg-[#1B1B1B] text-white text-lg tracking-wide rounded-full px-5 py-3">
             Log Out
-          </buttton>
+          </button>
           <div>
             <button className="flex items-center gap-3 cursor-pointer" onClick={() => setIsOpen(!isOpen)}>
               <div className="rounded-full p-3 bg-[#D2D2D2]">

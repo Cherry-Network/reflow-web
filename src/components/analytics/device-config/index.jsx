@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const DeviceConfig = () => {
+const DeviceConfig = ({closeFunction}) => {
   const [deviceInput, setDeviceInput] = useState({
     MIN1: 10,
     MAX1: 50,
@@ -142,6 +142,15 @@ const DeviceConfig = () => {
   const tableCellStyle = "py-5 px-2 border-r border-b text-center";
   return (
     <>
+      <div className="flex flex-col gap-2 pb-10">
+        <div className="text-3xl font-bold text-[#1D1D1D]">
+          Welcome to Project Name
+        </div>
+        <div className="text-lg font-semibold flex gap-8 pl-1 text-theme_black/40">
+          <span>Device - 1</span>
+          <span>S.NO. - AX301</span>
+        </div>
+      </div>
       <div className="bg-theme_black/10 p-6 rounded-xl flex flex-col gap-8">
         <div className="flex flex-col">
           {deviceData.map((device, index) => (
@@ -280,7 +289,8 @@ const DeviceConfig = () => {
           >
             Save
           </button>
-          <button className="bg-theme_black/40 text-theme_white border border-theme_black/30 text-center w-36 py-3 rounded-full text-lg">
+          <button className="bg-theme_black/40 text-theme_white border border-theme_black/30 text-center w-36 py-3 rounded-full text-lg"
+          onClick={closeFunction}>
             Close
           </button>
         </div>

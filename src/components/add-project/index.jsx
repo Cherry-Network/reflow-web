@@ -1,6 +1,9 @@
-const AddProjectButton = () => {
+const AddProjectButton = ({ addProjectFunction }) => {
   return (
-    <button className="flex flex-col items-center justify-center p-6 bg-gray-950 text-white font-bold rounded-lg shadow-md hover:bg-gray-900 w-full max-w-sm min-h-full">
+    <button
+      className="flex flex-col items-center justify-center p-6 bg-theme_black text-white font-bold rounded-2xl shadow-md hover:bg-gray-950 w-[400px] h-[250px]"
+      onClick={addProjectFunction}
+    >
       <svg
         className="w-12 h-12 mb-4 mt-12"
         xmlns="http://www.w3.org/2000/svg"
@@ -13,7 +16,7 @@ const AddProjectButton = () => {
       >
         <path d="M12 5v14m-7-7h14" />
       </svg>
-      <span className="text-lg mb-12">Add Project</span>
+      <span className="text-xl mb-12 tracking-wide">Add Project</span>
     </button>
   );
 };
@@ -56,4 +59,4 @@ const AddProjectButtons = ({ projects }) => {
   );
 };
 
-export default AddProjectButtons;
+export { AddProjectButton, AddProjectButtons };

@@ -26,7 +26,7 @@ const formConfig = [
   },
 ];
 
-const Form = () => {
+const Form = (projectID) => {
   const [formData, setFormData] = useState(() =>
     formConfig.reduce((acc, item) => ({ ...acc, [item.name]: "" }), {})
   );
@@ -42,6 +42,21 @@ const Form = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
+    if (localStorage.getItem("projects")) {
+      const projects = JSON.parse(localStorage.getItem("projects"));
+      const updatedProjects = projects.map((project) => {
+        if (project.project_id === projectID) {
+          if (!project.devices) {
+            project.devices = [];
+            project.devices.push(formData);
+          } else {
+            project.devices.push(formData);
+          }
+        }
+        return project;
+      });
+      localStorage.setItem("projects", JSON.stringify(updatedProjects));
+    }
   };
 
   return (
@@ -49,7 +64,7 @@ const Form = () => {
       <h1 className="text-3xl font-bold mb-8">Fill the details</h1>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-6 w-full max-w-3xl p-10 bg-[#F0F0F0] rounded-md shadow-md"
+        className="flex flex-col gap-6 w-full p-10 bg-theme_black/5 rounded-xl"
       >
         {formConfig.map((item, index) => (
           <InputField
