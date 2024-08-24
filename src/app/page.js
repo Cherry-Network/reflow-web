@@ -5,6 +5,7 @@ import { AddProjectButton } from "@/components/add-project";
 import PageLayout from "@/components/layout";
 import { useRouter } from "next/navigation";
 
+
 export default function Home() {
   const router = useRouter();
   const [projectData, setProjectData] = useState([]);
