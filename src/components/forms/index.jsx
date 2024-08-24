@@ -41,22 +41,7 @@ const Form = (projectID) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
-    if (localStorage.getItem("projects")) {
-      const projects = JSON.parse(localStorage.getItem("projects"));
-      const updatedProjects = projects.map((project) => {
-        if (project.project_id === projectID) {
-          if (!project.devices) {
-            project.devices = [];
-            project.devices.push(formData);
-          } else {
-            project.devices.push(formData);
-          }
-        }
-        return project;
-      });
-      localStorage.setItem("projects", JSON.stringify(updatedProjects));
-    }
+    const deviceData = { ...formData, project_id: projectID };
   };
 
   return (

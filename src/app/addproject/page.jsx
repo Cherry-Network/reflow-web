@@ -32,6 +32,7 @@ const AddProject = () => {
     setSubmitting(false);
     setProjectDetails({ project_name: "", project_description: "" });
     console.log("Project Added Successfully");
+    router.push("/");
     
   };
   return (

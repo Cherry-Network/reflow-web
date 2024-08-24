@@ -42,7 +42,13 @@ const calculateLevel = (reading) => {
   return (reading / maxReading) * 100;
 };
 
-const DataTable = ({ editFunction, addNewDevice, viewAllProjects, projectData }) => {
+const DataTable = ({
+  editFunction,
+  addNewDevice,
+  viewAllProjects,
+  projectName,
+  deviceSerialNumber,
+}) => {
   const [data, setData] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -72,11 +78,11 @@ const DataTable = ({ editFunction, addNewDevice, viewAllProjects, projectData })
     <div className="">
       <div className="flex flex-col gap-2 pb-10">
         <div className="text-3xl font-bold text-[#1D1D1D]">
-          Welcome to {projectData?.project_name || "Project Name"}
+          Welcome to {projectName}
         </div>
         <div className="text-lg font-semibold flex gap-8 pl-1 text-theme_black/40">
           <span>Device - 1</span>
-          <span>S.NO. - AX301</span>
+          <span>S.NO. - {deviceSerialNumber}</span>
         </div>
       </div>
       <div className="w-full h-full bg-theme_black/10 p-7 rounded-xl">
@@ -182,10 +188,16 @@ const DataTable = ({ editFunction, addNewDevice, viewAllProjects, projectData })
           </div>
         </div>
         <div className="flex flex-row gap-40 justify-between mt-14">
-          <button className="w-full py-5 bg-gray-900 text-white rounded-full" onClick={addNewDevice}>
+          <button
+            className="w-full py-5 bg-gray-900 text-white rounded-full"
+            onClick={addNewDevice}
+          >
             Add New Device
           </button>
-          <button className="w-full py-5 bg-gray-900 text-white rounded-full" onClick={viewAllProjects}>
+          <button
+            className="w-full py-5 bg-gray-900 text-white rounded-full"
+            onClick={viewAllProjects}
+          >
             View All Projects
           </button>
         </div>

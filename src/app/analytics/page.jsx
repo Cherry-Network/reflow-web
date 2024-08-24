@@ -9,10 +9,15 @@ const Analytics = () => {
   const router = useRouter();
   const [editTable, setEditTable] = useState(false);
   const [data, setData] = useState({});
+  const [deviceData, setDeviceData] = useState({});
   useEffect(() => {
     if (localStorage.getItem("projectDetail")) {
       const project = JSON.parse(localStorage.getItem("projectDetail"));
       setData(project);
+    }
+    if (localStorage.getItem("deviceDetail")) {
+      const device = JSON.parse(localStorage.getItem("deviceDetail"));
+      setDeviceData(device);
     }
   }, []);
   return (
@@ -29,13 +34,14 @@ const Analytics = () => {
                 setEditTable(true);
               }}
               addNewDevice={() => {
-                router.push("/");
+                router.push("/viewproject");
               }}
               viewAllProjects={() => {
                 localStorage.removeItem("projectDetail");
                 router.push("/");
               }}
-              projectData={data}
+              projectData={data.project_name}
+              deviceSerialNumber={deviceData.serialNumber}
             />
           )}
         </div>
