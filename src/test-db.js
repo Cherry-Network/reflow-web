@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const { Project } = require("../../../db/db.js");
+const { Project } = require("./db/db");
+
 
 mongoose
   .connect("mongodb://localhost:27017/reflowdb", {

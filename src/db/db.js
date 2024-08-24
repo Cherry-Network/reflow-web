@@ -1,45 +1,18 @@
+// db.js or a separate schema file
 const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
 
-const deviceSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  type: {
-    type: String,
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ["active", "inactive", "maintenance"],
-    default: "inactive",
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+const deviceSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  type: { type: String, required: true },
+  status: { type: String, enum: ["active", "inactive"], default: "active" },
 });
 
-const projectSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
+const projectSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  description: { type: String },
   devices: [deviceSchema],
 });
 
-
-const Device = mongoose.model("Device", deviceSchema);
 const Project = mongoose.model("Project", projectSchema);
 
-module.exports = { Project, Device };
+module.exports = { Project };

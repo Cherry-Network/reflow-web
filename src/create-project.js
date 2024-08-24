@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const { Project } = require("./db/db.js");
+const { Project } = require("./db/db");
 
-// Connect to MongoDB
+
 mongoose
   .connect("mongodb://localhost:27017/reflowdb", {
     useNewUrlParser: true,
@@ -9,6 +9,7 @@ mongoose
   })
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
+
 
 const createProject = async () => {
   const project = new Project({
@@ -26,9 +27,8 @@ const createProject = async () => {
   } catch (err) {
     console.error("Error creating project:", err);
   } finally {
-    mongoose.connection.close(); // Close the connection after the operation
+    mongoose.connection.close();
   }
 };
 
-// Run the function
 createProject();
