@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "js-cookie": "^3.0.5",
+    "mongoose": "^8.5.4",
     "mqtt": "^5.10.0",
     "next": "14.2.5",
     "react": "^18",
