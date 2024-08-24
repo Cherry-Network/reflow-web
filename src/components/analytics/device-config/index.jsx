@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const DeviceConfig = ({closeFunction}) => {
+const DeviceConfig = ({ closeFunction }) => {
   const [deviceInput, setDeviceInput] = useState({
     MIN1: 10,
     MAX1: 50,
@@ -20,18 +20,11 @@ const DeviceConfig = ({closeFunction}) => {
   });
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    if (e.target.type === "text") {
-      setDeviceInput((prevState) => ({
-        ...prevState,
-        [name]: value,
-      }));
-    } else {
-      setDeviceInput((prevState) => ({
-        ...prevState,
-        [name]: Number(value),
-      }));
-    }
+    const { name, value, type } = e.target;
+    setDeviceInput((prevState) => ({
+      ...prevState,
+      [name]: type === "number" ? Number(value) : value,
+    }));
   };
 
   const deviceData = [
@@ -131,14 +124,34 @@ const DeviceConfig = ({closeFunction}) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (deviceInput.CAL1 < 0 || deviceInput.CAL2 < 0 || deviceInput.CAL3 < 0) {
       alert("Calibration value cannot be negative");
     } else {
-      console.log(deviceInput);
+      try {
+        const response = await fetch("/api/mqtt-input", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(deviceInput),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        console.log("Data published successfully:", result);
+        alert("Data published successfully");
+      } catch (error) {
+        console.error("Error publishing data:", error);
+        alert("Failed to publish data");
+      }
     }
   };
+
   const tableCellStyle = "py-5 px-2 border-r border-b text-center";
   return (
     <>
@@ -289,8 +302,10 @@ const DeviceConfig = ({closeFunction}) => {
           >
             Save
           </button>
-          <button className="bg-theme_black/40 text-theme_white border border-theme_black/30 text-center w-36 py-3 rounded-full text-lg"
-          onClick={closeFunction}>
+          <button
+            className="bg-theme_black/40 text-theme_white border border-theme_black/30 text-center w-36 py-3 rounded-full text-lg"
+            onClick={closeFunction}
+          >
             Close
           </button>
         </div>
