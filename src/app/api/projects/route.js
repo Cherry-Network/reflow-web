@@ -2,7 +2,6 @@ import { MongoClient } from "mongodb";
 import { NextResponse } from "next/server";
 import { Project } from "@/db/db";
 
-
 const uri = "mongodb://localhost:27017/reflowdb";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
@@ -45,14 +44,24 @@ export async function POST(req) {
   }
 }
 
+
+
 export async function GET() {
   try {
-    const projects = await Project.find().select("name description devices");
-    return NextResponse.json(projects);
+    await client.connect();
+    const database = client.db("reflowdb");
+    const projects = database.collection("projects"); 
+
+    const projectList = await projects.find({}).toArray();
+
+    return new Response(JSON.stringify(projectList), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
   } catch (error) {
-    return NextResponse.json(
-      { error: "Failed to fetch projects" },
-      { status: 500 }
-    );
+    console.error("Error fetching projects:", error);
+    return new Response("Error fetching projects", { status: 500 });
+  } finally {
+    await client.close();
   }
 }

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import PageLayout from "@/components/layout";
 import { useState } from "react";
@@ -6,13 +6,16 @@ import { useRouter } from "next/navigation";
 import Form from "@/components/forms";
 
 const ViewProject = () => {
-    const router = useRouter();
-    const [showAddDevice, setShowAddDevice] = useState(false);
-    const thisproject = JSON.parse(localStorage.getItem("projectDetail"));
-    console.log(thisproject);
+  const router = useRouter();
+  const [showAddDevice, setShowAddDevice] = useState(false);
+  const thisproject = JSON.parse(localStorage.getItem("projectDetail"));
+  console.log(thisproject);
+
+  const projectID = thisproject?.project?._id;
+
   return (
     <>
-      <PageLayout pageName={"Add Project"}>
+      <PageLayout pageName={"Project Details"}>
         <div className="p-10">
           <div
             className={
@@ -24,10 +27,7 @@ const ViewProject = () => {
             </div>
             <div className="text-4xl font-bold text-theme_black/90 mt-2">
               Welcome to "
-              {thisproject
-                ? thisproject?.project?.project_name
-                : "Project Name"}
-              "
+              {thisproject ? thisproject.project.project_name : "Project Name"}"
             </div>
             <div className="flex flex-wrap gap-3">
               {thisproject?.project?.devices?.map((device, index) => (
@@ -70,7 +70,7 @@ const ViewProject = () => {
           </div>
           {showAddDevice && (
             <div className="">
-              <Form projectID={thisproject?.project?.project_id} />
+              <Form projectID={projectID} />
             </div>
           )}
         </div>

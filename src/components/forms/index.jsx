@@ -1,9 +1,9 @@
+
 "use client";
 
 import React, { useState } from "react";
 import { InputField } from "./ui";
 import { useRouter } from "next/navigation";
-
 const formConfig = [
   {
     type: "serialNumber",
@@ -28,6 +28,9 @@ const formConfig = [
   },
 ];
 
+
+
+
 const Form = ({ projectID }) => {
   const [formData, setFormData] = useState(() =>
     formConfig.reduce((acc, item) => ({ ...acc, [item.name]: "" }), {})
@@ -48,32 +51,28 @@ const Form = ({ projectID }) => {
 
     const deviceData = {
       name: formData.serialNumber,
-      type: formData.dropdownValue,
+      serial_no: formData.serialNumber, // Assuming serial number is used as the serial_no
       status: formData.activationCode ? "active" : "inactive",
     };
 
     try {
-      const response = await fetch("/api/projects", {
+      const response = await fetch(`/api/projects/${projectID}/add-device`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          name: "New Project",
-          description: "Project Description",
-          devices: [deviceData],
-        }),
+        body: JSON.stringify(deviceData),
       });
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Project created:", data);
-        router.push("/some-page");
+        console.log("Device added:", data);
+        router.push("/some-page"); // Redirect as necessary
       } else {
-        console.error("Error creating project:", await response.text());
+        console.error("Error adding device:", await response.text());
       }
     } catch (error) {
-      console.error("Error creating project:", error);
+      console.error("Error adding device:", error);
     }
   };
 
@@ -106,5 +105,6 @@ const Form = ({ projectID }) => {
     </main>
   );
 };
+
 
 export default Form;

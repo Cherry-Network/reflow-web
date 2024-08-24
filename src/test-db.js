@@ -15,8 +15,8 @@ const createProject = async () => {
     name: "IoT Monitoring System",
     description: "A project to monitor IoT devices.",
     devices: [
-      { name: "Temperature Sensor", type: "Sensor", status: "active" },
-      { name: "Humidity Sensor", type: "Sensor" },
+      { name: "Temperature Sensor", seriel_no: "Sensor", status: "active" },
+      { name: "Humidity Sensor", seriel_no: "Sensor" },
     ],
   });
 
