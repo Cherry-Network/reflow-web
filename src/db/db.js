@@ -1,5 +1,6 @@
-// db.js or a separate schema file
 const mongoose = require("mongoose");
+
+const uri = "mongodb://localhost:27017/reflowdb";
 
 const deviceSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -13,6 +14,7 @@ const projectSchema = new mongoose.Schema({
   devices: [deviceSchema],
 });
 
-const Project = mongoose.model("Project", projectSchema);
+const Project =
+  mongoose.models.Project || mongoose.model("Project", projectSchema);
 
 module.exports = { Project };

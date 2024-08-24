@@ -2,6 +2,8 @@
 
 import React, { useState } from "react";
 import { InputField } from "./ui";
+import { useRouter } from "next/navigation";
+
 const formConfig = [
   {
     type: "serialNumber",
@@ -26,10 +28,12 @@ const formConfig = [
   },
 ];
 
-const Form = (projectID) => {
+const Form = ({ projectID }) => {
   const [formData, setFormData] = useState(() =>
     formConfig.reduce((acc, item) => ({ ...acc, [item.name]: "" }), {})
   );
+
+  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -39,9 +43,38 @@ const Form = (projectID) => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const deviceData = { ...formData, project_id: projectID };
+
+    const deviceData = {
+      name: formData.serialNumber,
+      type: formData.dropdownValue,
+      status: formData.activationCode ? "active" : "inactive",
+    };
+
+    try {
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: "New Project",
+          description: "Project Description",
+          devices: [deviceData],
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Project created:", data);
+        router.push("/some-page");
+      } else {
+        console.error("Error creating project:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error creating project:", error);
+    }
   };
 
   return (

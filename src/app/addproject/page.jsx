@@ -9,6 +9,8 @@ const AddProject = () => {
     project_name: "",
     project_description: "",
   });
+  const [submitting, setSubmitting] = useState(false);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setProjectDetails((prevState) => ({
@@ -16,25 +18,37 @@ const AddProject = () => {
       [name]: value,
     }));
   };
-  const [submitting, setSubmitting] = useState(false);
-  const handleSubmit = (e) => {
-    setSubmitting(true);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const id = Date.now();
-    const getDetails = { ...projectDetails, project_id: id };
-    if (localStorage.getItem("projects") === null) {
-      localStorage.setItem("projects", JSON.stringify([getDetails]));
-    } else {
-      const projects = JSON.parse(localStorage.getItem("projects"));
-      projects.push(getDetails);
-      localStorage.setItem("projects", JSON.stringify(projects));
+    setSubmitting(true);
+
+    try {
+      const response = await fetch("/api/projects", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: projectDetails.project_name,
+          description: projectDetails.project_description,
+          devices: [], // Empty array for initial devices
+        }),
+      });
+
+      if (response.ok) {
+        console.log("Project Added Successfully");
+        router.push("/");
+      } else {
+        console.error("Error adding project:", await response.text());
+      }
+    } catch (error) {
+      console.error("Error adding project:", error);
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
-    setProjectDetails({ project_name: "", project_description: "" });
-    console.log("Project Added Successfully");
-    router.push("/");
-    
   };
+
   return (
     <>
       <PageLayout pageName={"Add Project"}>
@@ -42,7 +56,10 @@ const AddProject = () => {
           <div className="text-3xl font-bold text-theme_black/90">
             Please Fill the Details
           </div>
-          <form className="bg-theme_black/10 text-theme_black/60 py-10 px-16 flex flex-col justify-center items-center gap-10 rounded-2xl mt-10">
+          <form
+            className="bg-theme_black/10 text-theme_black/60 py-10 px-16 flex flex-col justify-center items-center gap-10 rounded-2xl mt-10"
+            onSubmit={handleSubmit}
+          >
             <div className="text-lg flex flex-col gap-3 w-full">
               <span>Project Name</span>
               <input
@@ -52,22 +69,22 @@ const AddProject = () => {
                 onChange={handleInputChange}
                 placeholder="Enter Project Name"
                 className="px-3 py-4 rounded-3xl border border-theme_black/40 focus:outline-none focus:border-theme_black/90"
+                required
               />
             </div>
             <div className="text-lg flex flex-col gap-3 w-full">
               <span>Project Description</span>
               <div className="rounded-3xl border border-theme_black/40 bg-white p-2">
                 <textarea
-                  type="text"
                   name="project_description"
-                  placeholder="Enter Project Name"
+                  placeholder="Enter Project Description"
                   value={projectDetails.project_description}
                   onChange={handleInputChange}
                   maxLength={1500}
                   className="px-3 py-4 h-[200px] w-full focus:outline-none"
+                  required
                 />
                 <span className="text-sm text-theme_black/40 flex justify-end px-3">
-                  {" "}
                   ({projectDetails.project_description.length} / 1500) Max. 250
                   words
                 </span>
@@ -75,8 +92,8 @@ const AddProject = () => {
             </div>
 
             <button
+              type="submit"
               className="w-[400px] xl:w-[500px] text-center py-4 bg-theme_black/90 text-white rounded-full text-lg"
-              onClick={handleSubmit}
               disabled={submitting}
             >
               {submitting ? (
