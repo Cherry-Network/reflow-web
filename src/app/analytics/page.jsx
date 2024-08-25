@@ -29,20 +29,7 @@ const Analytics = () => {
               <DeviceConfig closeFunction={() => setEditTable(false)} />
             </>
           ) : (
-            <DataTable
-              editFunction={() => {
-                setEditTable(true);
-              }}
-              addNewDevice={() => {
-                router.push("/viewproject");
-              }}
-              viewAllProjects={() => {
-                localStorage.removeItem("projectDetail");
-                router.push("/");
-              }}
-              projectData={data.project_name}
-              deviceSerialNumber={deviceData.serialNumber}
-            />
+            <></>
           )}
         </div>
       </PageLayout>

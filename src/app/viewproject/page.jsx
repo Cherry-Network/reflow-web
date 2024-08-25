@@ -4,14 +4,13 @@ import PageLayout from "@/components/layout";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Form from "@/components/forms";
+import DataTable from "@/components/analytics/device-stat";
 
 const ViewProject = () => {
   const router = useRouter();
   const [showAddDevice, setShowAddDevice] = useState(false);
-  const thisproject = JSON.parse(localStorage.getItem("projectDetail"));
-  console.log(thisproject);
+  
 
-  const projectID = thisproject?.project?._id;
 
   return (
     <>
@@ -26,30 +25,9 @@ const ViewProject = () => {
               Hello! "Name"
             </div>
             <div className="text-4xl font-bold text-theme_black/90 mt-2">
-              Welcome to "
-              {thisproject ? thisproject.project.project_name : "Project Name"}"
+              Welcome to ""
             </div>
             <div className="flex flex-wrap gap-3">
-              {thisproject?.project?.devices?.map((device, index) => (
-                <button
-                  key={index}
-                  className="bg-white p-5 rounded-2xl w-[250px] h-[200px] flex flex-col gap-2 justify-center items-center"
-                  onClick={(e) => {
-                    localStorage.setItem(
-                      "deviceDetail",
-                      JSON.stringify(device)
-                    );
-                    router.push("/analytics");
-                  }}
-                >
-                  <span className="text-2xl font-bold">
-                    {device.dropdownValue}
-                  </span>
-                  <span className="text-sm font-semibold text-gray-300">
-                    ID: {device.serialNumber}
-                  </span>
-                </button>
-              ))}
             </div>
             <div className="flex justify-center my-20">
               <button
@@ -68,12 +46,24 @@ const ViewProject = () => {
               </button>
             </div>
           </div>
+
           {showAddDevice && (
             <div className="">
               <Form projectID={projectID} />
             </div>
           )}
         </div>
+        <DataTable
+          editFunction={() => {
+            setEditTable(true);
+          }}
+          addNewDevice={() => {
+            router.push("/viewproject");
+          }}
+          viewAllProjects={() => {
+            router.push("/");
+          }}
+        />
       </PageLayout>
     </>
   );
