@@ -53,11 +53,14 @@ const ViewProject = () => {
 
             {showAddDevice && (
               <div className="">
-                <Form projectID={projectID} />
+                <Form projectID={currentProject._id} />
               </div>
             )}
           </div>
-          <DataTable
+          {
+            (showAddDevice==false)&&
+
+            <DataTable
             editFunction={() => {
               setEditTable(true);
             }}
@@ -67,7 +70,7 @@ const ViewProject = () => {
             viewAllProjects={() => {
               router.push("/");
             }}
-          />
+          />}
           </div>
       </PageLayout>
     </>
