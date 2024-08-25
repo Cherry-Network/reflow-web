@@ -11,7 +11,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
 
   const showProject = (project) => {
-    localStorage.setItem("selectedProjectID", project._id);
+    sessionStorage.setItem("selectedProjectID", project._id);
     router.push("/viewproject");
   };
 
