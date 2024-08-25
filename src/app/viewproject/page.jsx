@@ -15,7 +15,6 @@ const ViewProject = () => {
     getCurrentProject(JSON.parse(sessionStorage.getItem("selectedProjectID")));
   }, []);
 
-
   return (
     <>
       <PageLayout pageName={"Project Details"}>
@@ -57,21 +56,17 @@ const ViewProject = () => {
               </div>
             )}
           </div>
-          {
-            (showAddDevice==false)&&
 
+          {showAddDevice == false && (
             <DataTable
-            editFunction={() => {
-              setEditTable(true);
-            }}
-            addNewDevice={() => {
-              router.push("/viewproject");
-            }}
-            viewAllProjects={() => {
-              router.push("/");
-            }}
-          />}
-          </div>
+              editFunction={() => {
+                router.push("/analytics");
+              }}
+              deviceSerialNumber={"Fetch from the database"}
+              deviceName={"Fetch from the database"}
+            />
+          )}
+        </div>
       </PageLayout>
     </>
   );

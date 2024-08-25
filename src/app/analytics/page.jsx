@@ -7,30 +7,15 @@ import { useRouter } from "next/navigation";
 
 const Analytics = () => {
   const router = useRouter();
-  const [editTable, setEditTable] = useState(false);
   const [data, setData] = useState({});
   const [deviceData, setDeviceData] = useState({});
-  useEffect(() => {
-    if (localStorage.getItem("projectDetail")) {
-      const project = JSON.parse(localStorage.getItem("projectDetail"));
-      setData(project);
-    }
-    if (localStorage.getItem("deviceDetail")) {
-      const device = JSON.parse(localStorage.getItem("deviceDetail"));
-      setDeviceData(device);
-    }
-  }, []);
   return (
     <>
       <PageLayout pageName={"Analytics"}>
         <div className="px-8 mt-20">
-          {editTable ? (
-            <>
-              <DeviceConfig closeFunction={() => setEditTable(false)} />
-            </>
-          ) : (
-            <></>
-          )}
+          <>
+            <DeviceConfig closeFunction={() => router.push('/viewproject')} />
+          </>
         </div>
       </PageLayout>
     </>
