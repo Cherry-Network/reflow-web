@@ -9,10 +9,10 @@ import DataTable from "@/components/analytics/device-stat";
 const ViewProject = () => {
   const router = useRouter();
   const [showAddDevice, setShowAddDevice] = useState(false);
-  const [currentProjectID, getCurrentProjectID] = useState("");
+  const [currentProject, getCurrentProject] = useState();
 
   useEffect(() => {
-    getCurrentProjectID(sessionStorage.getItem("selectedProjectID"));
+    getCurrentProject(JSON.parse(sessionStorage.getItem("selectedProjectID")));
   }, []);
 
 
@@ -30,7 +30,7 @@ const ViewProject = () => {
                 Hello! "Name"
               </div>
               <div className="text-4xl font-bold text-theme_black/90 mt-2">
-                Welcome to {currentProjectID}
+                Welcome to {currentProject?.name}
               </div>
               <div className="flex flex-wrap gap-3"></div>
               <div className="flex justify-center my-20">
