@@ -28,12 +28,12 @@ const PageLayout = ({ children, pageName }) => {
 
   return (
     <>
-      <div className="flex flex-col h-screen overflow-hidden">
+      <div className="flex flex-col min-h-screen overflow-auto">
         <Navbar />
         <div className="flex w-full h-full">
           <div className="">
-            <div className="w-[300px] flex flex-col justify-center gap-3 pt-4 h-full bg-[#1B1B1B]">
-              <div className="rounded-full bg-white p-4 w-fit mx-auto">
+            <div className="w-[300px] flex flex-col gap-3 pt-4 h-full bg-[#1B1B1B]">
+              <div className="rounded-full bg-white p-4 w-fit mt-60 mx-auto">
                 <img
                   src="/assets/company-logo.svg"
                   alt="logo"
@@ -99,7 +99,7 @@ const PageLayout = ({ children, pageName }) => {
               </div>
             </div>
           </div>
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 mt-20">
             <div className="p-5">{children}</div>
           </div>
         </div>
