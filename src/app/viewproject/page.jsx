@@ -15,6 +15,10 @@ const ViewProject = () => {
     getCurrentProject(JSON.parse(sessionStorage.getItem("selectedProjectID")));
   }, []);
 
+  const handleFormSuccess = () => {
+    setShowAddDevice(false);
+  };
+
   return (
     <>
       <PageLayout pageName={"Project Details"}>
@@ -51,13 +55,16 @@ const ViewProject = () => {
             </div>
 
             {showAddDevice && (
-              <div className="">
-                <Form projectID={currentProject._id} />
+              <div className="p-10 bg-theme_black/5 rounded-2xl">
+                <Form
+                  projectID={currentProject._id}
+                  onSuccess={handleFormSuccess}
+                />
               </div>
             )}
           </div>
 
-          {showAddDevice == false && (
+          {!showAddDevice && (
             <DataTable
               editFunction={() => {
                 router.push("/analytics");

@@ -1,9 +1,9 @@
-
 "use client";
 
 import React, { useState } from "react";
 import { InputField } from "./ui";
 import { useRouter } from "next/navigation";
+
 const formConfig = [
   {
     type: "serialNumber",
@@ -28,15 +28,10 @@ const formConfig = [
   },
 ];
 
-
-
-
-const Form = ({ projectID }) => {
+const Form = ({ projectID, onSuccess }) => {
   const [formData, setFormData] = useState(() =>
     formConfig.reduce((acc, item) => ({ ...acc, [item.name]: "" }), {})
   );
-
-  const router = useRouter();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,7 +46,7 @@ const Form = ({ projectID }) => {
 
     const deviceData = {
       name: formData.serialNumber,
-      serial_no: formData.serialNumber, // Assuming serial number is used as the serial_no
+      serial_no: formData.serialNumber,
       status: formData.activationCode ? "active" : "inactive",
     };
 
@@ -67,7 +62,8 @@ const Form = ({ projectID }) => {
       if (response.ok) {
         const data = await response.json();
         console.log("Device added:", data);
-        router.push("/some-page"); // Redirect as necessary
+        alert("Device added successfully!");
+        onSuccess(); // Call the success callback
       } else {
         console.error("Error adding device:", await response.text());
       }
