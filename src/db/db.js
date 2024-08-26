@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const uri =
-  "mongodb+srv://devanandk:NDKNiMNfAYHkemiX@clusterreflow.66omo.mongodb.net/";
+  "mongodb+srv://devanandpvt04:Ysdg0l3ELYu6g3ei@reflowcluster.8yfxr.mongodb.net/";
 
 const deviceSchema = new mongoose.Schema({
   name: { type: String, required: true },

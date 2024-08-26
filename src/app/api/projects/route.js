@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { Project } from "@/db/db";
 
 const uri =
-  "mongodb+srv://devanandk:NDKNiMNfAYHkemiX@clusterreflow.66omo.mongodb.net/";
+  "mongodb+srv://devanandpvt04:Ysdg0l3ELYu6g3ei@reflowcluster.8yfxr.mongodb.net/";
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
