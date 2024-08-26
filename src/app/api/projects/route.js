@@ -1,9 +1,6 @@
 import { MongoClient } from "mongodb";
-import { NextResponse } from "next/server";
-import { Project } from "@/db/db";
 
-const uri =
-  "mongodb+srv://devanandpvt04:Ysdg0l3ELYu6g3ei@reflowcluster.8yfxr.mongodb.net/";
+const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
