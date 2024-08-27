@@ -46,6 +46,8 @@ const ActivationCode = ({ value, onChange, name, label, pattern }) => (
 
 const InputField = ({ type, ...props }) => {
   switch (type) {
+    case "deviceName":
+      return <ActivationCode {...props} />;
     case "activationCode":
       return <ActivationCode {...props} />;
     case "dropdown":

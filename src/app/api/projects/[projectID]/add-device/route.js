@@ -9,7 +9,7 @@ export async function POST(req, { params }) {
     return new Response("Project ID is required", { status: 400 });
   }
 
-  const { name, serial_no, status } = await req.json();
+  const { name, serial_no, activation_code, status } = await req.json();
 
   try {
     await client.connect();
@@ -24,7 +24,7 @@ export async function POST(req, { params }) {
 
     const result = await projects.updateOne(
       { _id: new ObjectId(projectID) },
-      { $push: { devices: { name, serial_no, status } } }
+      { $push: { devices: { name, serial_no, activation_code, status } } }
     );
 
     return new Response(JSON.stringify(result), { status: 200 });

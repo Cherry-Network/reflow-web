@@ -4,12 +4,18 @@ import React, { useState } from "react";
 import { InputField } from "./ui";
 import { useRouter } from "next/navigation";
 
+
 const formConfig = [
+  {
+    type: "deviceName",
+    name: "deviceName",
+    label: "Device Name",
+  },
   {
     type: "serialNumber",
     name: "serialNumber",
     label: "Serial Number",
-    pattern: "\\d{4}-\\d{4}",
+    pattern: "^[A-Za-z]{2}\\d{3,}$",
   },
   {
     type: "activationCode",
@@ -28,6 +34,7 @@ const formConfig = [
   },
 ];
 
+
 const Form = ({ projectID, onSuccess }) => {
   const [formData, setFormData] = useState(() =>
     formConfig.reduce((acc, item) => ({ ...acc, [item.name]: "" }), {})
@@ -45,8 +52,9 @@ const Form = ({ projectID, onSuccess }) => {
     e.preventDefault();
 
     const deviceData = {
-      name: formData.serialNumber,
+      name: formData.deviceName,
       serial_no: formData.serialNumber,
+      activation_code: formData.activationCode,
       status: formData.activationCode ? "active" : "inactive",
     };
 
@@ -63,7 +71,7 @@ const Form = ({ projectID, onSuccess }) => {
         const data = await response.json();
         console.log("Device added:", data);
         alert("Device added successfully!");
-        onSuccess(); // Call the success callback
+        onSuccess();
       } else {
         console.error("Error adding device:", await response.text());
       }
