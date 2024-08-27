@@ -12,7 +12,6 @@ export async function POST(req, { params }) {
 
   const { name, serial_no, activation_code, status } = await req.json();
 
-  // Define the default initial values
   const initialValues = {
     MIN1: 10,
     MAX1: 50,
@@ -32,7 +31,6 @@ export async function POST(req, { params }) {
   };
 
   try {
-    // Connect to MongoDB
     await client.connect();
     const database = client.db("reflowdb");
     const projects = database.collection("projects");
@@ -55,12 +53,11 @@ export async function POST(req, { params }) {
         password: "chakreesh",
       });
 
-      // Constructing the topic based on the serial number
+      
       const topic = `${serial_no.slice(0, 3)}/${serial_no.slice(3, 5)}/IN`;
 
       return new Promise((resolve, reject) => {
         mqttClient.on("connect", () => {
-          // Publish the initial values to the MQTT topic
           mqttClient.publish(topic, JSON.stringify(initialValues), (err) => {
             mqttClient.end();
 

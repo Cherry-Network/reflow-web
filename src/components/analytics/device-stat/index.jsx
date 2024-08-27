@@ -42,11 +42,7 @@ const calculateLevel = (reading) => {
   return (reading / maxReading) * 100;
 };
 
-const DataTable = ({
-  editFunction,
-  deviceSerialNumber,
-  deviceName,
-}) => {
+const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
   const [data, setData] = useState([]);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
