@@ -1,9 +1,9 @@
 "use client";
-import PageLayout from "@/components/layout";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import PageLayout from "@/components/layout";
 
-const AddProject = () => {
+export default function AddProject() {
   const router = useRouter();
   const [projectDetails, setProjectDetails] = useState({
     project_name: "",
@@ -23,6 +23,15 @@ const AddProject = () => {
     e.preventDefault();
     setSubmitting(true);
 
+    // Get the stored username from session storage
+    const username = sessionStorage.getItem("username");
+
+    if (!username) {
+      console.error("Username not found in session storage");
+      setSubmitting(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/projects", {
         method: "POST",
@@ -32,7 +41,8 @@ const AddProject = () => {
         body: JSON.stringify({
           name: projectDetails.project_name,
           description: projectDetails.project_description,
-          devices: [], // Empty array for initial devices
+          devices: [],
+          username, // Include the username in the request body
         }),
       });
 
@@ -126,6 +136,4 @@ const AddProject = () => {
       </PageLayout>
     </>
   );
-};
-
-export default AddProject;
+}
