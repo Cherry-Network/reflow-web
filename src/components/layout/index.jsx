@@ -7,7 +7,7 @@ const PageLayout = ({ children, pageName }) => {
 
   const sidebarItems = [
     { name: "Add Project", icon: "/icons/add.svg", path: "/" },
-    { name: "Analytics", icon: "/icons/analytics.svg", path: "/analytics" },
+    { name: "Config Panel", icon: "/icons/analytics.svg", path: "/configpanel" },
     {
       name: "Ai Analytics",
       icon: "/icons/analytics.svg",

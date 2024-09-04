@@ -9,12 +9,22 @@ const Analytics = () => {
   const router = useRouter();
   const [data, setData] = useState({});
   const [deviceData, setDeviceData] = useState({});
+  useEffect(() => {
+    const deviceData = JSON.parse(sessionStorage.getItem("configDeviceData"));
+    setDeviceData(deviceData);
+  }, []);
   return (
     <>
       <PageLayout pageName={"Analytics"}>
         <div className="px-8 mt-20">
           <>
-            <DeviceConfig closeFunction={() => router.push('/viewproject')} />
+            <DeviceConfig
+              closeFunction={() => {
+                sessionStorage.removeItem("configDeviceData");
+                router.push("/viewproject");
+              }}
+              deviceDetails={deviceData}
+            />
           </>
         </div>
       </PageLayout>

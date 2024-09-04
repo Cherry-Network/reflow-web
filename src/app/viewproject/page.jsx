@@ -19,6 +19,10 @@ const ViewProject = () => {
     setShowAddDevice(false);
   };
 
+  const deviceConfig = ({ serialNumber, name }) => {
+    sessionStorage.setItem("configDeviceData", JSON.stringify({ id:serialNumber, name:name }));
+    router.push("/configpanel");
+  };
   return (
     <PageLayout pageName={"Project Details"}>
       <div className="">
@@ -63,18 +67,23 @@ const ViewProject = () => {
         </div>
 
         {/* Render DataTables for each device */}
+        <div className="grid grid-cols-1 gap-3">
         {!showAddDevice &&
           currentProject?.devices?.length > 0 &&
           currentProject.devices.map((device, index) => (
             <DataTable
               key={index}
               editFunction={() => {
-                router.push("/analytics");
+                deviceConfig({
+                  serialNumber: device.serial_no,
+                  name: device.name,
+                });
               }}
               deviceSerialNumber={device.serial_no}
               deviceName={device.name}
             />
           ))}
+          </div>
       </div>
     </PageLayout>
   );

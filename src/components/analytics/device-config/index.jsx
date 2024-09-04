@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const DeviceConfig = ({ closeFunction }) => {
+const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   const [deviceInput, setDeviceInput] = useState({
     MIN1: 10,
     MAX1: 50,
@@ -157,11 +157,11 @@ const DeviceConfig = ({ closeFunction }) => {
     <>
       <div className="flex flex-col gap-2 pb-10">
         <div className="text-3xl font-bold text-[#1D1D1D]">
-          Welcome to Project Name
+          Welcome to {JSON.parse(sessionStorage.getItem("selectedProjectID")).name}
         </div>
         <div className="text-lg font-semibold flex gap-8 pl-1 text-theme_black/40">
-          <span>Device - 1</span>
-          <span>S.NO. - AX301</span>
+          <span>Device - {deviceDetails && deviceDetails.name}</span>
+          <span>S.NO. - {deviceDetails && deviceDetails.id}</span>
         </div>
       </div>
       <div className="bg-theme_black/10 p-6 rounded-xl flex flex-col gap-8">
