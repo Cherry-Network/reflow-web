@@ -114,7 +114,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       case 0:
         return "Addition";
       case 1:
-        return "Substraction";
+        return "Subtraction";
       case 2:
         return "Multiplication";
       case 3:
@@ -130,12 +130,13 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       alert("Calibration value cannot be negative");
     } else {
       try {
+        const topic = generateMqttTopic(deviceDetails.id); // Generate the topic using device id
         const response = await fetch("/api/mqtt-input", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(deviceInput),
+          body: JSON.stringify({ deviceInput, topic }), // Send both deviceInput and the topic
         });
 
         if (!response.ok) {
@@ -152,12 +153,19 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
     }
   };
 
+  const generateMqttTopic = (serialId) => {
+    const prefix = serialId.slice(0, 3); // AX3
+    const suffix = serialId.slice(3); // 03
+    return `${prefix}/${suffix}/IN`; // AX3/03/IN
+  };
+
   const tableCellStyle = "py-5 px-2 border-r border-b text-center";
   return (
     <>
       <div className="flex flex-col gap-2 pb-10">
         <div className="text-3xl font-bold text-[#1D1D1D]">
-          Welcome to {JSON.parse(sessionStorage.getItem("selectedProjectID")).name}
+          Welcome to{" "}
+          {JSON.parse(sessionStorage.getItem("selectedProjectID")).name}
         </div>
         <div className="text-lg font-semibold flex gap-8 pl-1 text-theme_black/40">
           <span>Device - {deviceDetails && deviceDetails.name}</span>
@@ -253,7 +261,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
                       {displayFactorValue(device.factor.value)}
                     </option>
                     <option value={0}>Addition</option>
-                    <option value={1}>Substraction</option>
+                    <option value={1}>Subtraction</option>
                     <option value={2}>Multiplication</option>
                     <option value={3}>Division</option>
                   </select>

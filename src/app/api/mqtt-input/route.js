@@ -1,12 +1,10 @@
-// src/app/api/mqtt-input/route.js
-
 import mqtt from "mqtt";
 import { NextResponse } from "next/server";
 
 export async function POST(request) {
   try {
     // Parse JSON from the request body
-    const deviceInput = await request.json();
+    const { deviceInput, topic } = await request.json(); // Receive deviceInput and topic
 
     // Connect to MQTT broker
     const client = mqtt.connect("mqtt://mqtt.infinit-i.in:1883", {
@@ -17,25 +15,30 @@ export async function POST(request) {
     // Return a promise that resolves or rejects based on the MQTT operations
     return new Promise((resolve, reject) => {
       client.on("connect", () => {
-        // Publish the data
-        client.publish("AX3/10/IN", JSON.stringify(deviceInput), (err) => {
-          if (err) {
-            resolve(
-              NextResponse.json(
-                { message: "Failed to publish" },
-                { status: 500 }
-              )
-            );
-          } else {
-            client.end(); // Disconnect after publishing
-            resolve(
-              NextResponse.json(
-                { message: "Data published successfully" },
-                { status: 200 }
-              )
-            );
+        // Publish the data to the dynamic topic with retain option set to true
+        client.publish(
+          topic,
+          JSON.stringify(deviceInput),
+          { retain: true },
+          (err) => {
+            if (err) {
+              resolve(
+                NextResponse.json(
+                  { message: "Failed to publish" },
+                  { status: 500 }
+                )
+              );
+            } else {
+              client.end(); // Disconnect after publishing
+              resolve(
+                NextResponse.json(
+                  { message: "Data published successfully" },
+                  { status: 200 }
+                )
+              );
+            }
           }
-        });
+        );
       });
 
       client.on("error", (err) => {

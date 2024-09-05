@@ -9,10 +9,16 @@ const Analytics = () => {
   const router = useRouter();
   const [data, setData] = useState({});
   const [deviceData, setDeviceData] = useState({});
+
   useEffect(() => {
     const deviceData = JSON.parse(sessionStorage.getItem("configDeviceData"));
+
+    // Log the device data to console
+    console.log("Config Device Data:", deviceData);
+
     setDeviceData(deviceData);
   }, []);
+
   return (
     <>
       <PageLayout pageName={"Analytics"}>
