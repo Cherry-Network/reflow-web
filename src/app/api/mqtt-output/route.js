@@ -8,40 +8,43 @@ const options = {
   password: "chakreesh",
 };
 
-// Store messages
-let mqttData = [];
+// Store messages per device serial number
+let mqttData = {};
+let subscribedTopics = new Set();
+
+// Function to dynamically generate the MQTT topic based on the serial number
+const generateMqttTopic = (serialId) => {
+  const prefix = serialId.slice(0, 3); // e.g., "AX3"
+  const suffix = serialId.slice(3); // e.g., "03"
+  return `${prefix}/${suffix}/IN`; // e.g., "AX3/03/IN"
+};
 
 // Establish connection to the MQTT broker
 const client = mqtt.connect(brokerUrl, options);
 
 client.on("connect", () => {
   console.log("Connected to MQTT broker");
-  client.subscribe("AX3/01/OUTPUT", (err) => {
-    if (err) {
-      console.error("Failed to subscribe:", err);
-    } else {
-      console.log("Subscribed to AX3/01/OUTPUT");
-    }
-  });
 });
 
 client.on("message", (topic, message) => {
   try {
     const messageString = message.toString();
-
-    // Log the incoming message for debugging
     console.log("Received message:", messageString);
 
-    // Attempt to parse the JSON message
     const parsedMessage = JSON.parse(messageString);
+    const fullSerialId = topic.split("/")[0] + topic.split("/")[1]; // e.g., AX303
 
-    // Store the parsed message
-    mqttData.push(parsedMessage);
-
-    // Keep only the latest 10 messages
-    if (mqttData.length > 10) {
-      mqttData.shift();
+    if (!mqttData[fullSerialId]) {
+      mqttData[fullSerialId] = [];
     }
+    mqttData[fullSerialId].push(parsedMessage);
+
+    // Keep only the latest 10 messages for each serialId
+    if (mqttData[fullSerialId].length > 10) {
+      mqttData[fullSerialId].shift();
+    }
+
+    console.log("Stored data:", mqttData);
   } catch (error) {
     console.error("Failed to parse MQTT message:", error);
     console.error("Original message:", message.toString());
@@ -52,6 +55,52 @@ client.on("error", (err) => {
   console.error("Connection error:", err);
 });
 
-export async function GET() {
-  return NextResponse.json(mqttData);
+// Subscribe to a dynamically generated topic based on the serial number
+const subscribeToTopic = async (serialId) => {
+  const topic = generateMqttTopic(serialId);
+  if (!subscribedTopics.has(topic)) {
+    return new Promise((resolve, reject) => {
+      client.subscribe(topic, (err) => {
+        if (err) {
+          console.error(`Failed to subscribe to ${topic}:`, err);
+          reject(err);
+        } else {
+          console.log(`Subscribed to ${topic}`);
+          subscribedTopics.add(topic);
+          resolve();
+        }
+      });
+    });
+  }
+};
+
+export async function GET(req) {
+  const { searchParams } = new URL(req.url);
+  const serialId = searchParams.get("serialId");
+
+  if (!serialId) {
+    return NextResponse.json(
+      { error: "serialId parameter is required" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    // Subscribe to the topic for this device if not already subscribed
+    await subscribeToTopic(serialId);
+
+    // Wait for a short period to allow subscription and message reception
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Return the data for the requested serial number
+    const data = mqttData[serialId] || [];
+    console.log("Returned data for serialId:", serialId, "Data:", data);
+    return NextResponse.json(data);
+  } catch (error) {
+    console.error("Error processing request:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch data" },
+      { status: 500 }
+    );
+  }
 }

@@ -9,10 +9,16 @@ const ViewProject = () => {
   const router = useRouter();
   const [showAddDevice, setShowAddDevice] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
+  const [selectedDevice, setSelectedDevice] = useState(null);
 
   useEffect(() => {
     const projectData = JSON.parse(sessionStorage.getItem("selectedProjectID"));
     setCurrentProject(projectData);
+
+    // Set default selected device if available
+    if (projectData?.devices?.length > 0) {
+      setSelectedDevice(projectData.devices[0]);
+    }
   }, []);
 
   const handleFormSuccess = () => {
@@ -20,9 +26,21 @@ const ViewProject = () => {
   };
 
   const deviceConfig = ({ serialNumber, name }) => {
-    sessionStorage.setItem("configDeviceData", JSON.stringify({ id:serialNumber, name:name }));
+    sessionStorage.setItem(
+      "configDeviceData",
+      JSON.stringify({ id: serialNumber, name: name })
+    );
     router.push("/configpanel");
   };
+
+  const handleDeviceChange = (e) => {
+    const serialNo = e.target.value;
+    const device = currentProject.devices.find(
+      (device) => device.serial_no === serialNo
+    );
+    setSelectedDevice(device);
+  };
+
   return (
     <PageLayout pageName={"Project Details"}>
       <div className="">
@@ -66,24 +84,37 @@ const ViewProject = () => {
           )}
         </div>
 
-        {/* Render DataTables for each device */}
-        <div className="grid grid-cols-1 gap-3">
-        {!showAddDevice &&
-          currentProject?.devices?.length > 0 &&
-          currentProject.devices.map((device, index) => (
-            <DataTable
-              key={index}
-              editFunction={() => {
-                deviceConfig({
-                  serialNumber: device.serial_no,
-                  name: device.name,
-                });
-              }}
-              deviceSerialNumber={device.serial_no}
-              deviceName={device.name}
-            />
-          ))}
+        {/* Dropdown for selecting device */}
+        <div className="p-10">
+          <div className="text-lg font-bold text-theme_black/60 mb-4">
+            Select Device:
           </div>
+          <select
+            className="p-2 border border-gray-300 rounded-md"
+            value={selectedDevice?.serial_no || ""}
+            onChange={handleDeviceChange}
+          >
+            {currentProject?.devices?.map((device) => (
+              <option key={device.serial_no} value={device.serial_no}>
+                {device.name} - {device.serial_no}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Render DataTable for the selected device */}
+        {selectedDevice && (
+          <DataTable
+            editFunction={() => {
+              deviceConfig({
+                serialNumber: selectedDevice.serial_no,
+                name: selectedDevice.name,
+              });
+            }}
+            deviceSerialNumber={selectedDevice.serial_no}
+            deviceName={selectedDevice.name}
+          />
+        )}
       </div>
     </PageLayout>
   );

@@ -1,32 +1,39 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-const fetchData = async () => {
+// Function to fetch data from the API endpoint
+const fetchData = async (serialId) => {
   try {
-    const response = await fetch("/api/mqtt-output");
+    const response = await fetch(`/api/mqtt-output?serialId=${serialId}`);
     const result = await response.json();
 
+    if (result.length === 0) return []; // Handle empty result case
+
+    // Extracting the single object from the result
+    const dataObject = result[0];
+
+    // Mapping the data to the format expected in the table
     const formattedData = [
       {
         serialNo: 1,
-        readings: result[0]?.CH1 || "N/A",
-        calibratedReadings: result[0]?.CalibratedValue1 || "N/A",
-        readingsLevel: calculateLevel(result[0]?.CH1 || 0),
-        status: [0, 1, 2].includes(result[0]?.ERR1) ? "Online" : "Offline",
+        readings: dataObject.MIN1 || "N/A",
+        calibratedReadings: dataObject.CAL1 || "N/A",
+        readingsLevel: calculateLevel(dataObject.MIN1 || 0),
+        status: dataObject.MIN1 ? "Online" : "Offline",
       },
       {
         serialNo: 2,
-        readings: result[0]?.CH2 || "N/A",
-        calibratedReadings: result[0]?.CalibratedValue2 || "N/A",
-        readingsLevel: calculateLevel(result[0]?.CH2 || 0),
-        status: [0, 1, 2].includes(result[0]?.ERR2) ? "Online" : "Offline",
+        readings: dataObject.MIN2 || "N/A",
+        calibratedReadings: dataObject.CAL2 || "N/A",
+        readingsLevel: calculateLevel(dataObject.MIN2 || 0),
+        status: dataObject.MIN2 ? "Online" : "Offline",
       },
       {
         serialNo: 3,
-        readings: result[0]?.CH3 || "N/A",
-        calibratedReadings: result[0]?.CalibratedValue3 || "N/A",
-        readingsLevel: calculateLevel(result[0]?.CH3 || 0),
-        status: [0, 1, 2].includes(result[0]?.ERR3) ? "Online" : "Offline",
+        readings: dataObject.MIN3 || "N/A",
+        calibratedReadings: dataObject.CAL3 || "N/A",
+        readingsLevel: calculateLevel(dataObject.MIN3 || 0),
+        status: dataObject.MIN3 ? "Online" : "Offline",
       },
     ];
 
@@ -37,11 +44,13 @@ const fetchData = async () => {
   }
 };
 
+// Function to calculate the level based on the reading
 const calculateLevel = (reading) => {
   const maxReading = 100;
   return (reading / maxReading) * 100;
 };
 
+// DataTable component
 const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
   const [data, setData] = useState([]);
   const [startDate, setStartDate] = useState("");
@@ -49,7 +58,7 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
 
   useEffect(() => {
     const getData = async () => {
-      const result = await fetchData();
+      const result = await fetchData(deviceSerialNumber); // Pass serialNumber to fetchData
       setData(result);
     };
 
@@ -58,8 +67,9 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
     const intervalId = setInterval(getData, 5000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [deviceSerialNumber]); // Add deviceSerialNumber to dependency array
 
+  // Define the columns for the table
   const columns = [
     { key: "serialNo", label: "Serial No" },
     { key: "readings", label: "Readings" },

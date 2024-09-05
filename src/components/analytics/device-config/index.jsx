@@ -1,23 +1,63 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   const [deviceInput, setDeviceInput] = useState({
-    MIN1: 10,
-    MAX1: 50,
-    FAC1: 0,
-    CAL1: 1.0,
-    SNO1: "A123",
-    MIN2: 5,
-    MAX2: 30,
-    FAC2: 1,
-    CAL2: 1.0,
-    SNO2: "B456",
-    MIN3: 20,
-    MAX3: 80,
-    FAC3: 2,
-    CAL3: 1.0,
-    SNO3: "C789",
+    MIN1: "",
+    MAX1: "",
+    FAC1: "",
+    CAL1: "",
+    SNO1: "",
+    MIN2: "",
+    MAX2: "",
+    FAC2: "",
+    CAL2: "",
+    SNO2: "",
+    MIN3: "",
+    MAX3: "",
+    FAC3: "",
+    CAL3: "",
+    SNO3: "",
   });
+
+  useEffect(() => {
+    const fetchDeviceData = async () => {
+      try {
+        const response = await fetch(
+          `/api/mqtt-output?serialId=${deviceDetails.id}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Assuming data is an array with a single object as shown in your example
+        if (data.length > 0) {
+          const fetchedData = data[0];
+          setDeviceInput({
+            MIN1: fetchedData.MIN1,
+            MAX1: fetchedData.MAX1,
+            FAC1: fetchedData.FAC1,
+            CAL1: fetchedData.CAL1,
+            SNO1: fetchedData.SNO1,
+            MIN2: fetchedData.MIN2,
+            MAX2: fetchedData.MAX2,
+            FAC2: fetchedData.FAC2,
+            CAL2: fetchedData.CAL2,
+            SNO2: fetchedData.SNO2,
+            MIN3: fetchedData.MIN3,
+            MAX3: fetchedData.MAX3,
+            FAC3: fetchedData.FAC3,
+            CAL3: fetchedData.CAL3,
+            SNO3: fetchedData.SNO3,
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching device data:", error);
+      }
+    };
+
+    fetchDeviceData();
+  }, [deviceDetails.id]);
 
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
@@ -199,7 +239,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
                   disabled={device.type}
                 />
               </div>
-              <div className={`grid grid-cols-2`}>
+              <div className="grid grid-cols-2">
                 <div
                   className={`${tableCellStyle} col-span-2 ${
                     device.range.name ? "" : "hidden"
@@ -219,7 +259,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
                       name={data.name}
                       value={data.value}
                       onChange={handleInputChange}
-                      className={`text-center w-11/12  ${
+                      className={`text-center w-11/12 ${
                         device.type && "bg-theme_black text-lg text-theme_white"
                       }`}
                       disabled={device.type}
@@ -237,7 +277,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
                   name={device.calibration.name}
                   value={device.calibration.value}
                   onChange={handleInputChange}
-                  className={`text-center w-11/12  ${
+                  className={`text-center w-11/12 ${
                     device.type && "bg-theme_black text-lg text-theme_white"
                   }`}
                   disabled={device.type}
