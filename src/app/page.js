@@ -46,7 +46,7 @@ export default function Home() {
   }, [router]);
 
   return (
-    <PageLayout pageName={"Projects"}>
+    <PageLayout pageName={"Add Project"}>
       <div className="p-10 flex flex-wrap gap-4 justify-start items-stretch">
         {loading ? (
           <p>Loading...</p>
