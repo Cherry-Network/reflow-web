@@ -10,8 +10,10 @@ const ViewProject = () => {
   const [showAddDevice, setShowAddDevice] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
   const [selectedDevice, setSelectedDevice] = useState(null);
+  const [userName, setUserName] = useState("Loading...");
 
   useEffect(() => {
+    setUserName(sessionStorage.getItem("username"));
     const projectData = JSON.parse(sessionStorage.getItem("selectedProjectID"));
     setCurrentProject(projectData);
 
@@ -42,7 +44,7 @@ const ViewProject = () => {
   };
 
   return (
-    <PageLayout pageName={"Project Details"}>
+    <PageLayout pageName={"My Projects"}>
       <div className="">
         <div className="p-10">
           <div
@@ -51,7 +53,7 @@ const ViewProject = () => {
             }
           >
             <div className="text-4xl font-bold text-theme_black/40">
-              Hello! "Name"
+              Hello! "{userName.toUpperCase()}"
             </div>
             <div className="text-4xl font-bold text-theme_black/90 mt-2">
               Welcome to {currentProject?.name}
@@ -61,7 +63,7 @@ const ViewProject = () => {
                 className="bg-theme_black/90 text-white w-[450px] text-xl font-semibold tracking-wide py-4 rounded-full mt-4 flex gap-3 justify-center items-center"
                 onClick={(e) => {
                   e.preventDefault();
-                  setShowAddDevice(true);
+                  router.push("/adddevice");
                 }}
               >
                 <img

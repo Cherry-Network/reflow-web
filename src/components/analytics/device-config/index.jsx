@@ -81,7 +81,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       calibration: { name: "cal", value: "Calibration" },
       factor: { name: "fac", value: "Factor" },
       alert: {
-        name: "Alert",
+        name: "Threshold",
         value: [
           { name: "min", value: "Min" },
           { name: "max", value: "Max" },

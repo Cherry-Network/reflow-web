@@ -6,7 +6,7 @@ const PageLayout = ({ children, pageName }) => {
   const router = useRouter();
 
   const sidebarItems = [
-    { name: "Add Project", icon: "/icons/add.svg", path: "/" },
+    { name: "My Projects", icon: "/icons/add.svg", path: "/" },
     {
       name: "Config Panel",
       icon: "/icons/analytics.svg",
@@ -46,7 +46,17 @@ const PageLayout = ({ children, pageName }) => {
                         : "bg-[#1B1B1B] text-white"
                     } flex justify-center items-center gap-3 rounded-full w-full py-2`}
                     key={index}
-                    onClick={() => router.push(item.path)}
+                    onClick={() => {
+                      if (item.name === "Config Panel") {
+                        if (sessionStorage.getItem("selectedProjectID") && sessionStorage.getItem("configDeviceData")) {
+                          router.push(item.path);
+                        } else {
+                          alert('Device Not Selected.');
+                        }
+                      } else {
+                        router.push(item.path);
+                      }
+                    }}
                   >
                     <span className="">
                       <img
