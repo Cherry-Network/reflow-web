@@ -4,11 +4,11 @@ import { NextResponse } from "next/server";
 // GET handler function for the API route
 export async function GET(req) {
   const client = new Client({
-    host: "54.89.106.185",
-    database: "ax3_db",
-    user: "reflow",
-    password: "rfcc1234",
-    port: 5432,
+    host: process.env.POSTGRES_HOST,
+    database: process.env.POSTGRES_DB,
+    user: process.env.POSTGRES_USER,
+    password: process.env.POSTGRES_PASSWORD,
+    port: process.env.POSTGRES_PORT,
   });
   // Extract query parameters from the request URL
   const { searchParams } = new URL(req.url);

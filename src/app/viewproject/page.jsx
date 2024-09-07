@@ -96,7 +96,7 @@ const ViewProject = () => {
             value={selectedDevice?.serial_no || ""}
             onChange={handleDeviceChange}
           >
-            {currentProject?.devices?.map((device) => (
+            {currentProject?.devices?.map((device, index) => (
               <option key={device.serial_no} value={device.serial_no}>
                 {device.name} - {device.serial_no}
               </option>
