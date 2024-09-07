@@ -11,6 +11,7 @@ const projectSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String },
   devices: [deviceSchema],
+  owner: { type: String, required: true }, // Add this field
 });
 
 const userSchema = new mongoose.Schema({

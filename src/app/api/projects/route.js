@@ -17,11 +17,19 @@ export async function POST(req) {
     const body = await req.json();
     const { name, description, devices, username } = body;
 
-    // Insert the new project
+    if (!username) {
+      return new Response(JSON.stringify({ error: "Username is required" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    // Insert the new project with the owner field
     const result = await projects.insertOne({
       name,
       description,
       devices,
+      owner: username, // Set the owner to the username
     });
 
     // Update the user's projectIDs array
