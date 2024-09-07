@@ -51,13 +51,30 @@ const ProvideAccess = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
-    // ==========================
-    // Add Provide Access Logic
-    //=============================
-    console.log(accessDetails);
-    setSubmitting(false);
-    setAccessDetails({username:"", projectID: ""});
+
+    try {
+      const response = await fetch("/api/provide-access", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(accessDetails),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to provide access");
+      }
+
+      const data = await response.json();
+      console.log(data.message);
+    } catch (error) {
+      console.error("Error providing access:", error);
+    } finally {
+      setSubmitting(false);
+      setAccessDetails({ username: "", projectID: "" });
+    }
   };
+
   const [submitting, setSubmitting] = useState(false);
   return (
     <>

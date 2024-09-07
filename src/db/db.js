@@ -11,13 +11,14 @@ const projectSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String },
   devices: [deviceSchema],
-  owner: { type: String, required: true }, // Add this field
+  owner: { type: String, required: true },
 });
 
 const userSchema = new mongoose.Schema({
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   projectIDs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
+  sharedAccess: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }], // Added field
 });
 
 const Project =

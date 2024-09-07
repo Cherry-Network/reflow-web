@@ -1,5 +1,5 @@
 // app/api/projects/route.js
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 
 const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri, {
@@ -24,15 +24,13 @@ export async function POST(req) {
       });
     }
 
-    // Insert the new project with the owner field
     const result = await projects.insertOne({
       name,
       description,
       devices,
-      owner: username, // Set the owner to the username
+      owner: username,
     });
 
-    // Update the user's projectIDs array
     await users.updateOne(
       { username },
       { $push: { projectIDs: result.insertedId } }
@@ -65,10 +63,7 @@ export async function GET(req) {
     const projects = database.collection("projects");
     const users = database.collection("users");
 
-    // Get the username from sessionStorage
-    // Note: Fetching sessionStorage directly in server-side code is not possible.
-    // This needs to be sent from the client-side code as part of the request.
-    const username = req.headers.get("username"); // Modify this line based on your actual implementation
+    const username = req.headers.get("username");
 
     if (!username) {
       return new Response(JSON.stringify({ error: "Username is required" }), {
@@ -77,7 +72,6 @@ export async function GET(req) {
       });
     }
 
-    // Find the user and get their project IDs
     const user = await users.findOne({ username });
     if (!user) {
       return new Response(JSON.stringify({ error: "User not found" }), {
@@ -86,9 +80,13 @@ export async function GET(req) {
       });
     }
 
-    // Fetch projects associated with the user
+    const allProjectIDs = [
+      ...(user.projectIDs || []).map((id) => new ObjectId(id)),
+      ...(user.sharedAccess || []).map((id) => new ObjectId(id)),
+    ];
+
     const projectList = await projects
-      .find({ _id: { $in: user.projectIDs } })
+      .find({ _id: { $in: allProjectIDs } })
       .toArray();
 
     return new Response(JSON.stringify(projectList), {
