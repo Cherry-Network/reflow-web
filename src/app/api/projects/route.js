@@ -72,6 +72,7 @@ export async function GET(req) {
       });
     }
 
+    // Find the user and get their project IDs and shared access
     const user = await users.findOne({ username });
     if (!user) {
       return new Response(JSON.stringify({ error: "User not found" }), {
@@ -80,16 +81,53 @@ export async function GET(req) {
       });
     }
 
-    const allProjectIDs = [
-      ...(user.projectIDs || []).map((id) => new ObjectId(id)),
-      ...(user.sharedAccess || []).map((id) => new ObjectId(id)),
-    ];
+    const ownProjectIDs = (user.projectIDs || []).map((id) => new ObjectId(id));
+    const sharedProjectIDs = (user.sharedAccess || []).map(
+      (id) => new ObjectId(id)
+    );
 
-    const projectList = await projects
-      .find({ _id: { $in: allProjectIDs } })
+    // Fetch own projects
+    const ownProjects = await projects
+      .find({ _id: { $in: ownProjectIDs } })
       .toArray();
 
-    return new Response(JSON.stringify(projectList), {
+    // Fetch shared projects with owner information
+    const sharedProjects = await projects
+      .aggregate([
+        { $match: { _id: { $in: sharedProjectIDs } } },
+        {
+          $lookup: {
+            from: "users",
+            localField: "owner",
+            foreignField: "username",
+            as: "ownerInfo",
+          },
+        },
+        {
+          $unwind: {
+            path: "$ownerInfo",
+            preserveNullAndEmptyArrays: true,
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            description: 1,
+            devices: 1,
+            owner: "$ownerInfo.username", // Include the owner's name
+          },
+        },
+      ])
+      .toArray();
+
+    // Combine results
+    const result = {
+      ownProjects,
+      sharedProjects,
+    };
+
+    return new Response(JSON.stringify(result), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
