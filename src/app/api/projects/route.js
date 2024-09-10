@@ -72,7 +72,6 @@ export async function GET(req) {
       });
     }
 
-    // Find the user and get their project IDs and shared access
     const user = await users.findOne({ username });
     if (!user) {
       return new Response(JSON.stringify({ error: "User not found" }), {
@@ -86,12 +85,10 @@ export async function GET(req) {
       (id) => new ObjectId(id)
     );
 
-    // Fetch own projects
     const ownProjects = await projects
       .find({ _id: { $in: ownProjectIDs } })
       .toArray();
 
-    // Fetch shared projects with owner information
     const sharedProjects = await projects
       .aggregate([
         { $match: { _id: { $in: sharedProjectIDs } } },
@@ -115,13 +112,12 @@ export async function GET(req) {
             name: 1,
             description: 1,
             devices: 1,
-            owner: "$ownerInfo.username", // Include the owner's name
+            owner: "$ownerInfo.username",
           },
         },
       ])
       .toArray();
 
-    // Combine results
     const result = {
       ownProjects,
       sharedProjects,

@@ -2,7 +2,7 @@
 
 import PageLayout from "@/components/layout";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // Import useRouter for navigation
+import { useRouter } from "next/navigation";
 
 const ProvideAccess = () => {
   const router = useRouter();
@@ -18,7 +18,7 @@ const ProvideAccess = () => {
     const storedUsername = sessionStorage.getItem("username");
 
     if (!storedUsername) {
-      router.push("/username"); // Redirect to username entry page if not available
+      router.push("/username");
       return;
     }
 
@@ -28,7 +28,7 @@ const ProvideAccess = () => {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            username: storedUsername, // Include username in headers
+            username: storedUsername,
           },
         });
 
@@ -37,18 +37,17 @@ const ProvideAccess = () => {
         }
 
         const data = await response.json();
-        console.log("Fetched Project Data:", data); // Debugging log to check fetched data
+        console.log("Fetched Project Data:", data);
 
-        // Only set ownProjects to state, filtering out sharedProjects
         if (data && data.ownProjects) {
           setProjectData(data.ownProjects);
         } else {
           console.warn("Own projects data not found:", data);
-          setProjectData([]); // Reset to empty array if ownProjects is not found
+          setProjectData([]);
         }
       } catch (error) {
         console.error("Error fetching projects:", error);
-        setProjectData([]); // Handle error and reset data
+        setProjectData([]);
       } finally {
         setLoading(false);
       }

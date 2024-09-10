@@ -15,7 +15,7 @@ export default function Home() {
     const storedUsername = sessionStorage.getItem("username");
 
     if (!storedUsername) {
-      router.push("/username"); // Redirect to username entry page if not available
+      router.push("/username");
       return;
     }
 
@@ -27,7 +27,7 @@ export default function Home() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            username: storedUsername, // Include username in headers
+            username: storedUsername,
           },
         });
 
@@ -54,7 +54,6 @@ export default function Home() {
           <p>Loading...</p>
         ) : (
           <>
-            {/* Display Own Projects */}
             <div className="w-full">
               <h2 className="text-xl font-bold text-theme_black mb-4">
                 Your Projects
@@ -80,14 +79,12 @@ export default function Home() {
                     </span>
                   </button>
                 ))}
-                {/* Add Project Button within Your Projects Section */}
                 <AddProjectButton
                   addProjectFunction={() => router.push("/addproject")}
                 />
               </div>
             </div>
 
-            {/* Display Shared Projects */}
             <div className="w-full mt-8">
               <h2 className="text-xl font-bold text-theme_black mb-4">
                 Shared Projects
