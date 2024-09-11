@@ -19,6 +19,8 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
     SNO3: "",
   });
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
@@ -53,6 +55,8 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
         }
       } catch (error) {
         console.error("Error fetching device data:", error);
+      } finally {
+        setLoading(false); // Set loading to false after data is fetched
       }
     };
 
@@ -202,62 +206,42 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   const tableCellStyle = "py-5 px-2 border-r border-b text-center";
   return (
     <>
-      <div className="flex flex-col gap-2 pb-10">
-        <div className="text-3xl font-bold text-[#1D1D1D]">
-          Welcome to{" "}
-          {JSON.parse(sessionStorage.getItem("selectedProjectID")).name}
+      {loading ? (
+        <div className="flex justify-center items-center h-40">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
         </div>
-        <div className="text-lg font-semibold flex gap-8 pl-1 text-theme_black/40">
-          <span>Device - {deviceDetails && deviceDetails.name}</span>
-          <span>S.NO. - {deviceDetails && deviceDetails.id}</span>
-        </div>
-      </div>
-      <div className="bg-theme_black/10 p-6 rounded-xl flex flex-col gap-8">
-        <div className="flex flex-col">
-          {deviceData.map((device, index) => (
-            <form
-              key={index}
-              className={`grid grid-cols-7 font-medium ${
-                device.type
-                  ? "bg-theme_black text-theme_white rounded-t-xl"
-                  : "text-theme_black bg-theme_white"
-              } `}
-            >
-              <div
-                className={`${tableCellStyle} border-l ${
-                  device.type && "rounded-tl-xl"
-                } ${device.type ? "" : "border-theme_black"}`}
-              >
-                <input
-                  type="text"
-                  name={device.name.name}
-                  value={device.name.value}
-                  onChange={handleInputChange}
-                  className={`text-center w-11/12 ${
-                    device.type && "bg-theme_black text-lg text-theme_white"
-                  }`}
-                  disabled={device.type}
-                />
-              </div>
-              <div className="grid grid-cols-2">
-                <div
-                  className={`${tableCellStyle} col-span-2 ${
-                    device.range.name ? "" : "hidden"
-                  }`}
+      ) : (
+        <div>
+          <div className="flex flex-col gap-2 pb-10">
+            <div className="text-3xl font-bold text-[#1D1D1D]">
+              Welcome to{" "}
+              {JSON.parse(sessionStorage.getItem("selectedProjectID")).name}
+            </div>
+            <div className="text-lg font-semibold flex gap-8 pl-1 text-theme_black/40">
+              <span>Device - {deviceDetails && deviceDetails.name}</span>
+              <span>S.NO. - {deviceDetails && deviceDetails.id}</span>
+            </div>
+          </div>
+          <div className="bg-theme_black/10 p-6 rounded-xl flex flex-col gap-8">
+            <div className="flex flex-col">
+              {deviceData.map((device, index) => (
+                <form
+                  key={index}
+                  className={`grid grid-cols-7 font-medium ${
+                    device.type
+                      ? "bg-theme_black text-theme_white rounded-t-xl"
+                      : "text-theme_black bg-theme_white"
+                  } `}
                 >
-                  {device.range.name}
-                </div>
-                {device.range.value.map((data, index) => (
                   <div
-                    className={`${tableCellStyle} ${
-                      device.type ? "" : "border-theme_black"
-                    }`}
-                    key={index}
+                    className={`${tableCellStyle} border-l ${
+                      device.type && "rounded-tl-xl"
+                    } ${device.type ? "" : "border-theme_black"}`}
                   >
                     <input
-                      type={device.type ? "text" : "number"}
-                      name={data.name}
-                      value={data.value}
+                      type="text"
+                      name={device.name.name}
+                      value={device.name.value}
                       onChange={handleInputChange}
                       className={`text-center w-11/12 ${
                         device.type && "bg-theme_black text-lg text-theme_white"
@@ -265,99 +249,130 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
                       disabled={device.type}
                     />
                   </div>
-                ))}
-              </div>
-              <div
-                className={`${tableCellStyle} ${
-                  device.type ? "" : "border-theme_black"
-                }`}
-              >
-                <input
-                  type={device.type ? "text" : "number"}
-                  name={device.calibration.name}
-                  value={device.calibration.value}
-                  onChange={handleInputChange}
-                  className={`text-center w-11/12 ${
-                    device.type && "bg-theme_black text-lg text-theme_white"
-                  }`}
-                  disabled={device.type}
-                />
-              </div>
-              <div
-                className={`${tableCellStyle} ${
-                  device.type ? "" : "border-theme_black"
-                }`}
-              >
-                {device.type ? (
-                  device.factor.value
-                ) : (
-                  <select
-                    name={device.factor.name}
-                    value={device.factor.value}
-                    onChange={handleInputChange}
-                    className="-ml-1 bg-theme_black/10 py-2 px-2 rounded-full"
-                  >
-                    <option disabled>
-                      {displayFactorValue(device.factor.value)}
-                    </option>
-                    <option value={0}>Addition</option>
-                    <option value={1}>Subtraction</option>
-                    <option value={2}>Multiplication</option>
-                    <option value={3}>Division</option>
-                  </select>
-                )}
-              </div>
-              <div className={`grid grid-cols-${device.alert.value.length}`}>
-                <div
-                  className={`${tableCellStyle} col-span-2 ${
-                    device.alert.name ? "" : "hidden"
-                  }`}
-                >
-                  {device.alert.name}
-                </div>
-                {device.alert.value.map((data, index) => (
+                  <div className="grid grid-cols-2">
+                    <div
+                      className={`${tableCellStyle} col-span-2 ${
+                        device.range.name ? "" : "hidden"
+                      }`}
+                    >
+                      {device.range.name}
+                    </div>
+                    {device.range.value.map((data, index) => (
+                      <div
+                        className={`${tableCellStyle} ${
+                          device.type ? "" : "border-theme_black"
+                        }`}
+                        key={index}
+                      >
+                        <input
+                          type={device.type ? "text" : "number"}
+                          name={data.name}
+                          value={data.value}
+                          onChange={handleInputChange}
+                          className={`text-center w-11/12 ${
+                            device.type &&
+                            "bg-theme_black text-lg text-theme_white"
+                          }`}
+                          disabled={device.type}
+                        />
+                      </div>
+                    ))}
+                  </div>
                   <div
                     className={`${tableCellStyle} ${
                       device.type ? "" : "border-theme_black"
                     }`}
-                    key={index}
                   >
-                    {data.value}
+                    <input
+                      type={device.type ? "text" : "number"}
+                      name={device.calibration.name}
+                      value={device.calibration.value}
+                      onChange={handleInputChange}
+                      className={`text-center w-11/12 ${
+                        device.type && "bg-theme_black text-lg text-theme_white"
+                      }`}
+                      disabled={device.type}
+                    />
                   </div>
-                ))}
-              </div>
-              <div
-                className={`${tableCellStyle} ${
-                  device.type ? "" : "border-theme_black"
-                }`}
+                  <div
+                    className={`${tableCellStyle} ${
+                      device.type ? "" : "border-theme_black"
+                    }`}
+                  >
+                    {device.type ? (
+                      device.factor.value
+                    ) : (
+                      <select
+                        name={device.factor.name}
+                        value={device.factor.value}
+                        onChange={handleInputChange}
+                        className="-ml-1 bg-theme_black/10 py-2 px-2 rounded-full"
+                      >
+                        <option disabled>
+                          {displayFactorValue(device.factor.value)}
+                        </option>
+                        <option value={0}>Addition</option>
+                        <option value={1}>Subtraction</option>
+                        <option value={2}>Multiplication</option>
+                        <option value={3}>Division</option>
+                      </select>
+                    )}
+                  </div>
+                  <div
+                    className={`grid grid-cols-${device.alert.value.length}`}
+                  >
+                    <div
+                      className={`${tableCellStyle} col-span-2 ${
+                        device.alert.name ? "" : "hidden"
+                      }`}
+                    >
+                      {device.alert.name}
+                    </div>
+                    {device.alert.value.map((data, index) => (
+                      <div
+                        className={`${tableCellStyle} ${
+                          device.type ? "" : "border-theme_black"
+                        }`}
+                        key={index}
+                      >
+                        {data.value}
+                      </div>
+                    ))}
+                  </div>
+                  <div
+                    className={`${tableCellStyle} ${
+                      device.type ? "" : "border-theme_black"
+                    }`}
+                  >
+                    {device.readings.value}
+                  </div>
+                  <div
+                    className={`${tableCellStyle} ${
+                      device.type && "rounded-t-xl"
+                    } ${device.type ? "" : "border-theme_black"}`}
+                  >
+                    {device.calibratedReadings.value}
+                  </div>
+                </form>
+              ))}
+            </div>
+            <div className="flex justify-end gap-6">
+              <button
+                className={`bg-theme_black text-theme_white text-center w-36 py-3 rounded-full text-lg border border-theme_black`}
+                onClick={handleSubmit}
               >
-                {device.readings.value}
-              </div>
-              <div
-                className={`${tableCellStyle} ${
-                  device.type && "rounded-t-xl"
-                } ${device.type ? "" : "border-theme_black"}`}
+                Save
+              </button>
+              <button
+                className="bg-theme_black/40 text-theme_white border border-theme_black/30 text-center w-36 py-3 rounded-full text-lg"
+                onClick={closeFunction}
               >
-                {device.calibratedReadings.value}
-              </div>
-            </form>
-          ))}
+                Close
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="flex justify-end gap-6">
-          <button
-            className={`bg-theme_black text-theme_white text-center w-36 py-3 rounded-full text-lg border border-theme_black`}
-            onClick={handleSubmit}
-          >
-            Save
-          </button>
-          <button
-            className="bg-theme_black/40 text-theme_white border border-theme_black/30 text-center w-36 py-3 rounded-full text-lg"
-            onClick={closeFunction}
-          >
-            Close
-          </button>
-        </div>
-      </div>
+      )}
     </>
   );
 };

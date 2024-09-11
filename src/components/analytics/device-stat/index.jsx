@@ -53,13 +53,22 @@ const calculateLevel = (reading) => {
 // DataTable component
 const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true); // Track initial loading state
+  const [initialLoad, setInitialLoad] = useState(true); // Track if initial load is done
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const getData = async () => {
+      if (initialLoad) {
+        setLoading(true); // Show spinner during initial fetch
+      }
       const result = await fetchData(deviceSerialNumber); // Pass serialNumber to fetchData
       setData(result);
+      if (initialLoad) {
+        setLoading(false); // Hide spinner after initial fetch
+        setInitialLoad(false); // Mark initial load as done
+      }
     };
 
     getData();
@@ -87,69 +96,77 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
         </div>
         <div className="bg-white border-4 border-black rounded-3xl overflow-hidden flex">
           <div className="flex-grow">
-            <table className="min-w-full bg-[#F0F0F0] border-collapse border-black">
-              <thead className="bg-black text-white">
-                <tr>
-                  {columns.map((column, index) => (
-                    <th
-                      key={column.key}
-                      className={`px-4 py-6 text-center ${
-                        index === 0 ? "border-l-0" : ""
-                      } ${
-                        index === columns.length - 1
-                          ? "border-r-0"
-                          : "border-r-2"
-                      } border-white`}
-                    >
-                      {column.label}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {data.map((row, index) => (
-                  <tr key={index} className="border-b-2 border-black">
-                    {columns.map((column, colIndex) => (
-                      <td
+            {loading && initialLoad ? (
+              <div className="flex justify-center items-center h-40">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+              </div>
+            ) : (
+              <table className="min-w-full bg-[#F0F0F0] border-collapse border-black">
+                <thead className="bg-black text-white">
+                  <tr>
+                    {columns.map((column, index) => (
+                      <th
                         key={column.key}
                         className={`px-4 py-6 text-center ${
-                          colIndex === 0 ? "border-l-0" : ""
+                          index === 0 ? "border-l-0" : ""
                         } ${
-                          colIndex === columns.length - 1
+                          index === columns.length - 1
                             ? "border-r-0"
                             : "border-r-2"
-                        } border-black ${
-                          column.key === "status" ? "text-black" : "text-black"
-                        }`}
-                        style={{
-                          backgroundColor:
-                            column.key === "status"
-                              ? row[column.key] === "Online"
-                                ? "#d4edda"
-                                : "#f8d7da"
-                              : "inherit",
-                        }}
+                        } border-white`}
                       >
-                        {column.key === "readingsLevel" ? (
-                          <div className="relative">
-                            <div
-                              className="absolute top-0 left-0 bg-blue-500 h-full rounded-full"
-                              style={{
-                                width: `${row[column.key]}%`,
-                                height: "100%",
-                              }}
-                            ></div>
-                            <div className="bg-[#A5A5A5] h-4 w-full rounded-full"></div>
-                          </div>
-                        ) : (
-                          row[column.key]
-                        )}
-                      </td>
+                        {column.label}
+                      </th>
                     ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {data.map((row, index) => (
+                    <tr key={index} className="border-b-2 border-black">
+                      {columns.map((column, colIndex) => (
+                        <td
+                          key={column.key}
+                          className={`px-4 py-6 text-center ${
+                            colIndex === 0 ? "border-l-0" : ""
+                          } ${
+                            colIndex === columns.length - 1
+                              ? "border-r-0"
+                              : "border-r-2"
+                          } border-black ${
+                            column.key === "status"
+                              ? "text-black"
+                              : "text-black"
+                          }`}
+                          style={{
+                            backgroundColor:
+                              column.key === "status"
+                                ? row[column.key] === "Online"
+                                  ? "#d4edda"
+                                  : "#f8d7da"
+                                : "inherit",
+                          }}
+                        >
+                          {column.key === "readingsLevel" ? (
+                            <div className="relative">
+                              <div
+                                className="absolute top-0 left-0 bg-blue-500 h-full rounded-full"
+                                style={{
+                                  width: `${row[column.key]}%`,
+                                  height: "100%",
+                                }}
+                              ></div>
+                              <div className="bg-[#A5A5A5] h-4 w-full rounded-full"></div>
+                            </div>
+                          ) : (
+                            row[column.key]
+                          )}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
           </div>
 
           <div className="w-64 flex flex-col bg-white border-l-2 border-black">

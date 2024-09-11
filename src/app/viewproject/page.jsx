@@ -11,6 +11,7 @@ const ViewProject = () => {
   const [currentProject, setCurrentProject] = useState(null);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [userName, setUserName] = useState("Loading...");
+  const [loading, setLoading] = useState(false); // Spinner state
 
   useEffect(() => {
     setUserName(sessionStorage.getItem("username"));
@@ -35,12 +36,19 @@ const ViewProject = () => {
     router.push("/configpanel");
   };
 
-  const handleDeviceChange = (e) => {
+  const handleDeviceChange = async (e) => {
     const serialNo = e.target.value;
+    setLoading(true); // Show spinner
+
     const device = currentProject.devices.find(
       (device) => device.serial_no === serialNo
     );
     setSelectedDevice(device);
+
+    // Simulate a delay to show spinner
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
+    setLoading(false); // Hide spinner
   };
 
   return (
@@ -57,22 +65,6 @@ const ViewProject = () => {
             </div>
             <div className="text-4xl font-bold text-theme_black/90 mt-2">
               Welcome to {currentProject?.name}
-            </div>
-            <div className="flex justify-center my-20">
-              <button
-                className="bg-theme_black/90 text-white w-[450px] text-xl font-semibold tracking-wide py-4 rounded-full mt-4 flex gap-3 justify-center items-center"
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push("/adddevice");
-                }}
-              >
-                <img
-                  src="/icons/add-solid.svg"
-                  alt="add"
-                  className="w-7 h-auto"
-                />
-                <span>Add Device</span>
-              </button>
             </div>
           </div>
 
@@ -96,7 +88,7 @@ const ViewProject = () => {
             value={selectedDevice?.serial_no || ""}
             onChange={handleDeviceChange}
           >
-            {currentProject?.devices?.map((device, index) => (
+            {currentProject?.devices?.map((device) => (
               <option key={device.serial_no} value={device.serial_no}>
                 {device.name} - {device.serial_no}
               </option>
@@ -106,16 +98,43 @@ const ViewProject = () => {
 
         {/* Render DataTable for the selected device */}
         {selectedDevice && (
-          <DataTable
-            editFunction={() => {
-              deviceConfig({
-                serialNumber: selectedDevice.serial_no,
-                name: selectedDevice.name,
-              });
-            }}
-            deviceSerialNumber={selectedDevice.serial_no}
-            deviceName={selectedDevice.name}
-          />
+          <div className="relative">
+            {loading && (
+              <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-70">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+              </div>
+            )}
+            <DataTable
+              editFunction={() => {
+                deviceConfig({
+                  serialNumber: selectedDevice.serial_no,
+                  name: selectedDevice.name,
+                });
+              }}
+              deviceSerialNumber={selectedDevice.serial_no}
+              deviceName={selectedDevice.name}
+            />
+          </div>
+        )}
+
+        {/* Add Device Button */}
+        {!showAddDevice && (
+          <div className="p-10 flex justify-center">
+            <button
+              className="bg-theme_black/90 text-white w-[450px] text-xl font-semibold tracking-wide py-4 rounded-full mt-4 flex gap-3 justify-center items-center"
+              onClick={(e) => {
+                e.preventDefault();
+                router.push("/adddevice");
+              }}
+            >
+              <img
+                src="/icons/add-solid.svg"
+                alt="add"
+                className="w-7 h-auto"
+              />
+              <span>Add Device</span>
+            </button>
+          </div>
         )}
       </div>
     </PageLayout>
