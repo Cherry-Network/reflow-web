@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import PageLayout from "@/components/layout";
 import { AddProjectButton } from "@/components/add-project";
+import { decode } from "next-auth/jwt";
 
 export default function Home() {
   const router = useRouter();
@@ -12,14 +13,22 @@ export default function Home() {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const storedUsername = sessionStorage.getItem("username");
+    const decoded = decode({
+      token: "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoiNnpOQ2xIYTFDVkZwX21SRWdSZDJlUXEyMlgtYW9sUW1QOVViVC1reWpwd2FxZUJYY25pSWZBTXBOanlyR1pEMjFZbVJtOVg3c3B4M005eUlMWHJpUFEifQ..NXM8Z4-oM0v0A8ZBnhrIeQ.3KRty9WhUxS9ma2sNDdYPvyD06UiGNxjy9NYbmwqdZAMOF9TyegS4KTNKW06HvxEnn25MH7NWdYwx7hZ2FHaefEe7-tvTBB1OIcBpLnhXymOrwBYQ34PipUrNtPcGt0DT-ipDPhsVAVegPnDA6OBvHTjIQ5C_R25ikSHRd50HLnsCigXGSaPUEaYMhACRZZdn-ClO3L5q0oV_etfU-ZscUMvNvt50Tc5h28nxbk43bzl3DMZk2Hm4m3UxP29c6sdywOpno03s1xDIe2Pvd4lRVVBBh3za9_6e1BommZlqsSNjMRV7aJQFTQQTN2fVkmE.uEOKu3oYk1zF1YKoKUYh8DLCxYsZ-Kq8_ya1a-7zVFM",
+      secret: "0MI/SmxJyhIk2GPSoE5h3es2h7rxTudrQpmOLilwd9w=",
+    });
+    console.log(decoded);
+  }, []);
 
+  useEffect(() => {
+    const storedUsername = sessionStorage.getItem("username");
     if (!storedUsername) {
       router.push("/username");
       return;
     }
-
     setUsername(storedUsername);
+
+
 
     const fetchProjects = async () => {
       try {
