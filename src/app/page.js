@@ -13,12 +13,23 @@ export default function Home() {
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    const decoded = decode({
-      token: "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoiNnpOQ2xIYTFDVkZwX21SRWdSZDJlUXEyMlgtYW9sUW1QOVViVC1reWpwd2FxZUJYY25pSWZBTXBOanlyR1pEMjFZbVJtOVg3c3B4M005eUlMWHJpUFEifQ..NXM8Z4-oM0v0A8ZBnhrIeQ.3KRty9WhUxS9ma2sNDdYPvyD06UiGNxjy9NYbmwqdZAMOF9TyegS4KTNKW06HvxEnn25MH7NWdYwx7hZ2FHaefEe7-tvTBB1OIcBpLnhXymOrwBYQ34PipUrNtPcGt0DT-ipDPhsVAVegPnDA6OBvHTjIQ5C_R25ikSHRd50HLnsCigXGSaPUEaYMhACRZZdn-ClO3L5q0oV_etfU-ZscUMvNvt50Tc5h28nxbk43bzl3DMZk2Hm4m3UxP29c6sdywOpno03s1xDIe2Pvd4lRVVBBh3za9_6e1BommZlqsSNjMRV7aJQFTQQTN2fVkmE.uEOKu3oYk1zF1YKoKUYh8DLCxYsZ-Kq8_ya1a-7zVFM",
-      secret: "0MI/SmxJyhIk2GPSoE5h3es2h7rxTudrQpmOLilwd9w=",
-    });
-    console.log(decoded);
+    const decodeToken = async () => {
+      try {
+        const decoded = await decode({
+          token: "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoiMmtiOVRkOG5FWS1pX2hKNldRbVF1ZkV6V0VXRzF1Szh1cnVnQlpZMmhPcWZLTEJoRlNHR1VURk5RNDVRZHRXR0p5WXpiMHV1YWMxMGkzWDB6U0Vic0EifQ..ZfJoSCssC2qjLIkWNlvzmA.lI-z99yWd94XPN1e9iAYB1C6fxwP7KWq-QU55i9A7daDfgO5qOAmBGwIgEDD4BJXhvZugrFid69LNUfmBUp76nTYuf7mFN2RMsTpw8qZI2bu90u6n19SigTeu58CQmmIJW4LB0UBVtwxoYGkl-5g_QQ4QFYsexl03vdFnCJsc8JmYL7zpqRGOkCHaKVOPvdcPqoqplc7g-vE97FEjaH0v1jPb0s6Fvh-LwhV9hUVARWRk43lJyxJhz-izatwbANEioXmX7rDqHJGTvEaJeqzN_3QjNBzSc6ry3OGUUj-Gz_ExneqR46cSGVd4SnTY7rQTc7q0bLsAx2j-6WqhHDEjA.NqGaRnKzXfaHjjcQktTjAKGMDa5oM2Q9qDyjI7EVwVo",
+          salt: "__Secure-authjs.session-token",
+          secret: "0MI/SmxJyhIk2GPSoE5h3es2h7rxTudrQpmOLilwd9w=",
+        });
+        console.log(decoded);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    };
+
+    decodeToken();
   }, []);
+
+
 
   useEffect(() => {
     const storedUsername = sessionStorage.getItem("username");
