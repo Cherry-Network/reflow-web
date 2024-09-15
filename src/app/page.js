@@ -21,20 +21,26 @@ export default function Home() {
 
   useEffect(() => {
     const userToken = getToken.get("user");
+    Cookies.set("authSessionToken", userToken, {expires: 1});
+
+    if (!userToken || !Cookies.get("authSessionToken")) {
+      router.push("https://reflow-login.vercel.app/login");
+      return;
+    }
     const decodeToken = async () => {
       try {
         const decoded = await decode({
-          token: `${userToken}`,
+          token: `${Cookies.get("authSessionToken")}`,
           salt: "__Secure-authjs.session-token",
           secret: authSecret,
         });
-        console.log(decoded);
+        return decoded;
       } catch (error) {
         console.error("Error decoding token:", error);
       }
     };
 
-    decodeToken();
+    console.log(decodeToken());
   }, []);
 
   useEffect(() => {
