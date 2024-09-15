@@ -4,41 +4,48 @@ import { useRouter } from "next/navigation";
 import PageLayout from "@/components/layout";
 import { AddProjectButton } from "@/components/add-project";
 import { decode } from "next-auth/jwt";
+import Cookies from "js-cookie";
+import { useSearchParams } from "next/navigation";
+
+const authSecret = process.env.NEXT_PUBLIC_AUTH_SECRET;
+const environment = process.env.NODE_ENV;
 
 export default function Home() {
   const router = useRouter();
+  const getToken = useSearchParams();
   const [ownProjects, setOwnProjects] = useState([]);
   const [sharedProjects, setSharedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
-
-  {/*
-    useEffect(() => {
-      const decodeToken = async () => {
-        try {
-          const decoded = await decode({
-            token:
-              "eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2Q0JDLUhTNTEyIiwia2lkIjoiMmtiOVRkOG5FWS1pX2hKNldRbVF1ZkV6V0VXRzF1Szh1cnVnQlpZMmhPcWZLTEJoRlNHR1VURk5RNDVRZHRXR0p5WXpiMHV1YWMxMGkzWDB6U0Vic0EifQ..ZfJoSCssC2qjLIkWNlvzmA.lI-z99yWd94XPN1e9iAYB1C6fxwP7KWq-QU55i9A7daDfgO5qOAmBGwIgEDD4BJXhvZugrFid69LNUfmBUp76nTYuf7mFN2RMsTpw8qZI2bu90u6n19SigTeu58CQmmIJW4LB0UBVtwxoYGkl-5g_QQ4QFYsexl03vdFnCJsc8JmYL7zpqRGOkCHaKVOPvdcPqoqplc7g-vE97FEjaH0v1jPb0s6Fvh-LwhV9hUVARWRk43lJyxJhz-izatwbANEioXmX7rDqHJGTvEaJeqzN_3QjNBzSc6ry3OGUUj-Gz_ExneqR46cSGVd4SnTY7rQTc7q0bLsAx2j-6WqhHDEjA.NqGaRnKzXfaHjjcQktTjAKGMDa5oM2Q9qDyjI7EVwVo",
-            salt: "__Secure-authjs.session-token",
-            secret: "0MI/SmxJyhIk2GPSoE5h3es2h7rxTudrQpmOLilwd9w=",
-          });
-          console.log(decoded);
-        } catch (error) {
-          console.error("Error decoding token:", error);
-        }
-      };
-
-      decodeToken();
-    }, []);
-  */}
+  const [user, setUser] = useState();
 
   useEffect(() => {
-    const storedUsername = sessionStorage.getItem("username");
+    const userToken = getToken.get("user");
+    const decodeToken = async () => {
+      try {
+        const decoded = await decode({
+          token: `${userToken}`,
+          salt: "authjs.session-token",
+          secret: authSecret,
+        });
+        console.log(decoded);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    };
+
+    decodeToken();
+  }, []);
+
+  useEffect(() => {
+    {
+      /*const storedUsername = sessionStorage.getItem("username");
     if (!storedUsername) {
       router.push("/username");
       return;
+    }*/
     }
-    setUsername(storedUsername);
+    setUsername("aditya");
 
     const fetchProjects = async () => {
       try {
@@ -46,7 +53,7 @@ export default function Home() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            username: storedUsername,
+            username: "aditya",
           },
         });
 
