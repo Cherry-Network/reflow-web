@@ -21,7 +21,7 @@ export default function Home() {
 
   useEffect(() => {
     const userToken = getToken.get("user");
-    Cookies.set("authSessionToken", userToken, {expires: 1});
+    Cookies.set("authSessionToken", userToken, { expires: 1 });
 
     if (!userToken || !Cookies.get("authSessionToken")) {
       router.push("https://reflow-login.vercel.app/login");
@@ -40,7 +40,10 @@ export default function Home() {
       }
     };
 
-    console.log(decodeToken());
+    decodeToken().then((decoded) => {
+      setUser(decoded);
+    });
+    console.log(user);
   }, []);
 
   useEffect(() => {
