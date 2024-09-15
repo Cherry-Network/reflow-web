@@ -6,6 +6,7 @@ import { AddProjectButton } from "@/components/add-project";
 import { decode } from "next-auth/jwt";
 import Cookies from "js-cookie";
 import { useSearchParams } from "next/navigation";
+import { get } from "mongoose";
 
 const authSecret = process.env.NEXT_PUBLIC_AUTH_SECRET;
 const environment = process.env.NODE_ENV;
@@ -21,9 +22,13 @@ export default function Home() {
 
   useEffect(() => {
     const userToken = getToken.get("user");
-    Cookies.set("authSessionToken", userToken, { expires: 1 });
-
-    if (!userToken || !Cookies.get("authSessionToken")) {
+    if (userToken) {
+      Cookies.set("authSessionToken", userToken, { expires: 1 });
+      const params = new URLSearchParams(getToken.toString());
+      params.delete("user");
+      router.replace(`?${params.toString()}`)
+    }    
+    if (!Cookies.get("authSessionToken")) {
       router.push("https://reflow-login.vercel.app/login");
       return;
     }
@@ -31,7 +36,7 @@ export default function Home() {
       try {
         const decoded = await decode({
           token: `${Cookies.get("authSessionToken")}`,
-          salt: "__Secure-authjs.session-token",
+          salt: "authjs.session-token",
           secret: authSecret,
         });
         return decoded;
@@ -43,9 +48,8 @@ export default function Home() {
     decodeToken().then((decoded) => {
       setUser(decoded);
     });
-    console.log(user);
   }, []);
-
+  console.log(user);
   useEffect(() => {
     {
       /*const storedUsername = sessionStorage.getItem("username");
