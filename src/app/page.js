@@ -26,12 +26,13 @@ export default function Home() {
       Cookies.set("authSessionToken", userToken, { expires: 1 });
       const params = new URLSearchParams(getToken.toString());
       params.delete("user");
-      router.replace(`?${params.toString()}`)
-    }    
+      router.replace(`?${params.toString()}`);
+    }
     if (!Cookies.get("authSessionToken")) {
       router.push("https://reflow-login.vercel.app/login");
       return;
     }
+
     const decodeToken = async () => {
       try {
         const decoded = await decode({
@@ -45,10 +46,35 @@ export default function Home() {
       }
     };
 
+    const checkOrCreateUser = async (decodedUser) => {
+      try {
+        const response = await fetch("/api/check-user", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username: decodedUser?.username }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setUser(data.user);
+        } else {
+          console.error("Error checking/creating user:", data.error);
+        }
+      } catch (error) {
+        console.error("Error in user check/create request:", error);
+      }
+    };
+
     decodeToken().then((decoded) => {
-      setUser(decoded);
+      if (decoded) {
+        checkOrCreateUser(decoded);
+      }
     });
-  }, []);
+  }, [router, getToken]);
+
   console.log(user);
   useEffect(() => {
     {
