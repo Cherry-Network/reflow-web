@@ -18,7 +18,6 @@ export default function Home() {
   const [sharedProjects, setSharedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
-  const [user, setUser] = useState();
 
   useEffect(() => {
     const userToken = getToken.get("user");
@@ -70,12 +69,11 @@ export default function Home() {
 
     decodeToken().then((decoded) => {
       if (decoded) {
+        console.log(decoded);
         checkOrCreateUser(decoded);
       }
     });
-  }, [router, getToken]);
-
-  console.log(user);
+  }, []);
   useEffect(() => {
     {
       /*const storedUsername = sessionStorage.getItem("username");
