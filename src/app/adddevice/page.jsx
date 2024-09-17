@@ -15,7 +15,7 @@ const AddDevice = () => {
   }, []);
 
   const handleFormSuccess = () => {
-    router.push("/viewproject");
+    router.push("/");
   };
 
   
