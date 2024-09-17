@@ -20,7 +20,7 @@ export async function POST(req) {
     const body = await req.json();
     const { username } = body;
 
-    const defaultPassword = "defaultPassword123"; // Set a default password
+    const defaultPassword = "defaultPassword123";
 
     const newUser = new User({
       username,

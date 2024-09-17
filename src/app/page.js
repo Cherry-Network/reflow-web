@@ -37,6 +37,13 @@ export default function Home() {
           salt: "authjs.session-token",
           secret: authSecret,
         });
+
+        if (decoded?.email) {
+          // Store the email as username in sessionStorage
+          sessionStorage.setItem("username", decoded.email);
+          setUsername(decoded.email); // Set the username state
+        }
+
         return decoded;
       } catch (error) {
         console.error("Error decoding token:", error);
