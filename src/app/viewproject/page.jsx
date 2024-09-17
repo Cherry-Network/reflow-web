@@ -11,14 +11,14 @@ const ViewProject = () => {
   const [currentProject, setCurrentProject] = useState(null);
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [userName, setUserName] = useState("Loading...");
-  const [loading, setLoading] = useState(false); // Spinner state
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setUserName(sessionStorage.getItem("username"));
     const projectData = JSON.parse(sessionStorage.getItem("selectedProjectID"));
     setCurrentProject(projectData);
 
-    // Set default selected device if available
+    
     if (projectData?.devices?.length > 0) {
       setSelectedDevice(projectData.devices[0]);
     }
@@ -38,17 +38,17 @@ const ViewProject = () => {
 
   const handleDeviceChange = async (e) => {
     const serialNo = e.target.value;
-    setLoading(true); // Show spinner
+    setLoading(true); 
 
     const device = currentProject.devices.find(
       (device) => device.serial_no === serialNo
     );
     setSelectedDevice(device);
 
-    // Simulate a delay to show spinner
+    
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    setLoading(false); // Hide spinner
+    setLoading(false); 
   };
 
   return (

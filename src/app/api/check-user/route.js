@@ -6,7 +6,7 @@ export async function POST(req) {
     const database = client.db("reflowdb");
     const users = database.collection("users");
 
-    const { username } = await req.json();
+    const { username, name } = await req.json();
 
     if (!username) {
       return new Response(JSON.stringify({ error: "Username is required" }), {
@@ -15,7 +15,7 @@ export async function POST(req) {
       });
     }
 
-    // Check if the user already exists in the database
+
     const existingUser = await users.findOne({ username });
 
     if (existingUser) {
@@ -31,9 +31,8 @@ export async function POST(req) {
       );
     }
 
-    // Create a new user if not found
     const newUser = {
-      name: username,
+      name,
       username,
       projectIDs: [],
       sharedAccess: [],

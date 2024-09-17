@@ -21,6 +21,7 @@ const userSchema = new mongoose.Schema({
   sharedAccess: [{ type: mongoose.Schema.Types.ObjectId, ref: "Project" }],
 });
 
+
 const Project =
   mongoose.models.Project || mongoose.model("Project", projectSchema);
 const User = mongoose.models.User || mongoose.model("User", userSchema);

@@ -23,7 +23,7 @@ export default function AddProject() {
     e.preventDefault();
     setSubmitting(true);
 
-    // Get the stored username from session storage
+
     const username = sessionStorage.getItem("username");
 
     if (!username) {
@@ -42,7 +42,7 @@ export default function AddProject() {
           name: projectDetails.project_name,
           description: projectDetails.project_description,
           devices: [],
-          username, // Include the username in the request body
+          username
         }),
       });
 

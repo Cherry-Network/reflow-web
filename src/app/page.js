@@ -16,6 +16,7 @@ export default function Home() {
   const [sharedProjects, setSharedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
+  const [fullName, setFullName] = useState(""); 
 
   useEffect(() => {
     const userToken = getToken.get("user");
@@ -38,10 +39,13 @@ export default function Home() {
           secret: authSecret,
         });
 
-        if (decoded?.email) {
-          // Store the email as username in sessionStorage
+        if (decoded?.firstName && decoded?.lastName) {
+          
+          const name = `${decoded.firstName} ${decoded.lastName}`;
+          setFullName(name);
+          
           sessionStorage.setItem("username", decoded.email);
-          setUsername(decoded.email); // Set the username state
+          setUsername(decoded.email); 
         }
 
         return decoded;
@@ -57,7 +61,7 @@ export default function Home() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username: decodedUser?.email }), // Using email as username
+          body: JSON.stringify({ username: username, name: fullName }),
         });
 
         const data = await response.json();
@@ -77,10 +81,10 @@ export default function Home() {
         checkOrCreateUser(decoded);
       }
     });
-  }, []);
+  }, [fullName, username]);
 
   useEffect(() => {
-    if (!username) return; // Wait until the username is set
+    if (!username) return;
 
     const fetchProjects = async () => {
       try {
@@ -88,7 +92,7 @@ export default function Home() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            username: username, // Use the dynamically set username
+            username: username,
           },
         });
 
@@ -106,7 +110,7 @@ export default function Home() {
     };
 
     fetchProjects();
-  }, [username]); // Fetch projects when username is set
+  }, [username]);
 
   return (
     <PageLayout pageName={"My Projects"}>
