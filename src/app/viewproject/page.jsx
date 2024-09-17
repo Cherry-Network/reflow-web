@@ -61,7 +61,7 @@ const ViewProject = () => {
             }
           >
             <div className="text-4xl font-bold text-theme_black/40">
-              Hello! "{userName.toUpperCase()}"
+              Hello! "{"userName.toUpperCase()"}"
             </div>
             <div className="text-4xl font-bold text-theme_black/90 mt-2">
               Welcome to {currentProject?.name}

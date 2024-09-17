@@ -16,7 +16,7 @@ let subscribedTopics = new Set();
 const generateMqttTopic = (serialId) => {
   const prefix = serialId.slice(0, 3); // e.g., "AX3"
   const suffix = serialId.slice(3); // e.g., "03"
-  return `${prefix}/${suffix}/IN`; // e.g., "AX3/03/IN"
+  return `${prefix}/${suffix}/OUTPUT`; // e.g., "AX3/03/IN"
 };
 
 // Establish connection to the MQTT broker

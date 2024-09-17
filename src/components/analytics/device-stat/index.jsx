@@ -16,24 +16,24 @@ const fetchData = async (serialId) => {
     const formattedData = [
       {
         serialNo: 1,
-        readings: dataObject.MIN1 || "N/A",
-        calibratedReadings: dataObject.CAL1 || "N/A",
-        readingsLevel: calculateLevel(dataObject.MIN1 || 0),
-        status: dataObject.MIN1 ? "Online" : "Offline",
+        readings: dataObject.RawCH1 || "N/A",
+        calibratedReadings: dataObject.CH1 || "N/A",
+        readingsLevel: calculateLevel(dataObject.ERR1 || 0),
+        status: dataObject.ERR1 ? "Online" : "Offline",
       },
       {
         serialNo: 2,
-        readings: dataObject.MIN2 || "N/A",
-        calibratedReadings: dataObject.CAL2 || "N/A",
-        readingsLevel: calculateLevel(dataObject.MIN2 || 0),
-        status: dataObject.MIN2 ? "Online" : "Offline",
+        readings: dataObject.RawCH2 || "N/A",
+        calibratedReadings: dataObject.CH2 || "N/A",
+        readingsLevel: calculateLevel(dataObject.ERR2 || 0),
+        status: dataObject.ERR2 ? "Online" : "Offline",
       },
       {
         serialNo: 3,
-        readings: dataObject.MIN3 || "N/A",
-        calibratedReadings: dataObject.CAL3 || "N/A",
-        readingsLevel: calculateLevel(dataObject.MIN3 || 0),
-        status: dataObject.MIN3 ? "Online" : "Offline",
+        readings: dataObject.RawCH3 || "N/A",
+        calibratedReadings: dataObject.CH3 || "N/A",
+        readingsLevel: calculateLevel(dataObject.ERR3 || 0),
+        status: dataObject.ERR3 ? "Online" : "Offline",
       },
     ];
 
