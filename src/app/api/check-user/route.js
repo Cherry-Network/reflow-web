@@ -1,11 +1,8 @@
-import { MongoClient } from "mongodb";
-
-const uri = process.env.MONGODB_URI;
-const client = new MongoClient(uri);
+import clientPromise from "@/lib/mongodb";
 
 export async function POST(req) {
   try {
-    await client.connect();
+    const client = await clientPromise;
     const database = client.db("reflowdb");
     const users = database.collection("users");
 
@@ -18,29 +15,50 @@ export async function POST(req) {
       });
     }
 
-    // Check if user already exists
-    let user = await users.findOne({ username });
+    // Check if the user already exists in the database
+    const existingUser = await users.findOne({ username });
 
-    if (!user) {
-      // Create new user if not found
-      const result = await users.insertOne({
-        username,
-        projectIDs: [],
-        sharedAccess: [],
-      });
-      user = result.ops[0]; // Get the newly created user
+    if (existingUser) {
+      return new Response(
+        JSON.stringify({
+          message: "User found",
+          user: existingUser,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
     }
 
-    return new Response(JSON.stringify({ user }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    // Create a new user if not found
+    const newUser = {
+      name: username,
+      username,
+      projectIDs: [],
+      sharedAccess: [],
+    };
+
+    const result = await users.insertOne(newUser);
+
+    return new Response(
+      JSON.stringify({
+        message: "New user created",
+        user: newUser,
+      }),
+      {
+        status: 201,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
     console.error("Error checking/creating user:", error);
-    return new Response(JSON.stringify({ error: "Error processing request" }), {
-      status: 500,
-    });
-  } finally {
-    await client.close();
+    return new Response(
+      JSON.stringify({ error: "Error checking/creating user" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }

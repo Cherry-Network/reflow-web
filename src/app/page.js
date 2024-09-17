@@ -6,10 +6,8 @@ import { AddProjectButton } from "@/components/add-project";
 import { decode } from "next-auth/jwt";
 import Cookies from "js-cookie";
 import { useSearchParams } from "next/navigation";
-import { get } from "mongoose";
 
 const authSecret = process.env.NEXT_PUBLIC_AUTH_SECRET;
-const environment = process.env.NODE_ENV;
 
 export default function Home() {
   const router = useRouter();
@@ -52,13 +50,13 @@ export default function Home() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username: decodedUser?.username }),
+          body: JSON.stringify({ username: decodedUser?.email }), // Using email as username
         });
 
         const data = await response.json();
 
         if (response.ok) {
-          setUser(data.user);
+          setUsername(data.user.username);
         } else {
           console.error("Error checking/creating user:", data.error);
         }
@@ -69,20 +67,13 @@ export default function Home() {
 
     decodeToken().then((decoded) => {
       if (decoded) {
-        console.log(decoded);
         checkOrCreateUser(decoded);
       }
     });
   }, []);
+
   useEffect(() => {
-    {
-      /*const storedUsername = sessionStorage.getItem("username");
-    if (!storedUsername) {
-      router.push("/username");
-      return;
-    }*/
-    }
-    setUsername("aditya");
+    if (!username) return; // Wait until the username is set
 
     const fetchProjects = async () => {
       try {
@@ -90,7 +81,7 @@ export default function Home() {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            username: "aditya",
+            username: username, // Use the dynamically set username
           },
         });
 
@@ -108,7 +99,7 @@ export default function Home() {
     };
 
     fetchProjects();
-  }, [router]);
+  }, [username]); // Fetch projects when username is set
 
   return (
     <PageLayout pageName={"My Projects"}>
