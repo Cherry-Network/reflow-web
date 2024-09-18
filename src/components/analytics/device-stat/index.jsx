@@ -55,8 +55,6 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true); // Track initial loading state
   const [initialLoad, setInitialLoad] = useState(true); // Track if initial load is done
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
     const getData = async () => {
@@ -88,8 +86,8 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
   ];
 
   return (
-    <div className="px-10">
-      <div className="w-full h-full bg-theme_black/10 p-7 rounded-xl">
+    <div className="">
+      <div className="w-full h-full p-7 rounded-xl">
         <div className="text-lg font-bold flex gap-8 pl-2 text-theme_black/60 pb-6">
           <span>Device - {deviceName}</span>
           <span>S.NO. - {deviceSerialNumber}</span>
@@ -120,7 +118,7 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
                     ))}
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="">
                   {data.map((row, index) => (
                     <tr key={index} className="border-b-2 border-black">
                       {columns.map((column, colIndex) => (
@@ -169,39 +167,7 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
             )}
           </div>
 
-          <div className="w-64 flex flex-col bg-white border-l-2 border-black">
-            <div className="bg-black text-white text-center flex justify-evenly items-center py-6 font-bold border-l-2 border-white">
-              <span>Export Data</span>
-              <button onClick={editFunction}>
-                <img src="/icons/edit.svg" alt="Edit" className="w-6 h-6" />
-              </button>
-            </div>
-            <div className="p-4 flex flex-col h-full">
-              <div className="mb-4">
-                <label className="block text-gray-700">Start Date:</label>
-                <input
-                  type="date"
-                  value={startDate}
-                  onChange={(e) => setStartDate(e.target.value)}
-                  className="w-full p-1 border border-gray-300 rounded-2xl text-black"
-                  style={{ height: "2rem" }}
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-gray-700">End Date:</label>
-                <input
-                  type="date"
-                  value={endDate}
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full p-1 border border-gray-300 rounded-2xl text-black"
-                  style={{ height: "2rem" }}
-                />
-              </div>
-              <button className="w-full py-2 bg-gray-800 text-white rounded-3xl hover:bg-gray-600">
-                Export
-              </button>
-            </div>
-          </div>
+          
         </div>
       </div>
     </div>

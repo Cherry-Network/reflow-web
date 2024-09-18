@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Form from "@/components/forms";
 import DataTable from "@/components/analytics/device-stat";
+import { CSVLink } from "react-csv";
 
 const ViewProject = () => {
   const router = useRouter();
@@ -58,6 +59,43 @@ const ViewProject = () => {
 
     setLoading(false);
   };
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [exportedData, setExportedData] = useState([]);
+  const [loadingExport, setLoadingExport] = useState(false);
+
+  const exportDeviceData = async () => {
+    setLoadingExport(true);
+    if (!startDate || !endDate) {
+      alert("Please select start and end date");
+      setLoadingExport(false);
+    } else {
+      const myHeaders = new Headers();
+      myHeaders.append("dev-id", "AX3010");
+      myHeaders.append("start-timestamp", `${startDate} 00:00:00+05:30`);
+      myHeaders.append("end-timestamp", `${endDate} 23:59:59+05:30`);
+
+      const requestOptions = {
+        method: "GET",
+        headers: myHeaders,
+        redirect: "follow",
+      };
+
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/export/device-reading/",
+          requestOptions
+        );
+        const result = await response.json();
+        console.log(selectedDevice.serial_no);
+        setExportedData(result);
+        setLoadingExport(false);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  };
+  console.log(exportedData);
 
   return (
     <PageLayout pageName={"My Projects"}>
@@ -107,22 +145,102 @@ const ViewProject = () => {
 
         {/* Render DataTable for the selected device */}
         {selectedDevice && (
-          <div className="relative">
+          <div className="relative px-5 mx-10 rounded-2xl bg-black/10">
             {loading && (
               <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-70">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
               </div>
             )}
-            <DataTable
-              editFunction={() => {
-                deviceConfig({
-                  serialNumber: selectedDevice.serial_no,
-                  name: selectedDevice.name,
-                });
-              }}
-              deviceSerialNumber={selectedDevice.serial_no}
-              deviceName={selectedDevice.name}
-            />
+            <div className="flex justify-center items-stretch">
+              <DataTable
+                editFunction={() => {
+                  deviceConfig({
+                    serialNumber: selectedDevice.serial_no,
+                    name: selectedDevice.name,
+                  });
+                }}
+                deviceSerialNumber={selectedDevice.serial_no}
+                deviceName={selectedDevice.name}
+              />
+              <div className="py-5">
+                <div className="w-64 flex flex-col bg-white border-2 border-black rounded-2xl mt-3">
+                  <div className="bg-black rounded-t-xl text-white text-center flex justify-evenly items-center py-6 font-bold">
+                    <span>Export Data</span>
+                    <button
+                      onClick={() => {
+                        deviceConfig({
+                          serialNumber: selectedDevice.serial_no,
+                          name: selectedDevice.name,
+                        });
+                      }}
+                    >
+                      <img
+                        src="/icons/edit.svg"
+                        alt="Edit"
+                        className="w-6 h-6"
+                      />
+                    </button>
+                  </div>
+                  <div className="p-4 flex flex-col h-full">
+                    <div className="mb-4">
+                      <label className="block text-gray-700">Start Date:</label>
+                      <input
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="w-full p-1 border border-gray-300 rounded-2xl text-black"
+                        style={{ height: "2rem" }}
+                      />
+                    </div>
+                    <div className="mb-4">
+                      <label className="block text-gray-700">End Date:</label>
+                      <input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="w-full p-1 border border-gray-300 rounded-2xl text-black"
+                        style={{ height: "2rem" }}
+                      />
+                    </div>
+                    <button
+                      className="w-full py-2 bg-black text-white rounded-3xl"
+                      onClick={exportDeviceData}
+                    >
+                      {loadingExport ? (
+                        <svg
+                          className="animate-spin mx-auto h-6 w-6 text-white"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          ></circle>
+                          <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                          ></path>
+                        </svg>
+                      ) : (
+                        "Export"
+                      )}
+                    </button>
+                    <br />
+                    <CSVLink data={exportedData} filename={`${selectedDevice.serial_no} Device Data from ${startDate} to ${endDate}`}>
+                      <div className="w-full py-2 bg-black text-white rounded-3xl text-center">
+                        Download
+                      </div>
+                    </CSVLink>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
