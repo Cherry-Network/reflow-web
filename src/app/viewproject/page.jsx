@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Form from "@/components/forms";
 import DataTable from "@/components/analytics/device-stat";
 import { CSVLink } from "react-csv";
+import { set } from "mongoose";
 
 const ViewProject = () => {
   const router = useRouter();
@@ -63,6 +64,7 @@ const ViewProject = () => {
   const [endDate, setEndDate] = useState("");
   const [exportedData, setExportedData] = useState([]);
   const [loadingExport, setLoadingExport] = useState(false);
+  const [readyToDownload, setReadyToDownload] = useState(false);
 
   const exportDeviceData = async () => {
     setLoadingExport(true);
@@ -71,7 +73,7 @@ const ViewProject = () => {
       setLoadingExport(false);
     } else {
       const myHeaders = new Headers();
-      myHeaders.append("dev-id", "AX3010");
+      myHeaders.append("dev-id", selectedDevice.serial_no);
       myHeaders.append("start-timestamp", `${startDate} 00:00:00+05:30`);
       myHeaders.append("end-timestamp", `${endDate} 23:59:59+05:30`);
 
@@ -90,6 +92,7 @@ const ViewProject = () => {
         console.log(selectedDevice.serial_no);
         setExportedData(result);
         setLoadingExport(false);
+        setReadyToDownload(true);
       } catch (error) {
         console.error(error);
       }
@@ -163,7 +166,7 @@ const ViewProject = () => {
                 deviceName={selectedDevice.name}
               />
               <div className="py-5">
-                <div className="w-64 flex flex-col bg-white border-2 border-black rounded-2xl mt-3">
+                <div className="w-64 flex flex-col bg-white border-2 border-black rounded-2xl mt-14">
                   <div className="bg-black rounded-t-xl text-white text-center flex justify-evenly items-center py-6 font-bold">
                     <span>Export Data</span>
                     <button
@@ -182,64 +185,83 @@ const ViewProject = () => {
                     </button>
                   </div>
                   <div className="p-4 flex flex-col h-full">
-                    <div className="mb-4">
-                      <label className="block text-gray-700">Start Date:</label>
-                      <input
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        className="w-full p-1 border border-gray-300 rounded-2xl text-black"
-                        style={{ height: "2rem" }}
-                      />
-                    </div>
-                    <div className="mb-4">
-                      <label className="block text-gray-700">End Date:</label>
-                      <input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        className="w-full p-1 border border-gray-300 rounded-2xl text-black"
-                        style={{ height: "2rem" }}
-                      />
-                    </div>
-                    <button
-                      className="w-full py-2 bg-black text-white rounded-3xl"
-                      onClick={exportDeviceData}
-                    >
-                      {loadingExport ? (
+                    {readyToDownload ? (
+                      <div className="flex flex-col justify-center items-center gap-4">
                         <svg
-                          className="animate-spin mx-auto h-6 w-6 text-white"
                           xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
+                          height="24px"
+                          viewBox="0 -960 960 960"
+                          width="24px"
+                          fill="#75FB4C"
                         >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="currentColor"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
+                          <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z" />
                         </svg>
-                      ) : (
-                        "Export"
-                      )}
-                    </button>
-                    <br />
-                    <CSVLink
-                      data={exportedData}
-                      filename={`${selectedDevice.serial_no} Device Data from ${startDate} to ${endDate}`}
-                    >
-                      <div className="w-full py-2 bg-black text-white rounded-3xl text-center">
-                        Download
+                        <CSVLink
+                          data={exportedData}
+                          filename={`${selectedDevice.serial_no} Device Data from ${startDate} to ${endDate}`}
+                        >
+                          <div className="w-full py-2 bg-black text-white rounded-3xl text-center">
+                            Download
+                          </div>
+                        </CSVLink>
                       </div>
-                    </CSVLink>
+                    ) : (
+                      <div>
+                        <div className="mb-4">
+                          <label className="block text-gray-700">
+                            Start Date:
+                          </label>
+                          <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="w-full p-1 border border-gray-300 rounded-2xl text-black"
+                            style={{ height: "2rem" }}
+                          />
+                        </div>
+                        <div className="mb-4">
+                          <label className="block text-gray-700">
+                            End Date:
+                          </label>
+                          <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="w-full p-1 border border-gray-300 rounded-2xl text-black"
+                            style={{ height: "2rem" }}
+                          />
+                        </div>
+                        <button
+                          className="w-full py-2 bg-black text-white rounded-3xl"
+                          onClick={exportDeviceData}
+                        >
+                          {loadingExport ? (
+                            <svg
+                              className="animate-spin mx-auto h-6 w-6 text-white"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                          ) : (
+                            "Export"
+                          )}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
