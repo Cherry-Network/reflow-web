@@ -43,6 +43,8 @@ export default function Home() {
           
           const name = `${decoded.firstName} ${decoded.lastName}`;
           setFullName(name);
+          sessionStorage.setItem("fullName", name);
+
           
           sessionStorage.setItem("username", decoded.email);
           setUsername(decoded.email); 

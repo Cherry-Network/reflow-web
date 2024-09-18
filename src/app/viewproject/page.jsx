@@ -10,15 +10,23 @@ const ViewProject = () => {
   const [showAddDevice, setShowAddDevice] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
   const [selectedDevice, setSelectedDevice] = useState(null);
-  const [userName, setUserName] = useState("Loading...");
+  const [fullName, setFullName] = useState("Loading..."); // Changed from userName to fullName
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setUserName(sessionStorage.getItem("username"));
+    // Fetch full name from session storage
+    const storedFullName = sessionStorage.getItem("fullName");
+    if (storedFullName) {
+      setFullName(storedFullName);
+    } else {
+      setFullName("User"); // Fallback if name is not available
+    }
+
+    // Fetch project details from session storage
     const projectData = JSON.parse(sessionStorage.getItem("selectedProjectID"));
     setCurrentProject(projectData);
 
-    
+    // Set the first device as the selected device by default
     if (projectData?.devices?.length > 0) {
       setSelectedDevice(projectData.devices[0]);
     }
@@ -38,17 +46,17 @@ const ViewProject = () => {
 
   const handleDeviceChange = async (e) => {
     const serialNo = e.target.value;
-    setLoading(true); 
+    setLoading(true);
 
     const device = currentProject.devices.find(
       (device) => device.serial_no === serialNo
     );
     setSelectedDevice(device);
 
-    
+    // Simulate loading delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    setLoading(false); 
+    setLoading(false);
   };
 
   return (
@@ -60,8 +68,9 @@ const ViewProject = () => {
               showAddDevice ? "hidden" : `p-10 bg-theme_black/10 rounded-2xl`
             }
           >
+            {/* Display the full name instead of username */}
             <div className="text-4xl font-bold text-theme_black/40">
-              Hello! "{"userName.toUpperCase()"}"
+              Hello! {fullName}
             </div>
             <div className="text-4xl font-bold text-theme_black/90 mt-2">
               Welcome to {currentProject?.name}
