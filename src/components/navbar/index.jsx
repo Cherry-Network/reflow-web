@@ -27,7 +27,7 @@ const Navbar = () => {
           ) : (
             <button
               className="bg-[#1B1B1B] text-white text-lg tracking-wide rounded-full px-5 py-3"
-              onClick={() => router.push("/username")}
+              onClick={() => router.push("/")}
             >
               Log In
             </button>
