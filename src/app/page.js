@@ -114,8 +114,6 @@ export default function Home() {
     fetchProjects();
   }, [username]);
 
-
-
   return (
     <PageLayout pageName={"My Projects"}>
       <div className="p-10 flex flex-wrap gap-4 justify-start items-stretch">
