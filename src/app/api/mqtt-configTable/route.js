@@ -16,7 +16,7 @@ let subscribedTopics = new Set();
 const generateMqttTopic = (serialId) => {
   const prefix = serialId.slice(0, 3); // e.g., "AX3"
   const suffix = serialId.slice(3, 5); // e.g., "03"
-  return `${prefix}/${suffix}/OUTPUT`; // e.g., "AX3/03/IN"
+  return `${prefix}/${suffix}/INPUT`; // e.g., "AX3/03/IN"
 };
 
 // Establish connection to the MQTT broker
@@ -90,7 +90,7 @@ export async function GET(req) {
     await subscribeToTopic(serialId);
 
     // Wait for a short period to allow subscription and message reception
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 10000));
 
     // Return the data for the requested serial number
     const data = mqttData[serialId] || [];

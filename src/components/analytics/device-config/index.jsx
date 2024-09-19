@@ -25,7 +25,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
     const fetchDeviceData = async () => {
       try {
         const response = await fetch(
-          `/api/mqtt-output?serialId=${deviceDetails.id}`
+          `/api/mqtt-configTable?serialId=${deviceDetails.id}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -60,6 +60,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       }
     };
 
+    console.log(deviceDetails.id);
     fetchDeviceData();
   }, [deviceDetails.id]);
 
@@ -199,8 +200,8 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
 
   const generateMqttTopic = (serialId) => {
     const prefix = serialId.slice(0, 3); // AX3
-    const suffix = serialId.slice(3); // 03
-    return `${prefix}/${suffix}/IN`; // AX3/03/IN
+    const suffix = serialId.slice(3, 5); // 03
+    return `${prefix}/${suffix}/INPUT`; // AX3/03/IN
   };
 
   const tableCellStyle = "py-5 px-2 border-r border-b text-center";

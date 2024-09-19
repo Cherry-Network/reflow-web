@@ -1,71 +1,93 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-// Function to fetch data from the API endpoint
 const fetchData = async (serialId) => {
   try {
     const response = await fetch(`/api/mqtt-output?serialId=${serialId}`);
     const result = await response.json();
+    console.log("Fetched data:", result); // Debug line
 
-    if (result.length === 0) return []; // Handle empty result case
+    if (result.length === 0) return { data: [], lastUpdatedTime: null };
 
-    // Extracting the single object from the result
     const dataObject = result[0];
+    const lastUpdatedTime = parseUpdateTime(dataObject.UpdateTimeStamp);
+    const isDeviceOnline = checkIfDeviceOnline(lastUpdatedTime);
 
-    // Mapping the data to the format expected in the table
     const formattedData = [
       {
         serialNo: 1,
         readings: dataObject.RawCH1 || "N/A",
         calibratedReadings: dataObject.CH1 || "N/A",
         readingsLevel: calculateLevel(dataObject.ERR1 || 0),
-        status: dataObject.ERR1 ? "Online" : "Offline",
+        status: isDeviceOnline ? "Online" : "Offline",
       },
       {
         serialNo: 2,
         readings: dataObject.RawCH2 || "N/A",
         calibratedReadings: dataObject.CH2 || "N/A",
         readingsLevel: calculateLevel(dataObject.ERR2 || 0),
-        status: dataObject.ERR2 ? "Online" : "Offline",
+        status: isDeviceOnline ? "Online" : "Offline",
       },
       {
         serialNo: 3,
         readings: dataObject.RawCH3 || "N/A",
         calibratedReadings: dataObject.CH3 || "N/A",
         readingsLevel: calculateLevel(dataObject.ERR3 || 0),
-        status: dataObject.ERR3 ? "Online" : "Offline",
+        status: isDeviceOnline ? "Online" : "Offline",
       },
     ];
 
-    return formattedData;
+    return { data: formattedData, lastUpdatedTime: dataObject.UpdateTimeStamp };
   } catch (error) {
     console.error("Error fetching data:", error);
-    return [];
+    return { data: [], lastUpdatedTime: null };
   }
 };
 
-// Function to calculate the level based on the reading
 const calculateLevel = (reading) => {
   const maxReading = 100;
   return (reading / maxReading) * 100;
 };
 
-// DataTable component
+const parseUpdateTime = (timestamp) => {
+  const [date, time] = timestamp.split(" ");
+  const [day, month, year] = date.split("/");
+  const [hour, minute, second] = time.split(":");
+  const parsedDate = new Date(
+    `20${year}-${month}-${day}T${hour}:${minute}:${second}`
+  );
+  console.log(`Parsed date: ${parsedDate}`); // Debug line
+  return parsedDate;
+};
+
+const checkIfDeviceOnline = (lastUpdatedTime) => {
+  const now = new Date();
+  const timeDifference = now - lastUpdatedTime;
+  console.log(`Current time: ${now}`);
+  console.log(`Last updated time: ${lastUpdatedTime}`);
+  console.log(`Time difference: ${timeDifference} milliseconds`);
+  const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
+  return timeDifference <= twoDaysInMilliseconds;
+};
+
 const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true); // Track initial loading state
-  const [initialLoad, setInitialLoad] = useState(true); // Track if initial load is done
+  const [lastUpdatedTime, setLastUpdatedTime] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshKey, setRefreshKey] = useState(Date.now());
 
   useEffect(() => {
     const getData = async () => {
-      if (initialLoad) {
-        setLoading(true); // Show spinner during initial fetch
+      const result = await fetchData(deviceSerialNumber);
+      if (JSON.stringify(result.data) !== JSON.stringify(data)) {
+        setData(result.data);
+        setRefreshKey(Date.now()); // Force re-render
       }
-      const result = await fetchData(deviceSerialNumber); // Pass serialNumber to fetchData
-      setData(result);
-      if (initialLoad) {
-        setLoading(false); // Hide spinner after initial fetch
-        setInitialLoad(false); // Mark initial load as done
+      if (result.lastUpdatedTime !== lastUpdatedTime) {
+        setLastUpdatedTime(result.lastUpdatedTime);
+      }
+      if (loading) {
+        setLoading(false);
       }
     };
 
@@ -74,9 +96,8 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
     const intervalId = setInterval(getData, 5000);
 
     return () => clearInterval(intervalId);
-  }, [deviceSerialNumber]); // Add deviceSerialNumber to dependency array
+  }, [deviceSerialNumber]);
 
-  // Define the columns for the table
   const columns = [
     { key: "serialNo", label: "Serial No" },
     { key: "readings", label: "Readings" },
@@ -86,15 +107,18 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
   ];
 
   return (
-    <div className="">
+    <div key={refreshKey} className="">
       <div className="w-full h-full p-7 rounded-xl">
         <div className="text-lg font-bold flex gap-8 pl-2 text-theme_black/60 pb-6">
           <span>Device - {deviceName}</span>
           <span>S.NO. - {deviceSerialNumber}</span>
+          <span>
+            Last Updated - {lastUpdatedTime ? lastUpdatedTime : "N/A"}
+          </span>
         </div>
         <div className="bg-white border-4 border-black rounded-3xl overflow-hidden flex">
           <div className="flex-grow">
-            {loading && initialLoad ? (
+            {loading ? (
               <div className="flex justify-center items-center h-40">
                 <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
               </div>
@@ -130,11 +154,7 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
                             colIndex === columns.length - 1
                               ? "border-r-0"
                               : "border-r-2"
-                          } border-black ${
-                            column.key === "status"
-                              ? "text-black"
-                              : "text-black"
-                          }`}
+                          } border-black`}
                           style={{
                             backgroundColor:
                               column.key === "status"
@@ -175,7 +195,7 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
                 </tbody>
               </table>
             )}
-          </div> 
+          </div>
         </div>
       </div>
     </div>
