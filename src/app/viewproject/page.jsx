@@ -73,7 +73,7 @@ const ViewProject = () => {
       setLoadingExport(false);
     } else {
       const myHeaders = new Headers();
-      myHeaders.append("dev-id", selectedDevice.serial_no);
+      myHeaders.append("dev-id", "AX3010");
       myHeaders.append("start-timestamp", `${startDate} 00:00:00+05:30`);
       myHeaders.append("end-timestamp", `${endDate} 23:59:59+05:30`);
 
@@ -91,14 +91,12 @@ const ViewProject = () => {
         const result = await response.json();
         console.log(selectedDevice.serial_no);
         setExportedData(result);
-        setLoadingExport(false);
         setReadyToDownload(true);
       } catch (error) {
         console.error(error);
       }
     }
   };
-  console.log(exportedData);
 
   return (
     <PageLayout pageName={"My Projects"}>
@@ -129,7 +127,7 @@ const ViewProject = () => {
         </div>
 
         {/* Dropdown for selecting device */}
-        <div className="p-10">
+        <div className={currentProject?.devices.length > 0 ? "p-10" : "hidden"}>
           <div className="text-lg font-bold text-theme_black/60 mb-4">
             Select Device:
           </div>
@@ -166,41 +164,56 @@ const ViewProject = () => {
                 deviceName={selectedDevice.name}
               />
               <div className="py-5">
-                <div className="w-64 flex flex-col bg-white border-2 border-black rounded-2xl mt-14">
-                  <div className="bg-black rounded-t-xl text-white text-center flex justify-evenly items-center py-6 font-bold">
-                    <span>Export Data</span>
-                    <button
-                      onClick={() => {
-                        deviceConfig({
-                          serialNumber: selectedDevice.serial_no,
-                          name: selectedDevice.name,
-                        });
-                      }}
+                <div className="flex w-full justify-end pt-1 pb-4">
+                  <button
+                    className="mr-2"
+                    onClick={() => {
+                      deviceConfig({
+                        serialNumber: selectedDevice.serial_no,
+                        name: selectedDevice.name,
+                      });
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="36px"
+                      viewBox="0 -960 960 960"
+                      width="36px"
+                      fill="#000000"
                     >
-                      <img
-                        src="/icons/edit.svg"
-                        alt="Edit"
-                        className="w-6 h-6"
-                      />
-                    </button>
+                      <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="w-64 flex flex-col bg-white border-2 border-black rounded-2xl">
+                  <div className="bg-black text-lg rounded-t-xl text-white text-center flex justify-evenly items-center py-6 font-bold">
+                    <span>Export Data</span>
                   </div>
                   <div className="p-4 flex flex-col h-full">
                     {readyToDownload ? (
                       <div className="flex flex-col justify-center items-center gap-4">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          height="24px"
+                          height="28px"
                           viewBox="0 -960 960 960"
-                          width="24px"
-                          fill="#75FB4C"
+                          width="28px"
+                          fill="#186a3b"
                         >
                           <path d="M480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q65 0 123 19t107 53l-58 59q-38-24-81-37.5T480-800q-133 0-226.5 93.5T160-480q0 133 93.5 226.5T480-160q133 0 226.5-93.5T800-480q0-18-2-36t-6-35l65-65q11 32 17 66t6 70q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Zm-56-216L254-466l56-56 114 114 400-401 56 56-456 457Z" />
                         </svg>
+                        <div className="text-black text-lg font-mono font-semibold text-center">
+                          {exportedData.length} records exported and ready to
+                          Download
+                        </div>
                         <CSVLink
                           data={exportedData}
+                          onClick={() => {
+                            setReadyToDownload(false);
+                            setLoadingExport(false);
+                          }}
                           filename={`${selectedDevice.serial_no} Device Data from ${startDate} to ${endDate}`}
                         >
-                          <div className="w-full py-2 bg-black text-white rounded-3xl text-center">
+                          <div className="w-full py-2 px-10 bg-black text-base text-white rounded-3xl text-center">
                             Download
                           </div>
                         </CSVLink>

@@ -162,6 +162,16 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
                       ))}
                     </tr>
                   ))}
+                  {data.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={columns.length}
+                        className="text-center py-10 text-red-950 text-2xl bg-white font-mono tracking-wider font-bold "
+                      >
+                        Your Device is Offline
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             )}
