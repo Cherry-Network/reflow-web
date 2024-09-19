@@ -66,26 +66,20 @@ const checkIfDeviceOnline = (lastUpdatedTime) => {
   console.log(`Current time: ${now}`);
   console.log(`Last updated time: ${lastUpdatedTime}`);
   console.log(`Time difference: ${timeDifference} milliseconds`);
-  const twoDaysInMilliseconds = 2 * 24 * 60 * 60 * 1000; // 2 days in milliseconds
+  const twoDaysInMilliseconds = 5 * 60 * 60 * 1000;
   return timeDifference <= twoDaysInMilliseconds;
 };
 
-const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
+const DataTable = ({ deviceSerialNumber, deviceName }) => {
   const [data, setData] = useState([]);
   const [lastUpdatedTime, setLastUpdatedTime] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [refreshKey, setRefreshKey] = useState(Date.now());
 
   useEffect(() => {
     const getData = async () => {
       const result = await fetchData(deviceSerialNumber);
-      if (JSON.stringify(result.data) !== JSON.stringify(data)) {
-        setData(result.data);
-        setRefreshKey(Date.now()); // Force re-render
-      }
-      if (result.lastUpdatedTime !== lastUpdatedTime) {
-        setLastUpdatedTime(result.lastUpdatedTime);
-      }
+      setData(result.data);
+      setLastUpdatedTime(result.lastUpdatedTime);
       if (loading) {
         setLoading(false);
       }
@@ -93,7 +87,7 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
 
     getData();
 
-    const intervalId = setInterval(getData, 5000);
+    const intervalId = setInterval(getData, 1000);
 
     return () => clearInterval(intervalId);
   }, [deviceSerialNumber]);
@@ -107,7 +101,7 @@ const DataTable = ({ editFunction, deviceSerialNumber, deviceName }) => {
   ];
 
   return (
-    <div key={refreshKey} className="">
+    <div className="">
       <div className="w-full h-full p-7 rounded-xl">
         <div className="text-lg font-bold flex gap-8 pl-2 text-theme_black/60 pb-6">
           <span>Device - {deviceName}</span>

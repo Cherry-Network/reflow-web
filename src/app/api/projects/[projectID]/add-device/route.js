@@ -56,7 +56,7 @@ export async function POST(req, { params }) {
       });
 
       // Constructing the topic based on the serial number
-      const topic = `${serial_no.slice(0, 3)}/${serial_no.slice(3, 5)}/IN`;
+      const topic = `${serial_no.slice(0, 3)}/${serial_no.slice(3, 5)}/INPUT`;
 
       return new Promise((resolve, reject) => {
         mqttClient.on("connect", () => {
