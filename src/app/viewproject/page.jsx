@@ -85,7 +85,7 @@ const ViewProject = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:3001/api/export/device-reading/",
+          "/api/export/device-reading/",
           requestOptions
         );
         const result = await response.json();
