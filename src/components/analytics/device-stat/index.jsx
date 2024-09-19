@@ -9,40 +9,47 @@ const fetchData = async (serialId) => {
 
     if (result.length === 0) return { data: [], lastUpdatedTime: null };
 
-    const dataObject = result[0];
-    const lastUpdatedTime = parseUpdateTime(dataObject.UpdateTimeStamp);
+    // Find the most recent update by sorting the result based on UpdateTimeStamp
+    const latestData = result.reduce((latest, current) => {
+      const currentDate = parseUpdateTime(current.UpdateTimeStamp);
+      const latestDate = parseUpdateTime(latest.UpdateTimeStamp);
+      return currentDate > latestDate ? current : latest;
+    });
+
+    const lastUpdatedTime = parseUpdateTime(latestData.UpdateTimeStamp);
     const isDeviceOnline = checkIfDeviceOnline(lastUpdatedTime);
 
     const formattedData = [
       {
         serialNo: 1,
-        readings: dataObject.RawCH1 || "N/A",
-        calibratedReadings: dataObject.CH1 || "N/A",
-        readingsLevel: calculateLevel(dataObject.ERR1 || 0),
+        readings: latestData.RawCH1 || "N/A",
+        calibratedReadings: latestData.CH1 || "N/A",
+        readingsLevel: calculateLevel(latestData.ERR1 || 0),
         status: isDeviceOnline ? "Online" : "Offline",
       },
       {
         serialNo: 2,
-        readings: dataObject.RawCH2 || "N/A",
-        calibratedReadings: dataObject.CH2 || "N/A",
-        readingsLevel: calculateLevel(dataObject.ERR2 || 0),
+        readings: latestData.RawCH2 || "N/A",
+        calibratedReadings: latestData.CH2 || "N/A",
+        readingsLevel: calculateLevel(latestData.ERR2 || 0),
         status: isDeviceOnline ? "Online" : "Offline",
       },
       {
         serialNo: 3,
-        readings: dataObject.RawCH3 || "N/A",
-        calibratedReadings: dataObject.CH3 || "N/A",
-        readingsLevel: calculateLevel(dataObject.ERR3 || 0),
+        readings: latestData.RawCH3 || "N/A",
+        calibratedReadings: latestData.CH3 || "N/A",
+        readingsLevel: calculateLevel(latestData.ERR3 || 0),
         status: isDeviceOnline ? "Online" : "Offline",
       },
     ];
 
-    return { data: formattedData, lastUpdatedTime: dataObject.UpdateTimeStamp };
+    return { data: formattedData, lastUpdatedTime: latestData.UpdateTimeStamp };
   } catch (error) {
     console.error("Error fetching data:", error);
     return { data: [], lastUpdatedTime: null };
   }
 };
+
 
 const calculateLevel = (reading) => {
   const maxReading = 100;

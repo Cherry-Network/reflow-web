@@ -8,7 +8,7 @@ const options = {
   password: "chakreesh",
 };
 
-// Store messages per device serial number
+// Store the most recent message per device serial number
 let mqttData = {};
 let subscribedTopics = new Set();
 
@@ -16,7 +16,7 @@ let subscribedTopics = new Set();
 const generateMqttTopic = (serialId) => {
   const prefix = serialId.slice(0, 3); // e.g., "AX3"
   const suffix = serialId.slice(3, 5); // e.g., "03"
-  return `${prefix}/${suffix}/OUTPUT`; // e.g., "AX3/03/IN"
+  return `${prefix}/${suffix}/OUTPUT`; // e.g., "AX3/03/OUTPUT"
 };
 
 // Establish connection to the MQTT broker
@@ -34,15 +34,8 @@ client.on("message", (topic, message) => {
     const parsedMessage = JSON.parse(messageString);
     const fullSerialId = topic.split("/")[0] + topic.split("/")[1]; // e.g., AX303
 
-    if (!mqttData[fullSerialId]) {
-      mqttData[fullSerialId] = [];
-    }
-    mqttData[fullSerialId].push(parsedMessage);
-
-    // Keep only the latest 10 messages for each serialId
-    if (mqttData[fullSerialId].length > 10) {
-      mqttData[fullSerialId].shift();
-    }
+    // Store only the most recent message for each serialId
+    mqttData[fullSerialId] = parsedMessage;
 
     console.log("Stored data:", mqttData);
   } catch (error) {
@@ -92,8 +85,8 @@ export async function GET(req) {
     // Wait for a short period to allow subscription and message reception
     await new Promise((resolve) => setTimeout(resolve, 2000));
 
-    // Return the data for the requested serial number
-    const data = mqttData[serialId] || [];
+    // Return the most recent data for the requested serial number
+    const data = mqttData[serialId] || {};
     console.log("Returned data for serialId:", serialId, "Data:", data);
     return NextResponse.json(data);
   } catch (error) {
