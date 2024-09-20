@@ -66,8 +66,8 @@ const checkIfDeviceOnline = (lastUpdatedTime) => {
   console.log(`Current time: ${now}`);
   console.log(`Last updated time: ${lastUpdatedTime}`);
   console.log(`Time difference: ${timeDifference} milliseconds`);
-  const twoDaysInMilliseconds = 5 * 60 * 60 * 1000;
-  return timeDifference <= twoDaysInMilliseconds;
+  const fiveMinsInMilliseconds = 5 * 60 * 60 * 1000;
+  return timeDifference <= fiveMinsInMilliseconds;
 };
 
 const DataTable = ({ deviceSerialNumber, deviceName }) => {
@@ -87,15 +87,15 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
 
     getData();
 
-    const intervalId = setInterval(getData, 1000);
+    const intervalId = setInterval(getData, 3000);
 
     return () => clearInterval(intervalId);
   }, [deviceSerialNumber]);
 
   const columns = [
     { key: "serialNo", label: "Serial No" },
-    { key: "readings", label: "Readings" },
-    { key: "calibratedReadings", label: "Calibrated Readings" },
+
+    { key: "calibratedReadings", label: " Readings" },
     { key: "readingsLevel", label: "Readings Level" },
     { key: "status", label: "Status" },
   ];
