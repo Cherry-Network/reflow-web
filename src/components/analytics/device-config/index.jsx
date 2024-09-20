@@ -63,6 +63,55 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       }
     };
 
+
+    const handleInputChange = (e) => {
+      const { name, value, type } = e.target;
+      setDeviceInput((prevState) => ({
+        ...prevState,
+        [name]: type === "number" ? Number(value) : value,
+      }));
+    };
+
+    const calculateCalibratedReading = (reading, calibration, factor) => {
+      switch (factor) {
+        case 0: // Addition
+          return reading + calibration;
+        case 1: // Subtraction
+          return reading - calibration;
+        case 2: // Multiplication
+          return reading * calibration;
+        case 3: // Division
+          return calibration !== 0 ? reading / calibration : "N/A"; // Handle division by zero
+        default:
+          return reading;
+      }
+    };
+
+    const updateCalibratedReadings = () => {
+      setDeviceData((prevState) =>
+        prevState.map((device) => {
+          if (!device.type) {
+            const newCalibratedReading = calculateCalibratedReading(
+              realTimeReadings[`RawCH${device.name.name.slice(-1)}`],
+              deviceInput[`CAL${device.name.name.slice(-1)}`],
+              deviceInput[`FAC${device.name.name.slice(-1)}`]
+            );
+            console.log(newCalibratedReading);
+            return {
+              ...device,
+              calibratedReadings: { name: "", value: newCalibratedReading },
+            };
+          }
+          return device;
+        })
+      );
+    };
+
+    // Call updateCalibratedReadings whenever inputs (readings, calibration, or factor) change
+    useEffect(() => {
+      updateCalibratedReadings();
+    }, [deviceInput, realTimeReadings]);
+
     const fetchRealTimeData = async () => {
       try {
         const response = await fetch(
