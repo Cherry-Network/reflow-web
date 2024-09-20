@@ -66,7 +66,7 @@ const checkIfDeviceOnline = (lastUpdatedTime) => {
   console.log(`Current time: ${now}`);
   console.log(`Last updated time: ${lastUpdatedTime}`);
   console.log(`Time difference: ${timeDifference} milliseconds`);
-  const fiveMinsInMilliseconds = 5 * 60 * 60 * 1000;
+  const fiveMinsInMilliseconds = 5 * 60 * 1000;
   return timeDifference <= fiveMinsInMilliseconds;
 };
 
