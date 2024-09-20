@@ -20,6 +20,11 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   });
 
   const [loading, setLoading] = useState(true);
+  const [realTimeReadings, setRealTimeReadings] = useState({
+    RawCH1: "",
+    RawCH2: "",
+    RawCH3: "",
+  });
 
   useEffect(() => {
     const fetchDeviceData = async () => {
@@ -31,8 +36,6 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-
-        // Assuming data is an array with a single object as shown in your example
         if (data.length > 0) {
           const fetchedData = data[0];
           setDeviceInput({
@@ -56,12 +59,29 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       } catch (error) {
         console.error("Error fetching device data:", error);
       } finally {
-        setLoading(false); // Set loading to false after data is fetched
+        setLoading(false);
       }
     };
 
-    console.log(deviceDetails.id);
+    const fetchRealTimeData = async () => {
+      try {
+        const response = await fetch(
+          `/api/mqtt-readings?serialId=${deviceDetails.id}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setRealTimeReadings(data);
+      } catch (error) {
+        console.error("Error fetching real-time readings:", error);
+      }
+    };
+
     fetchDeviceData();
+    const intervalId = setInterval(fetchRealTimeData, 3000); // Fetch data every 5 seconds
+
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, [deviceDetails.id]);
 
   const handleInputChange = (e) => {
@@ -111,7 +131,10 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
           { name: "max", value: "" },
         ],
       },
-      readings: { name: "", value: "" },
+      readings: {
+        name: realTimeReadings.RawCH1,
+        value: realTimeReadings.RawCH1,
+      },
       calibratedReadings: { name: "", value: "" },
     },
     {
@@ -130,7 +153,10 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
           { name: "max", value: "" },
         ],
       },
-      readings: { name: "", value: "" },
+      readings: {
+        name: realTimeReadings.RawCH2,
+        value: realTimeReadings.RawCH2,
+      },
       calibratedReadings: { name: "", value: "" },
     },
     {
@@ -149,7 +175,10 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
           { name: "max", value: "" },
         ],
       },
-      readings: { name: "", value: "" },
+      readings: {
+        name: realTimeReadings.RawCH3,
+        value: realTimeReadings.RawCH3,
+      },
       calibratedReadings: { name: "", value: "" },
     },
   ];
@@ -175,13 +204,13 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       alert("Calibration value cannot be negative");
     } else {
       try {
-        const topic = generateMqttTopic(deviceDetails.id); // Generate the topic using device id
+        const topic = generateMqttTopic(deviceDetails.id);
         const response = await fetch("/api/mqtt-input", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ deviceInput, topic }), // Send both deviceInput and the topic
+          body: JSON.stringify({ deviceInput, topic }),
         });
 
         if (!response.ok) {
@@ -199,9 +228,9 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   };
 
   const generateMqttTopic = (serialId) => {
-    const prefix = serialId.slice(0, 3); // AX3
-    const suffix = serialId.slice(3, 5); // 03
-    return `${prefix}/${suffix}/INPUT`; // AX3/03/IN
+    const prefix = serialId.slice(0, 3);
+    const suffix = serialId.slice(3, 5);
+    return `${prefix}/${suffix}/INPUT`;
   };
 
   const tableCellStyle = "py-5 px-2 border-r border-b text-center";
