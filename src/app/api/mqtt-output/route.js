@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import mqtt from "mqtt";
 
 // MQTT broker configuration
-const brokerUrl = "mqtt://mqtt.infinit-i.in:1883";
+const brokerUrl = process.env.MQTT_BROKER_URL;
 const options = {
-  username: "chakry",
-  password: "chakreesh",
+  username: process.env.MQTT_USERNAME,
+  password: process.env.MQTT_PASSWORD,
 };
 
 // Store messages per device serial number
@@ -29,7 +29,6 @@ client.on("connect", () => {
 client.on("message", (topic, message) => {
   try {
     const messageString = message.toString();
-    console.log("Received message:", messageString);
 
     const parsedMessage = JSON.parse(messageString);
     const fullSerialId = topic.split("/")[0] + topic.split("/")[1]; // e.g., AX303
@@ -40,7 +39,7 @@ client.on("message", (topic, message) => {
     mqttData[fullSerialId].push(parsedMessage);
 
     // Keep only the latest 10 messages for each serialId
-    if (mqttData[fullSerialId].length > 10) {
+    if (mqttData[fullSerialId].length > 1) {
       mqttData[fullSerialId].shift();
     }
 
@@ -95,6 +94,7 @@ export async function GET(req) {
     // Return the data for the requested serial number
     const data = mqttData[serialId] || [];
     console.log("Returned data for serialId:", serialId, "Data:", data);
+
     return NextResponse.json(data);
   } catch (error) {
     console.error("Error processing request:", error);
