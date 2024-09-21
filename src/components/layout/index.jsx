@@ -8,102 +8,79 @@ const PageLayout = ({ children, pageName }) => {
   const sidebarItems = [
     { name: "My Projects", icon: "/icons/add.svg", path: "/" },
     {
-      name: "Config Panel",
-      icon: "/icons/analytics.svg",
-      path: "/configpanel",
-    },
-    {
       name: "Provide Access",
       icon: "/icons/access.svg",
       path: "/provide-access",
     },
+    { name: "Settings", icon: "/icons/settings.svg", path: "/settings" },
   ];
+
   const [activeButton, setActiveButton] = useState(pageName);
 
   return (
     <>
-      <div className="flex flex-col min-h-screen overflow-auto">
+      <div className="flex flex-col min-h-screen">
         <Navbar />
         <div className="flex w-full h-full">
-          <div className="min-h-screen">
-            <div className="w-[300px] flex flex-col gap-3 pt-4 h-full bg-[#1B1B1B]">
-              <div className="rounded-full bg-white p-4 w-fit mt-60 mx-auto">
-                <img
-                  src="/assets/company-logo.svg"
-                  alt="logo"
-                  className="h-20 w-20"
-                />
-              </div>
-              <div className="text-white text-center text-xl tracking-wide">
-                Company Name
-              </div>
-              <div className="mt-7 grid grid-cols-1 items-start gap-4 px-5">
-                {sidebarItems.map((item, index) => (
-                  <button
-                    className={`${
-                      activeButton === item.name
-                        ? "bg-white text-[#1B1B1B]"
-                        : "bg-[#1B1B1B] text-white"
-                    } flex justify-center items-center gap-3 rounded-full w-full py-2`}
-                    key={index}
-                    onClick={() => {
-                      if (item.name === "Config Panel") {
-                        if (sessionStorage.getItem("selectedProjectID") && sessionStorage.getItem("configDeviceData")) {
-                          router.push(item.path);
-                        } else {
-                          alert('Device Not Selected.');
-                        }
-                      } else {
-                        router.push(item.path);
-                      }
-                    }}
-                  >
-                    <span className="">
-                      <img
-                        src={item.icon}
-                        className="w-5 h-auto"
-                        alt={item.name}
-                      />
-                    </span>
-                    <span className="font-medium tracking-wide text-lg">
-                      {item.name}
-                    </span>
-                  </button>
-                ))}
+          {/* Sidebar */}
+          <div className="w-[300px] bg-[#1B1B1B] flex flex-col h-screen">
+            <div className="flex flex-col items-center justify-center flex-grow gap-2 px-5">
+              {sidebarItems.map((item, index) => (
                 <button
                   className={`${
-                    activeButton === "Settings"
+                    activeButton === item.name
                       ? "bg-white text-[#1B1B1B]"
                       : "bg-[#1B1B1B] text-white"
                   } flex justify-center items-center gap-3 rounded-full w-full py-2`}
-                  onClick={() => setActiveButton("Settings")}
+                  key={index}
+                  onClick={() => {
+                    setActiveButton(item.name);
+                    if (item.name === "Config Panel") {
+                      if (
+                        sessionStorage.getItem("selectedProjectID") &&
+                        sessionStorage.getItem("configDeviceData")
+                      ) {
+                        router.push(item.path);
+                      } else {
+                        alert("Device Not Selected.");
+                      }
+                    } else {
+                      router.push(item.path);
+                    }
+                  }}
                 >
-                  <span className="">
+                  <span>
                     <img
-                      src={"/icons/settings.svg"}
+                      src={item.icon}
                       className="w-5 h-auto"
-                      alt={"Settings"}
+                      alt={item.name}
                     />
                   </span>
                   <span className="font-medium tracking-wide text-lg">
-                    {"Settings"}
+                    {item.name}
                   </span>
-                  <span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="24px"
-                      viewBox="0 -960 960 960"
-                      width="24px"
-                      fill={activeButton === "Settings" ? "#1B1B1B" : "#D2D2D2"}
-                    >
-                      <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
-                    </svg>
-                  </span>
+                  {item.name === "Settings" && (
+                    <span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="24px"
+                        viewBox="0 -960 960 960"
+                        width="24px"
+                        fill={
+                          activeButton === "Settings" ? "#1B1B1B" : "#D2D2D2"
+                        }
+                      >
+                        <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
+                      </svg>
+                    </span>
+                  )}
                 </button>
-              </div>
+              ))}
             </div>
           </div>
-          <div className="flex-1 mt-20">
+
+          {/* Main content */}
+          <div className="flex-1 overflow-y-auto">
             <div className="p-5">{children}</div>
           </div>
         </div>
