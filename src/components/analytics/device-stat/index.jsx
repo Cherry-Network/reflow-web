@@ -19,21 +19,21 @@ const fetchData = async (serialId) => {
         readings: dataObject.RawCH1 || "N/A",
         calibratedReadings: dataObject.CH1 || "N/A",
         readingsLevel: calculateLevel(dataObject.ERR1 || 0),
-        status: isDeviceOnline ? "Online" : "Offline",
+        status: dataObject.ERR1 === 0 ? "Online" : "Offline",
       },
       {
         serialNo: 2,
         readings: dataObject.RawCH2 || "N/A",
         calibratedReadings: dataObject.CH2 || "N/A",
         readingsLevel: calculateLevel(dataObject.ERR2 || 0),
-        status: isDeviceOnline ? "Online" : "Offline",
+        status: dataObject.ERR2 === 0 ? "Online" : "Offline",
       },
       {
         serialNo: 3,
         readings: dataObject.RawCH3 || "N/A",
         calibratedReadings: dataObject.CH3 || "N/A",
         readingsLevel: calculateLevel(dataObject.ERR3 || 0),
-        status: isDeviceOnline ? "Online" : "Offline",
+        status: dataObject.ERR3 === 0 ? "Online" : "Offline",
       },
     ];
 
