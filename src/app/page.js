@@ -16,7 +16,7 @@ export default function Home() {
   const [sharedProjects, setSharedProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [username, setUsername] = useState("");
-  const [fullName, setFullName] = useState(""); 
+  const [fullName, setFullName] = useState("");
 
   useEffect(() => {
     const userToken = getToken.get("user");
@@ -40,14 +40,12 @@ export default function Home() {
         });
 
         if (decoded?.firstName && decoded?.lastName) {
-          
           const name = `${decoded.firstName} ${decoded.lastName}`;
           setFullName(name);
           sessionStorage.setItem("fullName", name);
 
-          
           sessionStorage.setItem("username", decoded.email);
-          setUsername(decoded.email); 
+          setUsername(decoded.email);
         }
 
         return decoded;

@@ -60,22 +60,22 @@ const ViewProject = () => {
 
     setLoading(false);
   };
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
+  const [startPeriod, setStartPeriod] = useState({ date: "", time: "" });
+  const [endPeriod, setEndPeriod] = useState({ date: "", time: "" });
   const [exportedData, setExportedData] = useState([]);
   const [loadingExport, setLoadingExport] = useState(false);
   const [readyToDownload, setReadyToDownload] = useState(false);
 
   const exportDeviceData = async () => {
     setLoadingExport(true);
-    if (!startDate || !endDate) {
-      alert("Please select start and end date");
+    if (!startPeriod.date || !startPeriod.time || !endPeriod.date || !endPeriod.time) {
+      alert("Please select start and end datetime");
       setLoadingExport(false);
     } else {
       const myHeaders = new Headers();
       myHeaders.append("dev-id", "AX3010");
-      myHeaders.append("start-timestamp", `${startDate} 00:00:00+05:30`);
-      myHeaders.append("end-timestamp", `${endDate} 23:59:59+05:30`);
+      myHeaders.append("start-timestamp", `${startPeriod.date} ${startPeriod.time}+05:30`);
+      myHeaders.append("end-timestamp", `${endPeriod.date} ${endPeriod.time}+05:30`);
 
       const requestOptions = {
         method: "GET",
@@ -85,7 +85,7 @@ const ViewProject = () => {
 
       try {
         const response = await fetch(
-          "http://localhost:3001/api/export/device-reading/",
+          "/api/export/device-reading/",
           requestOptions
         );
         const result = await response.json();
@@ -152,18 +152,20 @@ const ViewProject = () => {
                 <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
               </div>
             )}
-            <div className="flex justify-center items-stretch">
-              <DataTable
-                editFunction={() => {
-                  deviceConfig({
-                    serialNumber: selectedDevice.serial_no,
-                    name: selectedDevice.name,
-                  });
-                }}
-                deviceSerialNumber={selectedDevice.serial_no}
-                deviceName={selectedDevice.name}
-              />
-              <div className="py-5">
+            <div className="flex justify-center items-end">
+              <div>
+                <DataTable
+                  editFunction={() => {
+                    deviceConfig({
+                      serialNumber: selectedDevice.serial_no,
+                      name: selectedDevice.name,
+                    });
+                  }}
+                  deviceSerialNumber={selectedDevice.serial_no}
+                  deviceName={selectedDevice.name}
+                />
+              </div>
+              <div className="pb-7">
                 <div className="flex w-full justify-end pt-1 pb-4">
                   <button
                     className="mr-2"
@@ -185,8 +187,8 @@ const ViewProject = () => {
                     </svg>
                   </button>
                 </div>
-                <div className="w-64 flex flex-col bg-white border-2 border-black rounded-2xl">
-                  <div className="bg-black text-lg rounded-t-xl text-white text-center flex justify-evenly items-center py-6 font-bold">
+                <div className="flex flex-col bg-white border-2 border-black rounded-2xl">
+                  <div className="bg-black text-lg rounded-t-xl text-white text-center flex w-full justify-evenly items-center py-6 font-bold">
                     <span>Export Data</span>
                   </div>
                   <div className="p-4 flex flex-col h-full">
@@ -211,7 +213,7 @@ const ViewProject = () => {
                             setReadyToDownload(false);
                             setLoadingExport(false);
                           }}
-                          filename={`${selectedDevice.serial_no} Device Data from ${startDate} to ${endDate}`}
+                          filename={`${selectedDevice.serial_no} Device Data from ${startPeriod.date}T${startPeriod.time} to ${endPeriod.date}T${endPeriod.time}`}
                         >
                           <div className="w-full py-2 px-10 bg-black text-base text-white rounded-3xl text-center">
                             Download
@@ -222,27 +224,67 @@ const ViewProject = () => {
                       <div>
                         <div className="mb-4">
                           <label className="block text-gray-700">
-                            Start Date:
+                            Start Date and Time:
                           </label>
-                          <input
-                            type="date"
-                            value={startDate}
-                            onChange={(e) => setStartDate(e.target.value)}
-                            className="w-full p-1 border border-gray-300 rounded-2xl text-black"
-                            style={{ height: "2rem" }}
-                          />
+                          <div className="flex gap-1">
+                            <input
+                              type="date"
+                              value={startPeriod.date}
+                              max={new Date().toISOString().split("T")[0]}
+                              onChange={(e) =>
+                                setStartPeriod({
+                                  ...startPeriod,
+                                  date: e.target.value,
+                                })
+                              }
+                              className="w-full p-1 border border-gray-300 rounded-2xl text-black"
+                              style={{ height: "2rem" }}
+                            />
+                            <input
+                              type="time"
+                              value={startPeriod.time}
+                              onChange={(e) =>
+                                setStartPeriod({
+                                  ...startPeriod,
+                                  time: e.target.value,
+                                })
+                              }
+                              className="w-full p-1 border border-gray-300 rounded-2xl text-black"
+                              style={{ height: "2rem" }}
+                            />
+                          </div>
                         </div>
                         <div className="mb-4">
                           <label className="block text-gray-700">
-                            End Date:
+                            End Date and Time:
                           </label>
-                          <input
-                            type="date"
-                            value={endDate}
-                            onChange={(e) => setEndDate(e.target.value)}
-                            className="w-full p-1 border border-gray-300 rounded-2xl text-black"
-                            style={{ height: "2rem" }}
-                          />
+                          <div className="flex gap-1">
+                            <input
+                              type="date"
+                              value={endPeriod.date}
+                              max={new Date().toISOString().split("T")[0]}
+                              onChange={(e) =>
+                                setEndPeriod({
+                                  ...endPeriod,
+                                  date: e.target.value,
+                                })
+                              }
+                              className="w-full p-1 border border-gray-300 rounded-2xl text-black"
+                              style={{ height: "2rem" }}
+                            />
+                            <input
+                              type="time"
+                              value={endPeriod.time}
+                              onChange={(e) =>
+                                setEndPeriod({
+                                  ...endPeriod,
+                                  time: e.target.value,
+                                })
+                              }
+                              className="w-full p-1 border border-gray-300 rounded-2xl text-black"
+                              style={{ height: "2rem" }}
+                            />
+                          </div>
                         </div>
                         <button
                           className="w-full py-2 bg-black text-white rounded-3xl"
