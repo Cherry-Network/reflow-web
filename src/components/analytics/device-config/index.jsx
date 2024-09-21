@@ -4,17 +4,17 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   const [deviceInput, setDeviceInput] = useState({
     MIN1: "",
     MAX1: "",
-    FAC1: "",
+    FAC1: null,
     CAL1: "",
     SNO1: "",
     MIN2: "",
     MAX2: "",
-    FAC2: "",
+    FAC2: null,
     CAL2: "",
     SNO2: "",
     MIN3: "",
     MAX3: "",
-    FAC3: "",
+    FAC3: null,
     CAL3: "",
     SNO3: "",
   });
@@ -407,10 +407,10 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
                         <option disabled>
                           {displayFactorValue(device.factor.value)}
                         </option>
-                        <option value={0}>Addition</option>
-                        <option value={1}>Subtraction</option>
-                        <option value={2}>Multiplication</option>
-                        <option value={3}>Division</option>
+                        <option value={Number(0)}>Addition</option>
+                        <option value={Number(1)}>Subtraction</option>
+                        <option value={Number(2)}>Multiplication</option>
+                        <option value={Number(3)}>Division</option>
                       </select>
                     )}
                   </div>

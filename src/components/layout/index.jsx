@@ -25,6 +25,13 @@ const PageLayout = ({ children, pageName }) => {
           <div className="min-h-screen">
             <div className="w-[300px] flex flex-col h-full bg-[#1B1B1B]">
               <div className="flex flex-col items-center justify-center flex-grow gap-2 px-5">
+                <div className="bg-white p-6 mb-4 rounded-full">
+                  <img
+                    src="/assets/company-logo.svg"
+                    alt="logo"
+                    className="h-20 w-20"
+                  />
+                </div>
                 {sidebarItems.map((item, index) => (
                   <button
                     className={`${

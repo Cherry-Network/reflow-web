@@ -23,15 +23,6 @@ const formConfig = [
     label: "Activation Code",
     pattern: "[A-Z0-9]{6}",
   },
-  {
-    type: "dropdown",
-    name: "dropdownValue",
-    label: "Select an Option",
-    options: [
-      { label: "Option 1", value: "1" },
-      { label: "Option 2", value: "2" },
-    ],
-  },
 ];
 
 const Form = ({ projectID, onSuccess }) => {

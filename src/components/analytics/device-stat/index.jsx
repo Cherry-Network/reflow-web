@@ -8,7 +8,7 @@ const fetchConfigData = async (serialId) => {
     const result = await response.json();
     if (result.length > 0) {
       const config = result[0];
-      console.log("Config Data:", config);
+      sessionStorage.setItem("configDeviceData", JSON.stringify(config));
       return config;
     } else {
       console.error("No config data found.");

@@ -65,17 +65,29 @@ const ViewProject = () => {
   const [exportedData, setExportedData] = useState([]);
   const [loadingExport, setLoadingExport] = useState(false);
   const [readyToDownload, setReadyToDownload] = useState(false);
+  const [exportedDataHeaders, setExportedDataHeaders] = useState([]);
 
   const exportDeviceData = async () => {
     setLoadingExport(true);
-    if (!startPeriod.date || !startPeriod.time || !endPeriod.date || !endPeriod.time) {
+    if (
+      !startPeriod.date ||
+      !startPeriod.time ||
+      !endPeriod.date ||
+      !endPeriod.time
+    ) {
       alert("Please select start and end datetime");
       setLoadingExport(false);
     } else {
       const myHeaders = new Headers();
-      myHeaders.append("dev-id", "AX3010");
-      myHeaders.append("start-timestamp", `${startPeriod.date} ${startPeriod.time}+05:30`);
-      myHeaders.append("end-timestamp", `${endPeriod.date} ${endPeriod.time}+05:30`);
+      myHeaders.append("dev-id", selectedDevice.serial_no);
+      myHeaders.append(
+        "start-timestamp",
+        `${startPeriod.date} ${startPeriod.time}+05:30`
+      );
+      myHeaders.append(
+        "end-timestamp",
+        `${endPeriod.date} ${endPeriod.time}+05:30`
+      );
 
       const requestOptions = {
         method: "GET",
@@ -90,7 +102,24 @@ const ViewProject = () => {
         );
         const result = await response.json();
         console.log(selectedDevice.serial_no);
+        console.log(result);
         setExportedData(result);
+        if (sessionStorage.getItem("configDeviceData") !== null) {
+          const config = JSON.parse(sessionStorage.getItem("configDeviceData"));
+          setExportedDataHeaders([
+            { label: "Timestamp", key: "timestamp" },
+            { label: config?.SNO1 ? config?.SNO1 : "Channel 1", key: "sno1" },
+            { label: config?.SNO2 ? config?.SNO2 : "Channel 2", key: "sno2" },
+            { label: config?.SNO3 ? config?.SNO3 : "Channel 3", key: "sno3" },
+          ]);
+        } else {
+          setExportedDataHeaders([
+            { label: "Timestamp", key: "timestamp" },
+            { label: "Channel 1", key: "SNO1" },
+            { label: "Channel 2", key: "SNO2" },
+            { label: "Channel 3", key: "SNO3" },
+          ]);
+        }
         setReadyToDownload(true);
       } catch (error) {
         console.error(error);
@@ -209,6 +238,7 @@ const ViewProject = () => {
                         </div>
                         <CSVLink
                           data={exportedData}
+                          headers={exportedDataHeaders}
                           onClick={() => {
                             setReadyToDownload(false);
                             setLoadingExport(false);
