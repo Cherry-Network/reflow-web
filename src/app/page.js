@@ -27,7 +27,7 @@ export default function Home() {
       router.replace(`?${params.toString()}`);
     }
     if (!Cookies.get("authSessionToken")) {
-      router.push("https://login.reflowtech.in/login");
+      router.push("https://reflowtech.in/login");
       return;
     }
 
