@@ -15,23 +15,16 @@ const Navbar = () => {
           <img src="/assets/nav-logo.svg" alt="logo" className="h-16 w-auto" />
         </div>
         <div className="flex gap-10 justify-center items-center">
-          {currentUser ? (
-            <button className="bg-[#1B1B1B] text-white text-lg tracking-wide rounded-full px-5 py-3"
-              onClick={() => {
-                sessionStorage.removeItem("username");
-                router.push("/username");
-              }}
-            >
-              Log Out
-            </button>
-          ) : (
-            <button
-              className="bg-[#1B1B1B] text-white text-lg tracking-wide rounded-full px-5 py-3"
-              onClick={() => router.push("/")}
-            >
-              Log In
-            </button>
-          )}
+          <button
+            className="bg-[#1B1B1B] text-white text-lg tracking-wide rounded-full px-5 py-3"
+            onClick={() => {
+              sessionStorage.removeItem("username");
+              router.push("https://reflowtech.in/login");
+            }}
+          >
+            Log Out
+          </button>
+
           {currentUser && (
             <div>
               <button
