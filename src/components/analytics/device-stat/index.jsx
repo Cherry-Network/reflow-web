@@ -66,8 +66,8 @@ const checkIfDeviceOnline = (lastUpdatedTime) => {
   console.log(`Current time: ${now}`);
   console.log(`Last updated time: ${lastUpdatedTime}`);
   console.log(`Time difference: ${timeDifference} milliseconds`);
-  const fiveMinsInMilliseconds = 5 * 60 * 1000;
-  return timeDifference <= fiveMinsInMilliseconds;
+  const twoMinsInMilliseconds = 2 * 60 * 1000;
+  return timeDifference <= twoMinsInMilliseconds;
 };
 
 const DataTable = ({ deviceSerialNumber, deviceName }) => {
@@ -94,10 +94,23 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
 
   const columns = [
     { key: "serialNo", label: "Serial No" },
-
-    { key: "calibratedReadings", label: " Readings" },
+    { key: "calibratedReadings", label: "Readings" },
     { key: "readingsLevel", label: "Readings Level" },
-    { key: "status", label: "Status" },
+    {
+      key: "status",
+      label: (
+        <div className="flex justify-center items-center gap-2">
+          Status
+          <span
+            className={`w-3 h-3 rounded-full ${
+              data.some((row) => row.status === "Online")
+                ? "bg-green-500"
+                : "bg-red-500"
+            }`}
+          ></span>
+        </div>
+      ),
+    },
   ];
 
   return (

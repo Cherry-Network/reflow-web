@@ -26,6 +26,12 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
     RawCH3: "",
   });
 
+  const [calibratedReadings, setCalibratedReadings] = useState({
+    CalibratedCH1: "",
+    CalibratedCH2: "",
+    CalibratedCH3: "",
+  });
+
   useEffect(() => {
     const fetchDeviceData = async () => {
       try {
@@ -63,55 +69,6 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       }
     };
 
-
-    const handleInputChange = (e) => {
-      const { name, value, type } = e.target;
-      setDeviceInput((prevState) => ({
-        ...prevState,
-        [name]: type === "number" ? Number(value) : value,
-      }));
-    };
-
-    const calculateCalibratedReading = (reading, calibration, factor) => {
-      switch (factor) {
-        case 0: // Addition
-          return reading + calibration;
-        case 1: // Subtraction
-          return reading - calibration;
-        case 2: // Multiplication
-          return reading * calibration;
-        case 3: // Division
-          return calibration !== 0 ? reading / calibration : "N/A"; // Handle division by zero
-        default:
-          return reading;
-      }
-    };
-
-    const updateCalibratedReadings = () => {
-      setDeviceData((prevState) =>
-        prevState.map((device) => {
-          if (!device.type) {
-            const newCalibratedReading = calculateCalibratedReading(
-              realTimeReadings[`RawCH${device.name.name.slice(-1)}`],
-              deviceInput[`CAL${device.name.name.slice(-1)}`],
-              deviceInput[`FAC${device.name.name.slice(-1)}`]
-            );
-            console.log(newCalibratedReading);
-            return {
-              ...device,
-              calibratedReadings: { name: "", value: newCalibratedReading },
-            };
-          }
-          return device;
-        })
-      );
-    };
-
-    // Call updateCalibratedReadings whenever inputs (readings, calibration, or factor) change
-    useEffect(() => {
-      updateCalibratedReadings();
-    }, [deviceInput, realTimeReadings]);
-
     const fetchRealTimeData = async () => {
       try {
         const response = await fetch(
@@ -128,17 +85,74 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
     };
 
     fetchDeviceData();
-    const intervalId = setInterval(fetchRealTimeData, 3000); // Fetch data every 5 seconds
+    const intervalId = setInterval(fetchRealTimeData, 3000); // Fetch data every 3 seconds
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, [deviceDetails.id]);
 
+  const calculateCalibratedReading = (reading, calibration, factor) => {
+    switch (factor) {
+      case 0: // Addition
+        return reading + calibration;
+      case 1: // Subtraction
+        return reading - calibration;
+      case 2: // Multiplication
+        return reading * calibration;
+      case 3: // Division
+        return calibration !== 0 ? reading / calibration : "N/A"; // Handle division by zero
+      default:
+        return reading;
+    }
+  };
+
+  useEffect(() => {
+    const newCalibratedReadings = {
+      CalibratedCH1: calculateCalibratedReading(
+        Number(realTimeReadings.RawCH1),
+        Number(deviceInput.CAL1),
+        Number(deviceInput.FAC1)
+      ),
+      CalibratedCH2: calculateCalibratedReading(
+        Number(realTimeReadings.RawCH2),
+        Number(deviceInput.CAL2),
+        Number(deviceInput.FAC2)
+      ),
+      CalibratedCH3: calculateCalibratedReading(
+        Number(realTimeReadings.RawCH3),
+        Number(deviceInput.CAL3),
+        Number(deviceInput.FAC3)
+      ),
+    };
+
+    setCalibratedReadings(newCalibratedReadings);
+    console.log("Updated Calibrated Readings:", newCalibratedReadings);
+  }, [realTimeReadings, deviceInput]);
+
   const handleInputChange = (e) => {
     const { name, value, type } = e.target;
+
+    // Update the device input state
+    const updatedValue = type === "number" ? Number(value) : value;
     setDeviceInput((prevState) => ({
       ...prevState,
-      [name]: type === "number" ? Number(value) : value,
+      [name]: updatedValue,
     }));
+
+    // Get the index from the name (e.g., CAL1 -> 1)
+    const index = name.charAt(3); // '1', '2', or '3'
+
+    // Fetch the current raw reading and the current calibration and factor
+    const reading = Number(realTimeReadings[`RawCH${index}`]);
+    const calibration = Number(updatedValue);
+    const factor = Number(deviceInput[`FAC${index}`]);
+
+    // Calculate and log the calibrated reading
+    const calibratedReading = calculateCalibratedReading(
+      reading,
+      calibration,
+      factor
+    );
+    console.log(`Calibrated Reading CH${index}:`, calibratedReading);
   };
 
   const deviceData = [
@@ -184,7 +198,10 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
         name: realTimeReadings.RawCH1,
         value: realTimeReadings.RawCH1,
       },
-      calibratedReadings: { name: "", value: "" },
+      calibratedReadings: {
+        name: "Calibrated CH1",
+        value: calibratedReadings.CalibratedCH1,
+      },
     },
     {
       name: { name: "SNO2", value: deviceInput.SNO2 },
@@ -206,7 +223,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
         name: realTimeReadings.RawCH2,
         value: realTimeReadings.RawCH2,
       },
-      calibratedReadings: { name: "", value: "" },
+      calibratedReadings: { name: "", value: calibratedReadings.CalibratedCH2 },
     },
     {
       name: { name: "SNO3", value: deviceInput.SNO3 },
@@ -228,7 +245,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
         name: realTimeReadings.RawCH3,
         value: realTimeReadings.RawCH3,
       },
-      calibratedReadings: { name: "", value: "" },
+      calibratedReadings: { name: "", value: calibratedReadings.CalibratedCH3 },
     },
   ];
 
@@ -427,10 +444,12 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
                   </div>
                   <div
                     className={`${tableCellStyle} ${
-                      device.type && "rounded-t-xl"
-                    } ${device.type ? "" : "border-theme_black"}`}
+                      device.type ? "rounded-t-xl" : "border-theme_black"
+                    }`}
                   >
-                    {device.calibratedReadings.value}
+                    {device.calibratedReadings.value !== undefined
+                      ? device.calibratedReadings.value
+                      : "N/A"}
                   </div>
                 </form>
               ))}
