@@ -16,7 +16,7 @@ let subscribedTopics = new Set();
 const generateMqttTopic = (serialId) => {
   const prefix = serialId.slice(0, 3); // e.g., "AX3"
   const suffix = serialId.slice(3, 5); // e.g., "03"
-  return `${prefix}/${suffix}/OUTPUT`; // e.g., "AX3/03/IN"
+  return `${prefix}/${suffix}/OUTPUT`; // e.g., "AX3/03/OUTPUT"
 };
 
 // Establish connection to the MQTT broker
@@ -29,7 +29,6 @@ client.on("connect", () => {
 client.on("message", (topic, message) => {
   try {
     const messageString = message.toString();
-    console.log("Received message:", messageString);
 
     const parsedMessage = JSON.parse(messageString);
     const fullSerialId = topic.split("/")[0] + topic.split("/")[1]; // e.g., AX303
@@ -40,11 +39,9 @@ client.on("message", (topic, message) => {
     mqttData[fullSerialId].push(parsedMessage);
 
     // Keep only the latest 10 messages for each serialId
-    if (mqttData[fullSerialId].length > 10) {
+    if (mqttData[fullSerialId].length > 1) {
       mqttData[fullSerialId].shift();
     }
-
-    console.log("Stored data:", mqttData);
   } catch (error) {
     console.error("Failed to parse MQTT message:", error);
     console.error("Original message:", message.toString());
@@ -70,6 +67,21 @@ const subscribeToTopic = async (serialId) => {
           resolve();
         }
       });
+    });
+  }
+};
+
+// Unsubscribe from a topic based on serial number
+const unsubscribeFromTopic = (serialId) => {
+  const topic = generateMqttTopic(serialId);
+  if (subscribedTopics.has(topic)) {
+    client.unsubscribe(topic, (err) => {
+      if (err) {
+        console.error(`Failed to unsubscribe from ${topic}:`, err);
+      } else {
+        console.log(`Unsubscribed from ${topic}`);
+        subscribedTopics.delete(topic);
+      }
     });
   }
 };
@@ -104,6 +116,10 @@ export async function GET(req) {
     };
 
     console.log("Returned readings for serialId:", serialId, "Data:", result);
+
+    // Unsubscribe after fetching data
+    unsubscribeFromTopic(serialId);
+
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error processing request:", error);

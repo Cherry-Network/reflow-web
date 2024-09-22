@@ -85,7 +85,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
     };
 
     fetchDeviceData();
-    const intervalId = setInterval(fetchRealTimeData, 3000); // Fetch data every 3 seconds
+    const intervalId = setInterval(fetchRealTimeData, 5000); // Fetch data every 3 seconds
 
     return () => clearInterval(intervalId); // Cleanup interval on component unmount
   }, [deviceDetails.id]);

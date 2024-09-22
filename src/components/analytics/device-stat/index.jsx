@@ -4,9 +4,9 @@ import React, { useState, useEffect } from "react";
 // Fetch config data once
 const fetchConfigData = async (serialId) => {
   try {
-    const response = await fetch(`/api/mqtt-configTable?serialId=${serialId}`); // Fixed backticks and added missing quotes
+    const response = await fetch(`/api/mqtt-configTable?serialId=${serialId}`);
     const result = await response.json();
-    console.log("Config fetch result:", result); // Log the response
+    console.log("Config fetch result:", result);
     if (result.length > 0) {
       return result[0];
     } else {
@@ -22,7 +22,7 @@ const fetchConfigData = async (serialId) => {
 // Fetch readings data (using config)
 const fetchData = async (serialId, config) => {
   try {
-    const response = await fetch(`/api/mqtt-output?serialId=${serialId}`); // Fixed backticks and added missing quotes
+    const response = await fetch(`/api/mqtt-output?serialId=${serialId}`);
     const result = await response.json();
 
     if (result.length === 0) return { data: [], lastUpdatedTime: null };
@@ -71,7 +71,7 @@ const parseUpdateTime = (timestamp) => {
   const [day, month, year] = date.split("/");
   const [hour, minute, second] = time.split(":");
   const parsedDate = new Date(
-    `20${year}-${month}-${day}T${hour}:${minute}:${second}` // Fixed backticks and string interpolation
+    `20${year}-${month}-${day}T${hour}:${minute}:${second}`
   );
   return parsedDate;
 };
@@ -95,34 +95,26 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
         setData(result.data);
         setLastUpdatedTime(result.lastUpdatedTime);
       } else {
-        console.error("No config data found for:", deviceSerialNumber); // More detailed logging
+        console.error("No config data found for:", deviceSerialNumber);
       }
       setLoading(false);
     };
 
     fetchInitialData();
+  }, [deviceSerialNumber]); // Fetch when deviceSerialNumber changes
 
-    // Clear previous interval
-    if (intervalId) {
-      clearInterval(intervalId);
-    }
-
-    // Set new interval for fetching output data
-    const newIntervalId = setInterval(async () => {
-      if (config) {
+  useEffect(() => {
+    if (config) {
+      const newIntervalId = setInterval(async () => {
         const intervalResult = await fetchData(deviceSerialNumber, config);
         setData(intervalResult.data);
         setLastUpdatedTime(intervalResult.lastUpdatedTime);
-      }
-    }, 2000);
+      }, 3000);
 
-    setIntervalId(newIntervalId);
-
-    // Cleanup function
-    return () => {
-      clearInterval(newIntervalId);
-    };
-  }, [deviceSerialNumber]); // Fetch when deviceSerialNumber changes
+      // Clear interval on component unmount
+      return () => clearInterval(newIntervalId);
+    }
+  }, [config]); // Only run when config changes
 
   const columns = [
     { key: "serialNo", label: "Serial No" },
@@ -205,7 +197,7 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
                             <div
                               className="absolute top-0 left-0 bg-blue-500 h-full rounded-full"
                               style={{
-                                width: `${row[column.key]}%`, // Fixed string interpolation for dynamic width
+                                width: `${row[column.key]}%`,
                                 height: "100%",
                               }}
                             ></div>
