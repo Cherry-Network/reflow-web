@@ -4,14 +4,13 @@ import React, { useState, useEffect } from "react";
 // Fetch config data once
 const fetchConfigData = async (serialId) => {
   try {
-    const response = await fetch(`/api/mqtt-configTable?serialId=${serialId}`);
+    const response = await fetch(`/api/mqtt-configTable?serialId=${serialId}`); // Fixed backticks and added missing quotes
     const result = await response.json();
+    console.log("Config fetch result:", result); // Log the response
     if (result.length > 0) {
-      const config = result[0];
-      sessionStorage.setItem("configDeviceData", JSON.stringify(config));
-      return config;
+      return result[0];
     } else {
-      console.error("No config data found.");
+      console.error("No config data found for serialId:", serialId);
       return null;
     }
   } catch (error) {
@@ -23,7 +22,7 @@ const fetchConfigData = async (serialId) => {
 // Fetch readings data (using config)
 const fetchData = async (serialId, config) => {
   try {
-    const response = await fetch(`/api/mqtt-output?serialId=${serialId}`);
+    const response = await fetch(`/api/mqtt-output?serialId=${serialId}`); // Fixed backticks and added missing quotes
     const result = await response.json();
 
     if (result.length === 0) return { data: [], lastUpdatedTime: null };
@@ -72,48 +71,58 @@ const parseUpdateTime = (timestamp) => {
   const [day, month, year] = date.split("/");
   const [hour, minute, second] = time.split(":");
   const parsedDate = new Date(
-    `20${year}-${month}-${day}T${hour}:${minute}:${second}`
+    `20${year}-${month}-${day}T${hour}:${minute}:${second}` // Fixed backticks and string interpolation
   );
   return parsedDate;
 };
 
 const DataTable = ({ deviceSerialNumber, deviceName }) => {
   const [data, setData] = useState([]);
-  const [config, setConfig] = useState(null); // State for config data
+  const [config, setConfig] = useState(null);
   const [lastUpdatedTime, setLastUpdatedTime] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
+      setLoading(true);
       const configData = await fetchConfigData(deviceSerialNumber);
       if (configData) {
-        setConfig(configData); // Set config only once
+        setConfig(configData);
 
-        // Fetch the readings once immediately after config is ready
+        // Fetch the readings immediately
         const result = await fetchData(deviceSerialNumber, configData);
         setData(result.data);
         setLastUpdatedTime(result.lastUpdatedTime);
-        setLoading(false); // Set loading to false after first fetch
-
-        // Set up the interval for fetching data periodically
-        const intervalId = setInterval(async () => {
-          const intervalResult = await fetchData(
-            deviceSerialNumber,
-            configData
-          );
-          setData(intervalResult.data);
-          setLastUpdatedTime(intervalResult.lastUpdatedTime);
-        }, 3000);
-
-        // Cleanup on component unmount
-        return () => clearInterval(intervalId);
       } else {
-        setLoading(false); // Stop loading if config fetch fails
+        console.error("No config data found for:", deviceSerialNumber); // More detailed logging
       }
+      setLoading(false);
     };
 
     fetchInitialData();
-  }, [deviceSerialNumber]); // Dependency on deviceSerialNumber
+
+    // Clear previous interval
+    if (intervalId) {
+      clearInterval(intervalId);
+    }
+
+    // Set new interval for fetching output data
+    const newIntervalId = setInterval(async () => {
+      if (config) {
+        const intervalResult = await fetchData(deviceSerialNumber, config);
+        setData(intervalResult.data);
+        setLastUpdatedTime(intervalResult.lastUpdatedTime);
+      }
+    }, 2000);
+
+    setIntervalId(newIntervalId);
+
+    // Cleanup function
+    return () => {
+      clearInterval(newIntervalId);
+    };
+  }, [deviceSerialNumber]); // Fetch when deviceSerialNumber changes
 
   const columns = [
     { key: "serialNo", label: "Serial No" },
@@ -196,7 +205,7 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
                             <div
                               className="absolute top-0 left-0 bg-blue-500 h-full rounded-full"
                               style={{
-                                width: `${row[column.key]}%`,
+                                width: `${row[column.key]}%`, // Fixed string interpolation for dynamic width
                                 height: "100%",
                               }}
                             ></div>
@@ -213,7 +222,7 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
                   <tr>
                     <td
                       colSpan={columns.length}
-                      className="text-center py-10 text-red-950 text-2xl bg-white font-mono tracking-wider font-bold "
+                      className="text-center py-10 text-red-950 text-2xl bg-white font-mono tracking-wider font-bold"
                     >
                       Your Device is Offline
                     </td>

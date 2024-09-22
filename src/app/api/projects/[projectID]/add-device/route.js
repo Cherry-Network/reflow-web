@@ -50,9 +50,9 @@ export async function POST(req, { params }) {
 
     // If the device was successfully added, proceed with MQTT
     if (result.modifiedCount === 1) {
-      const mqttClient = mqtt.connect("mqtt://mqtt.infinit-i.in:1883", {
-        username: "chakry",
-        password: "chakreesh",
+      const mqttClient = mqtt.connect(process.env.MQTT_BROKER_URL, {
+        username: process.env.MQTT_USERNAME,
+        password: process.env.MQTT_PASSWORD,
       });
 
       // Constructing the topic based on the serial number

@@ -4,17 +4,17 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   const [deviceInput, setDeviceInput] = useState({
     MIN1: "",
     MAX1: "",
-    FAC1: null,
+    FAC1: 0, // Set initial value as an integer
     CAL1: "",
     SNO1: "",
     MIN2: "",
     MAX2: "",
-    FAC2: null,
+    FAC2: 0, // Set initial value as an integer
     CAL2: "",
     SNO2: "",
     MIN3: "",
     MAX3: "",
-    FAC3: null,
+    FAC3: 0, // Set initial value as an integer
     CAL3: "",
     SNO3: "",
   });
@@ -133,10 +133,19 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
 
     // Update the device input state
     const updatedValue = type === "number" ? Number(value) : value;
-    setDeviceInput((prevState) => ({
-      ...prevState,
-      [name]: updatedValue,
-    }));
+    setDeviceInput((prevState) => {
+      const newState = {
+        ...prevState,
+        [name]: updatedValue,
+      };
+
+      // Ensure FAC values are integers
+      if (name.startsWith("FAC")) {
+        newState[name] = Number(updatedValue);
+      }
+
+      return newState;
+    });
 
     // Get the index from the name (e.g., CAL1 -> 1)
     const index = name.charAt(3); // '1', '2', or '3'
@@ -152,7 +161,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       calibration,
       factor
     );
-    console.log(`Calibrated Reading CH${index}:`, calibratedReading);
+    console.log(`Calibrated Reading CH${index}:, calibratedReading`);
   };
 
   const deviceData = [
@@ -271,12 +280,21 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
     } else {
       try {
         const topic = generateMqttTopic(deviceDetails.id);
+
+        // Create a new object to ensure FAC values are integers
+        const publishData = {
+          ...deviceInput,
+          FAC1: Number(deviceInput.FAC1), // Convert to integer
+          FAC2: Number(deviceInput.FAC2), // Convert to integer
+          FAC3: Number(deviceInput.FAC3), // Convert to integer
+        };
+
         const response = await fetch("/api/mqtt-input", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ deviceInput, topic }),
+          body: JSON.stringify({ deviceInput: publishData, topic }),
         });
 
         if (!response.ok) {
@@ -327,7 +345,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
                     device.type
                       ? "bg-theme_black text-theme_white rounded-t-xl"
                       : "text-theme_black bg-theme_white"
-                  } `}
+                  }`}
                 >
                   <div
                     className={`${tableCellStyle} border-l ${
@@ -407,10 +425,10 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
                         <option disabled>
                           {displayFactorValue(device.factor.value)}
                         </option>
-                        <option value={Number(0)}>Addition</option>
-                        <option value={Number(1)}>Subtraction</option>
-                        <option value={Number(2)}>Multiplication</option>
-                        <option value={Number(3)}>Division</option>
+                        <option value={0}>Addition</option>
+                        <option value={1}>Subtraction</option>
+                        <option value={2}>Multiplication</option>
+                        <option value={3}>Division</option>
                       </select>
                     )}
                   </div>
@@ -456,7 +474,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
             </div>
             <div className="flex justify-end gap-6">
               <button
-                className={`bg-theme_black text-theme_white text-center w-36 py-3 rounded-full text-lg border border-theme_black`}
+                className="bg-theme_black text-theme_white text-center w-36 py-3 rounded-full text-lg border border-theme_black"
                 onClick={handleSubmit}
               >
                 Save

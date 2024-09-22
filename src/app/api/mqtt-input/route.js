@@ -7,9 +7,9 @@ export async function POST(request) {
     const { deviceInput, topic } = await request.json(); // Receive deviceInput and topic
 
     // Connect to MQTT broker
-    const client = mqtt.connect("mqtt://mqtt.infinit-i.in:1883", {
-      username: "chakry",
-      password: "chakreesh",
+    const client = mqtt.connect(process.env.MQTT_BROKER_URL, {
+      username: process.env.MQTT_USERNAME,
+      password: process.env.MQTT_PASSWORD,
     });
 
     // Return a promise that resolves or rejects based on the MQTT operations

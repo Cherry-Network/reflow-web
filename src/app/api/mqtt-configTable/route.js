@@ -2,10 +2,10 @@ import { NextResponse } from "next/server";
 import mqtt from "mqtt";
 
 // MQTT broker configuration
-const brokerUrl = "mqtt://mqtt.infinit-i.in:1883";
+const brokerUrl = process.env.MQTT_BROKER_URL;
 const options = {
-  username: "chakry",
-  password: "chakreesh",
+  username: process.env.MQTT_USERNAME,
+  password: process.env.MQTT_PASSWORD,
 };
 
 // Store messages per device serial number
