@@ -6,7 +6,7 @@ import { Pool } from "pg";
 // Create PostgreSQL connection pool
 const pool = new Pool({
     host: process.env.POSTGRES_HOST,
-    database: "myax",
+    database: process.env.POSTGRES_DB_DEVICE_DATA,
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
     port: process.env.POSTGRES_PORT,

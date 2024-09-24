@@ -82,11 +82,11 @@ const ViewProject = () => {
       myHeaders.append("dev-id", selectedDevice.serial_no);
       myHeaders.append(
         "start-timestamp",
-        `${startPeriod.date} ${startPeriod.time}+05:30`
+        `${startPeriod.date} ${startPeriod.time}`
       );
       myHeaders.append(
         "end-timestamp",
-        `${endPeriod.date} ${endPeriod.time}+05:30`
+        `${endPeriod.date} ${endPeriod.time}`
       );
 
       const requestOptions = {
@@ -101,8 +101,6 @@ const ViewProject = () => {
           requestOptions
         );
         const result = await response.json();
-        console.log(selectedDevice.serial_no);
-        console.log(result);
         setExportedData(result);
         if (sessionStorage.getItem("configDeviceData") !== null) {
           const config = JSON.parse(sessionStorage.getItem("configDeviceData"));
