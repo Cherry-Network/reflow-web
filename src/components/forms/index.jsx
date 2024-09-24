@@ -63,7 +63,7 @@ const Form = ({ projectID, onSuccess }) => {
 
     try {
       const response = await fetch(
-        "http://localhost:3001/api/get-secret-key/",
+        "/api/get-secret-key/",
         requestOptions
       );
       const result = await response.json();
