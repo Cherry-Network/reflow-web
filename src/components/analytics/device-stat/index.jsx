@@ -6,7 +6,7 @@ const fetchConfigData = async (serialId) => {
   try {
     const response = await fetch(`/api/mqtt-configTable?serialId=${serialId}`);
     const result = await response.json();
-    console.log("Config fetch result:", result);
+    sessionStorage.setItem("configDeviceData", JSON.stringify(result));
     if (result.length > 0) {
       return result[0];
     } else {
@@ -151,7 +151,7 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
               <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
             </div>
           ) : (
-            <table className="min-w-full bg-[#F0F0F0] border-collapse border-black">
+            <table className="min-w-full bg-[#F0F0F0] border-collapse border-black min-h-72">
               <thead className="bg-black text-white">
                 <tr>
                   {columns.map((column, index) => (

@@ -78,16 +78,29 @@ const ViewProject = () => {
       alert("Please select start and end datetime");
       setLoadingExport(false);
     } else {
+      if (sessionStorage.getItem("configDeviceData")) {
+        const config = JSON.parse(sessionStorage.getItem("configDeviceData"));
+        setExportedDataHeaders([
+          { label: "Timestamp", key: "timestamp" },
+          { label: config[0].SNO1 ? config[0].SNO1 : "Channel 1", key: "sno1" },
+          { label: config[0].SNO2 ? config[0].SNO2 : "Channel 2", key: "sno2" },
+          { label: config[0].SNO3 ? config[0].SNO3 : "Channel 3", key: "sno3" },
+        ]);
+      } else {
+        setExportedDataHeaders([
+          { label: "Timestamp", key: "timestamp" },
+          { label: "Channel 1", key: "sno1" },
+          { label: "Channel 2", key: "sno2" },
+          { label: "Channel 3", key: "sno3" },
+        ]);
+      }
       const myHeaders = new Headers();
       myHeaders.append("dev-id", selectedDevice.serial_no);
       myHeaders.append(
         "start-timestamp",
         `${startPeriod.date} ${startPeriod.time}`
       );
-      myHeaders.append(
-        "end-timestamp",
-        `${endPeriod.date} ${endPeriod.time}`
-      );
+      myHeaders.append("end-timestamp", `${endPeriod.date} ${endPeriod.time}`);
 
       const requestOptions = {
         method: "GET",
@@ -102,22 +115,6 @@ const ViewProject = () => {
         );
         const result = await response.json();
         setExportedData(result);
-        if (sessionStorage.getItem("configDeviceData") !== null) {
-          const config = JSON.parse(sessionStorage.getItem("configDeviceData"));
-          setExportedDataHeaders([
-            { label: "Timestamp", key: "timestamp" },
-            { label: config?.SNO1 ? config?.SNO1 : "Channel 1", key: "sno1" },
-            { label: config?.SNO2 ? config?.SNO2 : "Channel 2", key: "sno2" },
-            { label: config?.SNO3 ? config?.SNO3 : "Channel 3", key: "sno3" },
-          ]);
-        } else {
-          setExportedDataHeaders([
-            { label: "Timestamp", key: "timestamp" },
-            { label: "Channel 1", key: "SNO1" },
-            { label: "Channel 2", key: "SNO2" },
-            { label: "Channel 3", key: "SNO3" },
-          ]);
-        }
         setReadyToDownload(true);
       } catch (error) {
         console.error(error);

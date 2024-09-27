@@ -19,10 +19,10 @@ const Navbar = () => {
             className="bg-[#1B1B1B] text-white text-lg tracking-wide rounded-full px-5 py-3"
             onClick={() => {
               sessionStorage.removeItem("username");
-              router.push("https://reflowtech.in/login");
+              router.push("https://reflowtech.in/loginned");
             }}
           >
-            Log Out
+            Back to Home
           </button>
 
           {currentUser && (

@@ -50,7 +50,9 @@ export default function Home() {
 
         return decoded;
       } catch (error) {
-        console.error("Error decoding token:", error);
+        // console.error("Error decoding token:", error);
+        alert("Failed to load. Try logging in again.");
+        router.push("https://reflowtech.in/login");
       }
     };
 
