@@ -122,6 +122,36 @@ const ViewProject = () => {
     }
   };
 
+  const deleteProject = async () => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    const raw = JSON.stringify({
+      projectId: currentProject?._id,
+    });
+
+    const requestOptions = {
+      method: "DELETE",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+
+    if (confirm("Are you sure you want to delete this project?")) {
+      try {
+        const response = await fetch("/api/projects/delete", requestOptions);
+        const result = await response.json();
+        alert(result.message);
+        router.push("/");
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      return;
+    }
+  };
+  const [showEditModal, setEditModal] = useState(false);
+
   return (
     <PageLayout pageName={"My Projects"}>
       <div className="">
@@ -132,10 +162,73 @@ const ViewProject = () => {
             }
           >
             {/* Display the full name instead of username */}
-            <div className="text-4xl font-bold text-theme_black/40">
-              Hello! {fullName}
+            <div className="flex justify-between items-start">
+              <div className="text-4xl font-bold text-theme_black/40">
+                Hello! {fullName}
+              </div>
+              <div className="-mt-8 -mr-4">
+                <button
+                  className={
+                    showEditModal ? "p-3 bg-black/10 rounded-full" : "p-3"
+                  }
+                  onClick={() => {
+                    setEditModal(!showEditModal);
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="38px"
+                    viewBox="0 -960 960 960"
+                    width="38px"
+                    fill="#000000"
+                  >
+                    <path d="m680-80-12-60q-12-5-22.5-10.5T624-164l-58 18-40-68 46-40q-2-12-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T668-420l12-60h80l12 60q12 5 22.5 10.5T816-396l58-18 40 68-46 40q2 12 2 26t-2 26l46 40-40 68-58-18q-11 8-21.5 13.5T772-140l-12 60h-80Zm40-120q33 0 56.5-23.5T800-280q0-33-23.5-56.5T720-360q-33 0-56.5 23.5T640-280q0 33 23.5 56.5T720-200Zm-560 40q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v131q-35-25-76-38t-85-13q-118 0-198.5 82.5T440-281q0 32 7 62t21 59H160Z" />
+                  </svg>
+                </button>
+                <div
+                  className={showEditModal ? "absolute z-50 mt-1" : "hidden"}
+                >
+                  <div className="flex flex-col gap-3 justify-start bg-white/70 px-5 py-3 rounded-lg border border-black/50 -ml-24">
+                    <div className="hidden">
+                      <button className="flex items-center gap-2">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          height="22px"
+                          viewBox="0 -960 960 960"
+                          width="22px"
+                          fill="#000000"
+                        >
+                          <path d="M80 0v-160h800V0H80Zm80-240v-170l448-447q11-11 25.5-17t30.5-6q16 0 31 6t27 18l55 56q12 11 17.5 26t5.5 31q0 15-5.5 29.5T777-687L330-240H160Zm504-448 56-56-56-56-56 56 56 56Z" />
+                        </svg>
+                        <div className="text-lg font-bold text-theme_black/70 tracking-wide font-sans">
+                          Edit
+                        </div>
+                      </button>
+                    </div>
+                    <button
+                      className="flex items-center gap-2"
+                      onClick={() => {
+                        deleteProject();
+                      }}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        height="22px"
+                        viewBox="0 -960 960 960"
+                        width="22px"
+                        fill="#000000"
+                      >
+                        <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z" />
+                      </svg>
+                      <div className="text-lg font-bold text-theme_black/70 tracking-wide font-sans">
+                        Delete
+                      </div>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className="text-4xl font-bold text-theme_black/90 mt-2">
+            <div className="text-4xl font-bold text-theme_black/90 mt-4">
               Welcome to {currentProject?.name}
             </div>
           </div>

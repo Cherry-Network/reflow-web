@@ -35,7 +35,7 @@ export default function Home() {
       try {
         const decoded = await decode({
           token: `${Cookies.get("authSessionToken")}`,
-          salt: "__Secure-authjs.session-token",
+          salt: "authjs.session-token",
           secret: authSecret,
         });
 
@@ -113,6 +113,7 @@ export default function Home() {
 
     fetchProjects();
   }, [username]);
+
 
   return (
     <PageLayout pageName={"My Projects"}>
