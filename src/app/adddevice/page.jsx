@@ -21,7 +21,7 @@ const AddDevice = () => {
   
 
   return (
-    <PageLayout pageName={"My Projects"}>
+    <PageLayout pageName={"My Projects"} routeToDashboard={true}>
       <div className="">
         <div className="p-10">
           <div className="p-10 bg-theme_black/5 rounded-2xl">

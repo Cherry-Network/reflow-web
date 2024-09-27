@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const Navbar = () => {
+const Navbar = ({ dashboardRoute }) => {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
   const [currentUser, setCurrentUser] = useState(null);
@@ -18,11 +18,15 @@ const Navbar = () => {
           <button
             className="bg-[#1B1B1B] text-white text-lg tracking-wide rounded-full px-5 py-3"
             onClick={() => {
-              sessionStorage.removeItem("username");
-              router.push("https://reflowtech.in/loginned");
+              if (dashboardRoute) {
+                router.push('/');
+              } else {
+                sessionStorage.removeItem("username");
+                router.push("https://reflowtech.in/loginned");
+              }
             }}
           >
-            Back to Home
+            {dashboardRoute ? "Back to Dashboard" : "Back to Home"}
           </button>
 
           {currentUser && (

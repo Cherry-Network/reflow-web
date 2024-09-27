@@ -21,7 +21,7 @@ const Analytics = () => {
 
   return (
     <>
-      <PageLayout pageName={"Config Panel"}>
+      <PageLayout pageName={"Config Panel"} routeToDashboard={true}>
         <div className="px-8 mt-20">
           <>
             <DeviceConfig

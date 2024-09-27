@@ -89,7 +89,7 @@ const ProvideAccess = () => {
   };
 
   return (
-    <PageLayout pageName={"Provide Access"}>
+    <PageLayout pageName={"Provide Access"} routeToDashboard={true}>
       <div className="p-10">
         <div className="text-3xl font-bold text-theme_black/90">
           Provide the Access Details

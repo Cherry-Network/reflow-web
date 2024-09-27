@@ -61,7 +61,7 @@ export default function AddProject() {
 
   return (
     <>
-      <PageLayout pageName={"My Projects"}>
+      <PageLayout pageName={"My Projects"} routeToDashboard={true}>
         <div className="p-10">
           <div className="text-3xl font-bold text-theme_black/90">
             Please Fill the Details

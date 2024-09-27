@@ -153,7 +153,7 @@ const ViewProject = () => {
   const [showEditModal, setEditModal] = useState(false);
 
   return (
-    <PageLayout pageName={"My Projects"}>
+    <PageLayout pageName={"My Projects"} routeToDashboard={true}>
       <div className="">
         <div className="p-10">
           <div
@@ -172,7 +172,9 @@ const ViewProject = () => {
                     showEditModal ? "p-3 bg-black/10 rounded-full" : "p-3"
                   }
                   onClick={() => {
-                    setEditModal(!showEditModal);
+                    currentProject?.owner === sessionStorage.getItem("username")
+                      ? setEditModal(!showEditModal)
+                      : alert("Not authroized to perform this action. Contact the project owner.");
                   }}
                 >
                   <svg
@@ -180,7 +182,12 @@ const ViewProject = () => {
                     height="38px"
                     viewBox="0 -960 960 960"
                     width="38px"
-                    fill="#000000"
+                    fill={
+                      currentProject?.owner ===
+                      sessionStorage.getItem("username")
+                        ? "#000000"
+                        : "#666666"
+                    }
                   >
                     <path d="m680-80-12-60q-12-5-22.5-10.5T624-164l-58 18-40-68 46-40q-2-12-2-26t2-26l-46-40 40-68 58 18q11-8 21.5-13.5T668-420l12-60h80l12 60q12 5 22.5 10.5T816-396l58-18 40 68-46 40q2 12 2 26t-2 26l46 40-40 68-58-18q-11 8-21.5 13.5T772-140l-12 60h-80Zm40-120q33 0 56.5-23.5T800-280q0-33-23.5-56.5T720-360q-33 0-56.5 23.5T640-280q0 33 23.5 56.5T720-200Zm-560 40q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v131q-35-25-76-38t-85-13q-118 0-198.5 82.5T440-281q0 32 7 62t21 59H160Z" />
                   </svg>
@@ -210,6 +217,12 @@ const ViewProject = () => {
                       onClick={() => {
                         deleteProject();
                       }}
+                      disabled={
+                        currentProject?.owner ===
+                        sessionStorage.getItem("username")
+                          ? false
+                          : true
+                      }
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"

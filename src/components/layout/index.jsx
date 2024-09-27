@@ -2,7 +2,7 @@ import Navbar from "@/components/navbar";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const PageLayout = ({ children, pageName }) => {
+const PageLayout = ({ children, pageName, routeToDashboard }) => {
   const router = useRouter();
 
   const sidebarItems = [
@@ -20,7 +20,7 @@ const PageLayout = ({ children, pageName }) => {
   return (
     <>
       <div className="flex flex-col min-h-screen overflow-auto">
-        <Navbar />
+        <Navbar dashboardRoute={routeToDashboard} />
         <div className="flex w-full h-full">
           <div className="min-h-screen">
             <div className="w-[300px] flex flex-col h-full bg-[#1B1B1B]">
