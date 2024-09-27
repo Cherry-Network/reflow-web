@@ -14,8 +14,12 @@ const ViewProject = () => {
   const [selectedDevice, setSelectedDevice] = useState(null);
   const [fullName, setFullName] = useState("Loading..."); // Changed from userName to fullName
   const [loading, setLoading] = useState(false);
+  const [adminUsername, setAdminUsername] = useState("");
 
   useEffect(() => {
+    // fetch admin username from session storage
+    const adminUsername = sessionStorage.getItem("username");
+    setAdminUsername(adminUsername);
     // Fetch full name from session storage
     const storedFullName = sessionStorage.getItem("fullName");
     if (storedFullName) {
@@ -172,9 +176,11 @@ const ViewProject = () => {
                     showEditModal ? "p-3 bg-black/10 rounded-full" : "p-3"
                   }
                   onClick={() => {
-                    currentProject?.owner === sessionStorage.getItem("username")
+                    currentProject?.owner === adminUsername
                       ? setEditModal(!showEditModal)
-                      : alert("Not authroized to perform this action. Contact the project owner.");
+                      : alert(
+                          "Not authroized to perform this action. Contact the project owner."
+                        );
                   }}
                 >
                   <svg
@@ -183,8 +189,7 @@ const ViewProject = () => {
                     viewBox="0 -960 960 960"
                     width="38px"
                     fill={
-                      currentProject?.owner ===
-                      sessionStorage.getItem("username")
+                      currentProject?.owner === adminUsername
                         ? "#000000"
                         : "#666666"
                     }
@@ -218,10 +223,7 @@ const ViewProject = () => {
                         deleteProject();
                       }}
                       disabled={
-                        currentProject?.owner ===
-                        sessionStorage.getItem("username")
-                          ? false
-                          : true
+                        currentProject?.owner === adminUsername ? false : true
                       }
                     >
                       <svg
