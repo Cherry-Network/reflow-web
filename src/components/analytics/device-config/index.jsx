@@ -303,7 +303,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
 
         const result = await response.json();
         console.log("Data published successfully:", result);
-        alert("Data published successfully");
+        alert("Device Configured Successfully.");
       } catch (error) {
         console.error("Error publishing data:", error);
         alert("Failed to publish data");
