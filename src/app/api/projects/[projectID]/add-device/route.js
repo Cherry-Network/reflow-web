@@ -11,8 +11,7 @@ export async function POST(req, { params }) {
   }
 
   const { name, serial_no, activation_code, status } = await req.json();
-
-  // Define the default initial values
+  
   const initialValues = {
     MIN1: 10,
     MAX1: 50,
@@ -32,35 +31,41 @@ export async function POST(req, { params }) {
   };
 
   try {
-    // Connect to MongoDB
     await client.connect();
     const database = client.db("reflowdb");
     const projects = database.collection("projects");
+    const devices = database.collection("devices"); // Collection for devices
 
     if (!ObjectId.isValid(projectID)) {
-      console.log("MONGODB_URI:", process.env.MONGODB_URI);
       return new Response("Invalid project ID", { status: 400 });
     }
 
-    // Add the device to the project
+    const existingDevice = await devices.findOne({ seriel_no: serial_no });
+
+    if (existingDevice) {
+      return new Response("Device with this serial number already exists", {
+        status: 400,
+      });
+    }
+
+    const newDevice = await devices.insertOne({ name, seriel_no: serial_no });
+
+
     const result = await projects.updateOne(
       { _id: new ObjectId(projectID) },
-      { $push: { devices: { name, serial_no, activation_code, status } } }
+      { $push: { devices: newDevice.insertedId } }
     );
 
-    // If the device was successfully added, proceed with MQTT
     if (result.modifiedCount === 1) {
       const mqttClient = mqtt.connect(process.env.MQTT_BROKER_URL, {
         username: process.env.MQTT_USERNAME,
         password: process.env.MQTT_PASSWORD,
       });
 
-      // Constructing the topic based on the serial number
       const topic = `${serial_no.slice(0, 3)}/${serial_no.slice(3, 5)}/INPUT`;
 
       return new Promise((resolve, reject) => {
         mqttClient.on("connect", () => {
-          // Publish the initial values to the MQTT topic with the retain flag
           mqttClient.publish(
             topic,
             JSON.stringify(initialValues),
@@ -69,12 +74,10 @@ export async function POST(req, { params }) {
               mqttClient.end();
 
               if (err) {
-                console.error("Error publishing to MQTT:", err);
                 resolve(
                   new Response("Error publishing to MQTT", { status: 500 })
                 );
               } else {
-                console.log(`Published to topic: ${topic} with retain flag`);
                 resolve(new Response(JSON.stringify(result), { status: 200 }));
               }
             }
@@ -83,7 +86,6 @@ export async function POST(req, { params }) {
 
         mqttClient.on("error", (err) => {
           mqttClient.end();
-          console.error("MQTT client error:", err);
           resolve(new Response("MQTT client error", { status: 500 }));
         });
       });
@@ -91,7 +93,6 @@ export async function POST(req, { params }) {
       return new Response("Device not added to the project", { status: 500 });
     }
   } catch (error) {
-    console.error("Error adding device:", error);
     return new Response("Error adding device", { status: 500 });
   } finally {
     await client.close();
