@@ -62,10 +62,7 @@ const Form = ({ projectID, onSuccess }) => {
     };
 
     try {
-      const response = await fetch(
-        "/api/get-secret-key/",
-        requestOptions
-      );
+      const response = await fetch("/api/get-secret-key/", requestOptions);
       const result = await response.json();
       if (result.status === "verified") {
         const deviceData = {
@@ -92,8 +89,10 @@ const Form = ({ projectID, onSuccess }) => {
             console.log("Device added:", data);
             alert("Device added successfully!");
             onSuccess();
+          } else if (response.status === 400) {
+            const errorMessage = await response.text();
+            alert(errorMessage);
           } else {
-            console.error("Error adding device:", await response.text());
             alert("Failed to add device");
           }
         } catch (error) {
@@ -105,6 +104,7 @@ const Form = ({ projectID, onSuccess }) => {
       }
     } catch (error) {
       console.error(error);
+      alert("Error fetching secret key");
     }
     setSubmitting(false);
   };
