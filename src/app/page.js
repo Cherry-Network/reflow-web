@@ -35,7 +35,7 @@ export default function Home() {
       try {
         const decoded = await decode({
           token: `${Cookies.get("authSessionToken")}`,
-          salt: "authjs.session-token",
+          salt: "__Secure-authjs.session-token",
           secret: authSecret,
         });
 
