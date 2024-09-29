@@ -54,7 +54,7 @@ const fetchData = async (serialId, config) => {
       },
     ];
 
-    return { data: formattedData, lastUpdatedTime: dataObject.UpdateTimeStamp };
+    return { data: formattedData, lastUpdatedTime };
   } catch (error) {
     console.error("Error fetching data:", error);
     return { data: [], lastUpdatedTime: null };
@@ -68,12 +68,40 @@ const calculateLevel = (reading) => {
 
 const parseUpdateTime = (timestamp) => {
   const [date, time] = timestamp.split(" ");
-  const [day, month, year] = date.split("/");
-  const [hour, minute, second] = time.split(":");
+  const [day, month, year] = date.split("/"); // Split the DD/MM/YY part
+  const [hour, minute, second] = time.split(":"); // Split the HH:MM:SS part
+
+  const fullYear = year.length === 2 ? `20${year}` : year;
+
   const parsedDate = new Date(
-    `20${year}-${month}-${day}T${hour}:${minute}:${second}`
+    `${fullYear}-${month.padStart(2, "0")}-${day.padStart(
+      2,
+      "0"
+    )}T${hour}:${minute}:${second}`
   );
+
+  // Check if the date is valid
+  if (isNaN(parsedDate.getTime())) {
+    console.error("Invalid date format:", timestamp);
+    return null;
+  }
+
   return parsedDate;
+};
+
+const checkIfDeviceOnline = (lastUpdatedTime) => {
+  if (!lastUpdatedTime) {
+    console.log("No last updated time, assuming device is offline.");
+    return false;
+  }
+
+  const now = new Date();
+  const timeDifference = now - lastUpdatedTime;
+  const fiveMinsInMilliseconds = 5 * 60 * 1000;
+
+  const isOnline = timeDifference <= fiveMinsInMilliseconds;
+
+  return isOnline;
 };
 
 const DataTable = ({ deviceSerialNumber, deviceName }) => {
@@ -81,7 +109,6 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
   const [config, setConfig] = useState(null);
   const [lastUpdatedTime, setLastUpdatedTime] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [intervalId, setIntervalId] = useState(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -90,7 +117,6 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
       if (configData) {
         setConfig(configData);
 
-        // Fetch the readings immediately
         const result = await fetchData(deviceSerialNumber, configData);
         setData(result.data);
         setLastUpdatedTime(result.lastUpdatedTime);
@@ -101,20 +127,21 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
     };
 
     fetchInitialData();
-  }, [deviceSerialNumber]); // Fetch when deviceSerialNumber changes
+  }, [deviceSerialNumber]);
 
+  // Fetch data periodically after config is available
   useEffect(() => {
     if (config) {
       const newIntervalId = setInterval(async () => {
         const intervalResult = await fetchData(deviceSerialNumber, config);
         setData(intervalResult.data);
-        setLastUpdatedTime(intervalResult.lastUpdatedTime);
+        setLastUpdatedTime(intervalResult.lastUpdatedTime); // Set last updated time here
       }, 3000);
 
       // Clear interval on component unmount
       return () => clearInterval(newIntervalId);
     }
-  }, [config]); // Only run when config changes
+  }, [config]);
 
   const columns = [
     { key: "serialNo", label: "Serial No" },
@@ -127,7 +154,7 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
           Status
           <span
             className={`w-3 h-3 rounded-full ${
-              data.some((row) => row.status === "Online")
+              checkIfDeviceOnline(lastUpdatedTime)
                 ? "bg-green-500"
                 : "bg-red-500"
             }`}
@@ -142,7 +169,10 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
       <div className="text-lg font-bold flex gap-8 pl-2 text-theme_black/60 pb-6">
         <span>Device - {deviceName}</span>
         <span>S.NO. - {deviceSerialNumber}</span>
-        <span>Last Updated - {lastUpdatedTime ? lastUpdatedTime : "N/A"}</span>
+        <span>
+          Last Updated -{" "}
+          {lastUpdatedTime ? lastUpdatedTime.toLocaleString() : "N/A"}
+        </span>
       </div>
       <div className="bg-white border-4 border-black rounded-3xl overflow-hidden flex">
         <div className="flex-grow">
