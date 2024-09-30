@@ -1,29 +1,83 @@
 // app/api/deleteProject/route.js
-import { NextResponse } from 'next/server';
-import clientPromise from '@/lib/mongodb';
-import { ObjectId } from 'mongodb';
+import { NextResponse } from "next/server";
+import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
 
 export async function DELETE(req) {
   try {
     const client = await clientPromise;
-    const db = client.db('reflowdb'); // Replace with your database name
+    const db = client.db("reflowdb");
 
-    // Parse the body to get projectId from the request
+    
     const { projectId } = await req.json();
 
-    if (!projectId) {
-      return NextResponse.json({ message: 'Project ID is required' }, { status: 400 });
+    if (!projectId || !ObjectId.isValid(projectId)) {
+      return NextResponse.json(
+        { message: "Invalid or missing Project ID" },
+        { status: 400 }
+      );
     }
 
-    // Delete the project by ObjectId
-    const result = await db.collection('projects').deleteOne({ _id: new ObjectId(projectId) });
+    const projectsCollection = db.collection("projects");
+    const usersCollection = db.collection("users");
+    const devicesCollection = db.collection("devices");
 
-    if (result.deletedCount === 1) {
-      return NextResponse.json({ message: 'Project deleted successfully' }, { status: 200 });
-    } else {
-      return NextResponse.json({ message: 'Project not found' }, { status: 404 });
+
+    const project = await projectsCollection.findOne({
+      _id: new ObjectId(projectId),
+    });
+
+    if (!project) {
+      return NextResponse.json(
+        { message: "Project not found" },
+        { status: 404 }
+      );
     }
+
+    const { devices: deviceIds } = project;
+
+
+    const projectDeletionResult = await projectsCollection.deleteOne({
+      _id: new ObjectId(projectId),
+    });
+
+    if (projectDeletionResult.deletedCount === 0) {
+      return NextResponse.json(
+        { message: "Failed to delete the project" },
+        { status: 500 }
+      );
+    }
+
+    await usersCollection.updateMany(
+      {
+        $or: [
+          { projectIDs: new ObjectId(projectId) },
+          { sharedAccess: new ObjectId(projectId) },
+        ],
+      },
+      {
+        $pull: {
+          projectIDs: new ObjectId(projectId),
+          sharedAccess: new ObjectId(projectId),
+        },
+      }
+    );
+
+    if (deviceIds && deviceIds.length > 0) {
+      await devicesCollection.deleteMany({
+        _id: { $in: deviceIds.map((id) => new ObjectId(id)) },
+      });
+    }
+
+    return NextResponse.json(
+      { message: "Project and related data deleted successfully" },
+      { status: 200 }
+    );
   } catch (error) {
-    return NextResponse.json({ message: 'An error occurred', error: error.message }, { status: 500 });
+    console.error("Error deleting project:", error);
+    return NextResponse.json(
+      { message: "An error occurred", error: error.message },
+      { status: 500 }
+    );
   }
 }
