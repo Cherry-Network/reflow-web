@@ -11,7 +11,7 @@ export async function POST(req, { params }) {
   }
 
   const { name, serial_no, activation_code, status } = await req.json();
-  
+
   const initialValues = {
     MIN1: 10,
     MAX1: 50,
@@ -34,7 +34,7 @@ export async function POST(req, { params }) {
     await client.connect();
     const database = client.db("reflowdb");
     const projects = database.collection("projects");
-    const devices = database.collection("devices"); // Collection for devices
+    const devices = database.collection("devices");
 
     if (!ObjectId.isValid(projectID)) {
       return new Response("Invalid project ID", { status: 400 });
@@ -48,12 +48,21 @@ export async function POST(req, { params }) {
       });
     }
 
-    const newDevice = await devices.insertOne({ name, seriel_no: serial_no });
+  
+    await devices.insertOne({ seriel_no: serial_no });
 
+    
+    const fullDevice = {
+      name,
+      seriel_no: serial_no,
+      activation_code,
+      status: status || "active",
+    };
 
+    
     const result = await projects.updateOne(
       { _id: new ObjectId(projectID) },
-      { $push: { devices: newDevice.insertedId } }
+      { $push: { devices: fullDevice } }
     );
 
     if (result.modifiedCount === 1) {
