@@ -16,7 +16,7 @@ export async function GET(req, { params }) {
 
     const project = await projects.findOne(
       { _id: new ObjectId(projectID) },
-      { projection: { devices: 1, name: 1 } }
+      { projection: { devices: 1, name: 1 } } 
     );
 
     if (!project) {
