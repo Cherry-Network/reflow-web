@@ -1,13 +1,13 @@
 const mongoose = require("mongoose");
 
 const deviceSchema = new mongoose.Schema({
-  seriel_no: { type: String, required: true, unique: true },
+  serial_no: { type: String, required: true, unique: true },
 });
 
 
 const fullDeviceSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  seriel_no: { type: String, required: true },
+  serial_no: { type: String, required: true },
   activation_code: { type: String, required: true },
   status: { type: String, enum: ["active", "inactive"], default: "active" },
 });
