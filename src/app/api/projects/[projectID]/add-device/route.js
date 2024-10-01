@@ -49,12 +49,12 @@ export async function POST(req, { params }) {
     }
 
   
-    await devices.insertOne({ seriel_no: serial_no });
+    await devices.insertOne({ serial_no: serial_no });
 
     
     const fullDevice = {
       name,
-      seriel_no: serial_no,
+      serial_no: serial_no,
       activation_code,
       status: status || "active",
     };
