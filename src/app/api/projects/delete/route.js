@@ -1,4 +1,4 @@
-// app/api/deleteProject/route.js
+// app/api/projects/delete/route.js
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
@@ -8,7 +8,6 @@ export async function DELETE(req) {
     const client = await clientPromise;
     const db = client.db("reflowdb");
 
-    
     const { projectId } = await req.json();
 
     if (!projectId || !ObjectId.isValid(projectId)) {
@@ -22,7 +21,6 @@ export async function DELETE(req) {
     const usersCollection = db.collection("users");
     const devicesCollection = db.collection("devices");
 
-
     const project = await projectsCollection.findOne({
       _id: new ObjectId(projectId),
     });
@@ -34,8 +32,7 @@ export async function DELETE(req) {
       );
     }
 
-    const { devices: deviceIds } = project;
-
+    const deviceSerialNos = project.devices.map((device) => device.serial_no);
 
     const projectDeletionResult = await projectsCollection.deleteOne({
       _id: new ObjectId(projectId),
@@ -63,14 +60,14 @@ export async function DELETE(req) {
       }
     );
 
-    if (deviceIds && deviceIds.length > 0) {
+    if (deviceSerialNos.length > 0) {
       await devicesCollection.deleteMany({
-        _id: { $in: deviceIds.map((id) => new ObjectId(id)) },
+        serial_no: { $in: deviceSerialNos },
       });
     }
 
     return NextResponse.json(
-      { message: "Project and related data deleted successfully" },
+      { message: "Project and related devices deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
