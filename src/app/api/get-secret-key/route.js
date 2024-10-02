@@ -6,8 +6,8 @@ export async function POST(req) {
   const client = new Client({
     host: process.env.POSTGRES_HOST,
     database: process.env.POSTGRES_DB_SECRET_KEY,
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
+    user: process.env.POSTGRES_USER_SECRET_KEY,
+    password: process.env.POSTGRES_PASSWORD_SECRET_KEY,
     port: process.env.POSTGRES_PORT,
   });
 
