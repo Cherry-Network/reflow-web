@@ -110,11 +110,11 @@ const Form = ({ projectID, onSuccess }) => {
   };
 
   return (
-    <main className="flex flex-col items-start p-10">
-      <h1 className="text-3xl font-bold mb-8">Fill the details</h1>
+    <main className="flex flex-col items-start p-6">
+      <h1 className="text-xl font-bold mb-6">Fill the details</h1>
       <form
         onSubmit={handleSubmit}
-        className="flex flex-col gap-6 w-full p-10 bg-theme_black/5 rounded-xl"
+        className="flex flex-col gap-6 w-full p-8 bg-theme_black/5 rounded-xl"
       >
         {formConfig.map((item, index) => (
           <InputField
@@ -135,7 +135,7 @@ const Form = ({ projectID, onSuccess }) => {
         >
           {submitting ? (
             <svg
-              className="animate-spin mx-auto h-7 w-7 text-white"
+              className="animate-spin mx-auto h-6 w-6 text-white"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

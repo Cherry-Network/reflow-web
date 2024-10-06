@@ -21,7 +21,7 @@ export default function Home() {
   useEffect(() => {
     const userToken = getToken.get("user");
     if (userToken) {
-      Cookies.set("authSessionToken", userToken, { expires: 1 });
+      Cookies.set("authSessionToken", userToken, { expires: 0.5 });
       const params = new URLSearchParams(getToken.toString());
       params.delete("user");
       router.replace(`?${params.toString()}`);
@@ -125,14 +125,14 @@ export default function Home() {
         ) : (
           <>
             <div className="w-full">
-              <h2 className="text-xl font-bold text-theme_black mb-4">
+              <h2 className="text-lg font-bold text-theme_black mb-4">
                 Your Projects
               </h2>
               <div className="flex flex-wrap gap-4">
                 {ownProjects.map((project) => (
                   <button
                     key={project._id}
-                    className="flex flex-col gap-1 py-6 h-[250px] justify-center items-center bg_project_card rounded-2xl w-[400px]"
+                    className="flex flex-col gap-1 py-6 h-[187px] justify-center items-center bg_project_card rounded-2xl w-[300px]"
                     onClick={() => {
                       sessionStorage.setItem(
                         "selectedProjectID",
@@ -141,10 +141,10 @@ export default function Home() {
                       router.push("/viewproject");
                     }}
                   >
-                    <span className="text-2xl text-theme_white font-bold">
+                    <span className="text-lg text-theme_white font-bold">
                       {project.name}
                     </span>
-                    <span className="text-sm font-medium tracking-wide text-gray-300">
+                    <span className="text-xs font-medium tracking-wide text-gray-300">
                       ID: {project._id}
                     </span>
                   </button>
@@ -156,7 +156,7 @@ export default function Home() {
             </div>
 
             <div className="w-full mt-8">
-              <h2 className="text-xl font-bold text-theme_black mb-4">
+              <h2 className="text-lg font-bold text-theme_black mb-4">
                 Shared Projects
               </h2>
               <div className="flex flex-wrap gap-4">
@@ -164,7 +164,7 @@ export default function Home() {
                   sharedProjects.map((project) => (
                     <button
                       key={project._id}
-                      className="flex flex-col gap-1 py-6 h-[250px] justify-center items-center bg_project_card rounded-2xl w-[400px]"
+                      className="flex flex-col gap-1 py-6 h-[187px] justify-center items-center bg_project_card rounded-2xl w-[300px]"
                       onClick={() => {
                         sessionStorage.setItem(
                           "selectedProjectID",
@@ -173,20 +173,20 @@ export default function Home() {
                         router.push("/viewproject");
                       }}
                     >
-                      <span className="text-2xl text-theme_white font-bold">
+                      <span className="text-lg text-theme_white font-bold">
                         {project.name}
                       </span>
-                      <span className="text-sm font-medium tracking-wide text-gray-300">
+                      <span className="text-xs font-medium tracking-wide text-gray-300">
                         ID: {project._id}
                       </span>
-                      <span className="text-sm font-medium tracking-wide text-gray-300">
+                      <span className="text-xs font-medium tracking-wide text-gray-300">
                         Owner: {project.owner}
                       </span>
                     </button>
                   ))
                 ) : (
-                  <div className="flex flex-col gap-1 py-6 h-[250px] justify-center items-center bg-gray-200 rounded-2xl w-[400px]">
-                    <span className="text-xl text-gray-500 font-semibold">
+                  <div className="flex flex-col gap-1 py-6 h-[187px] justify-center items-center bg-gray-200 rounded-2xl w-[300px]">
+                    <span className="text-base text-gray-500 font-semibold">
                       No shared projects available
                     </span>
                   </div>

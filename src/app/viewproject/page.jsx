@@ -159,15 +159,15 @@ const ViewProject = () => {
   return (
     <PageLayout pageName={"My Projects"} routeToDashboard={true}>
       <div className="">
-        <div className="p-10">
+        <div className="p-8">
           <div
             className={
-              showAddDevice ? "hidden" : `p-10 bg-theme_black/10 rounded-2xl`
+              showAddDevice ? "hidden" : `p-8 bg-theme_black/10 rounded-2xl`
             }
           >
             {/* Display the full name instead of username */}
             <div className="flex justify-between items-start">
-              <div className="text-4xl font-bold text-theme_black/40">
+              <div className="text-xl font-bold text-theme_black/40">
                 Hello! {fullName}
               </div>
               <div className="-mt-8 -mr-4">
@@ -185,9 +185,9 @@ const ViewProject = () => {
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    height="38px"
+                    height="28px"
                     viewBox="0 -960 960 960"
-                    width="38px"
+                    width="28px"
                     fill={
                       currentProject?.owner === adminUsername
                         ? "#000000"
@@ -205,14 +205,14 @@ const ViewProject = () => {
                       <button className="flex items-center gap-2">
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          height="22px"
+                          height="18px"
                           viewBox="0 -960 960 960"
-                          width="22px"
+                          width="18px"
                           fill="#000000"
                         >
                           <path d="M80 0v-160h800V0H80Zm80-240v-170l448-447q11-11 25.5-17t30.5-6q16 0 31 6t27 18l55 56q12 11 17.5 26t5.5 31q0 15-5.5 29.5T777-687L330-240H160Zm504-448 56-56-56-56-56 56 56 56Z" />
                         </svg>
-                        <div className="text-lg font-bold text-theme_black/70 tracking-wide font-sans">
+                        <div className="text-sm font-bold text-theme_black/70 tracking-wide font-sans">
                           Edit
                         </div>
                       </button>
@@ -228,14 +228,14 @@ const ViewProject = () => {
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        height="22px"
+                        height="18px"
                         viewBox="0 -960 960 960"
-                        width="22px"
+                        width="18px"
                         fill="#000000"
                       >
                         <path d="M280-120q-33 0-56.5-23.5T200-200v-520h-40v-80h200v-40h240v40h200v80h-40v520q0 33-23.5 56.5T680-120H280Zm80-160h80v-360h-80v360Zm160 0h80v-360h-80v360Z" />
                       </svg>
-                      <div className="text-lg font-bold text-theme_black/70 tracking-wide font-sans">
+                      <div className="text-sm font-bold text-theme_black/70 tracking-wide font-sans">
                         Delete
                       </div>
                     </button>
@@ -243,13 +243,13 @@ const ViewProject = () => {
                 </div>
               </div>
             </div>
-            <div className="text-4xl font-bold text-theme_black/90 mt-4">
+            <div className="text-2xl font-bold text-theme_black/90 mt-4">
               Welcome to {currentProject?.name}
             </div>
           </div>
 
           {showAddDevice && (
-            <div className="p-10 bg-theme_black/5 rounded-2xl">
+            <div className="p-8 bg-theme_black/5 rounded-2xl">
               <Form
                 projectID={currentProject?._id}
                 onSuccess={handleFormSuccess}
@@ -259,12 +259,12 @@ const ViewProject = () => {
         </div>
 
         {/* Dropdown for selecting device */}
-        <div className={currentProject?.devices.length > 0 ? "p-10" : "hidden"}>
-          <div className="text-lg font-bold text-theme_black/60 mb-4">
+        <div className={currentProject?.devices.length > 0 ? "px-10 pb-6" : "hidden"}>
+          <div className="text-base font-bold text-theme_black/60 mb-2">
             Select Device:
           </div>
           <select
-            className="p-2 border border-gray-300 rounded-md"
+            className="p-2 border border-gray-300 rounded-md text-sm"
             value={selectedDevice?.serial_no || ""}
             onChange={handleDeviceChange}
           >
@@ -310,17 +310,17 @@ const ViewProject = () => {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      height="36px"
+                      height="28px"
                       viewBox="0 -960 960 960"
-                      width="36px"
+                      width="28px"
                       fill="#000000"
                     >
                       <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" />
                     </svg>
                   </button>
                 </div>
-                <div className="flex flex-col bg-white border-2 border-black rounded-2xl">
-                  <div className="bg-black text-lg rounded-t-xl text-white text-center flex w-full justify-evenly items-center py-6 font-bold">
+                <div className="flex flex-col text-sm h-72 bg-white border-2 border-black rounded-2xl">
+                  <div className="bg-black text-base rounded-t-xl text-white text-center flex w-full justify-evenly items-center py-6 font-bold">
                     <span>Export Data</span>
                   </div>
                   <div className="p-4 flex flex-col h-full">
@@ -459,9 +459,9 @@ const ViewProject = () => {
 
         {/* Add Device Button */}
         {!showAddDevice && (
-          <div className="p-10 flex justify-center">
+          <div className="p-8 flex justify-center">
             <button
-              className="bg-theme_black/90 text-white w-[450px] text-xl font-semibold tracking-wide py-4 rounded-full mt-4 flex gap-3 justify-center items-center"
+              className="bg-theme_black/90 text-white w-[450px] text-lg font-semibold tracking-wide py-4 rounded-full mt-4 flex gap-3 justify-center items-center"
               onClick={(e) => {
                 e.preventDefault();
                 router.push("/adddevice");
@@ -470,7 +470,7 @@ const ViewProject = () => {
               <img
                 src="/icons/add-solid.svg"
                 alt="add"
-                className="w-7 h-auto"
+                className="w-5 h-auto"
               />
               <span>Add Device</span>
             </button>

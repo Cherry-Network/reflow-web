@@ -6,13 +6,24 @@ const PageLayout = ({ children, pageName, routeToDashboard }) => {
   const router = useRouter();
 
   const sidebarItems = [
-    { name: "My Projects", icon: "/icons/add.svg", path: "/" },
+    {
+      name: "My Projects",
+      icon: "/icons/add.svg",
+      icon_dark: "/icons/add-black.svg",
+      path: "/",
+    },
     {
       name: "Provide Access",
       icon: "/icons/access.svg",
+      icon_dark: "/icons/access-black.svg",
       path: "/provide-access",
     },
-    { name: "Settings", icon: "/icons/settings.svg", path: "/settings" },
+    {
+      name: "Settings",
+      icon: "/icons/settings.svg",
+      icon_dark: "/icons/settings-black.svg",
+      path: "/",
+    },
   ];
 
   const [activeButton, setActiveButton] = useState(pageName);
@@ -23,13 +34,13 @@ const PageLayout = ({ children, pageName, routeToDashboard }) => {
         <Navbar dashboardRoute={routeToDashboard} />
         <div className="flex w-full h-full">
           <div className="min-h-screen">
-            <div className="w-[300px] flex flex-col h-full bg-[#1B1B1B]">
-              <div className="flex flex-col items-center justify-center flex-grow gap-2 px-5">
-                <div className="bg-white p-6 mb-4 rounded-full">
+            <div className="w-[225px] flex flex-col h-full bg-[#1B1B1B]">
+              <div className="flex flex-col items-center justify-center flex-grow gap-4 px-5">
+                <div className="bg-white/95 p-5 mb-3 rounded-full">
                   <img
                     src="/assets/company-logo.svg"
                     alt="logo"
-                    className="h-20 w-20"
+                    className="h-14 w-14"
                   />
                 </div>
                 {sidebarItems.map((item, index) => (
@@ -58,12 +69,12 @@ const PageLayout = ({ children, pageName, routeToDashboard }) => {
                   >
                     <span className="">
                       <img
-                        src={item.icon}
-                        className="w-5 h-auto"
+                        src={activeButton === item.name ? item.icon_dark : item.icon}
+                        className="w-4 h-auto"
                         alt={item.name}
                       />
                     </span>
-                    <span className="font-medium tracking-wide text-lg">
+                    <span className="font-medium tracking-wide text-base">
                       {item.name}
                     </span>
                     {item.name === "Settings" && (
@@ -86,8 +97,8 @@ const PageLayout = ({ children, pageName, routeToDashboard }) => {
               </div>
             </div>
           </div>
-          <div className="flex-1 mt-20">
-            <div className="p-5">{children}</div>
+          <div className="flex-1 mt-16">
+            <div className="p-4">{children}</div>
           </div>
         </div>
       </div>

@@ -10,13 +10,13 @@ const Navbar = ({ dashboardRoute }) => {
   }, []);
   return (
     <>
-      <div className="bg-white fixed w-full border-b border-stone-300 py-5 px-10 flex justify-between items-center">
+      <div className="bg-white fixed w-full border-b border-stone-300 py-4 px-10 flex justify-between items-center">
         <div className="">
-          <img src="/assets/nav-logo.svg" alt="logo" className="h-16 w-auto" />
+          <img src="/assets/nav-logo.svg" alt="logo" className="h-12 w-auto" />
         </div>
         <div className="flex gap-10 justify-center items-center">
           <button
-            className="bg-[#1B1B1B] text-white text-lg tracking-wide rounded-full px-5 py-3"
+            className="bg-[#1B1B1B] text-white text-sm font-medium tracking-wide rounded-full px-5 py-3"
             onClick={() => {
               if (dashboardRoute) {
                 router.push('/');

@@ -327,7 +327,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       ) : (
         <div>
           <div className="flex flex-col gap-2 pb-10">
-            <div className="text-3xl font-bold text-[#1D1D1D]">
+            <div className="text-2xl font-bold text-[#1D1D1D]">
               Welcome to{" "}
               {JSON.parse(sessionStorage.getItem("selectedProjectID")).name}
             </div>
@@ -474,13 +474,13 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
             </div>
             <div className="flex justify-end gap-6">
               <button
-                className="bg-theme_black text-theme_white text-center w-36 py-3 rounded-full text-lg border border-theme_black"
+                className="text-theme_white text-center w-36 py-3 rounded-full text-lg border border-theme_black bg-green-950"
                 onClick={handleSubmit}
               >
                 Save
               </button>
               <button
-                className="bg-theme_black/40 text-theme_white border border-theme_black/30 text-center w-36 py-3 rounded-full text-lg"
+                className="bg-red-950 text-theme_white border border-theme_black/30 text-center w-36 py-3 rounded-full text-lg"
                 onClick={closeFunction}
               >
                 Close

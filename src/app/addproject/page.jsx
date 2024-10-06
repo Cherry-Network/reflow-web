@@ -62,15 +62,15 @@ export default function AddProject() {
   return (
     <>
       <PageLayout pageName={"My Projects"} routeToDashboard={true}>
-        <div className="p-10">
-          <div className="text-3xl font-bold text-theme_black/90">
+        <div className="p-8">
+          <div className="text-xl font-bold text-theme_black/90">
             Please Fill the Details
           </div>
           <form
-            className="bg-theme_black/10 text-theme_black/60 py-10 px-16 flex flex-col justify-center items-center gap-10 rounded-2xl mt-10"
+            className="bg-theme_black/10 text-theme_black/60 py-6 px-10 flex flex-col justify-center items-center gap-10 rounded-2xl mt-6"
             onSubmit={handleSubmit}
           >
-            <div className="text-lg flex flex-col gap-3 w-full">
+            <div className="text-base flex flex-col gap-3 w-full">
               <span>Project Name</span>
               <input
                 type="text"
@@ -78,23 +78,23 @@ export default function AddProject() {
                 value={projectDetails.project_name}
                 onChange={handleInputChange}
                 placeholder="Enter Project Name"
-                className="px-3 py-4 rounded-3xl border border-theme_black/40 focus:outline-none focus:border-theme_black/90"
+                className="px-3 py-4 rounded-2xl border border-theme_black/40 focus:outline-none focus:border-theme_black/90 text-sm"
                 required
               />
             </div>
-            <div className="text-lg flex flex-col gap-3 w-full">
+            <div className="text-base flex flex-col gap-3 w-full">
               <span>Project Description</span>
-              <div className="rounded-3xl border border-theme_black/40 bg-white p-2">
+              <div className="rounded-2xl border border-theme_black/40 bg-white p-2">
                 <textarea
                   name="project_description"
                   placeholder="Enter Project Description"
                   value={projectDetails.project_description}
                   onChange={handleInputChange}
                   maxLength={1500}
-                  className="px-3 py-4 h-[200px] w-full focus:outline-none"
+                  className="px-3 py-4 h-[200px] w-full focus:outline-none text-sm"
                   required
                 />
-                <span className="text-sm text-theme_black/40 flex justify-end px-3">
+                <span className="text-xs text-theme_black/40 flex justify-end px-3">
                   ({projectDetails.project_description.length} / 1500) Max. 250
                   words
                 </span>
@@ -103,12 +103,12 @@ export default function AddProject() {
 
             <button
               type="submit"
-              className="w-[400px] xl:w-[500px] text-center py-4 bg-theme_black/90 text-white rounded-full text-lg"
+              className="w-[300px] xl:w-[375px] text-center py-4 bg-theme_black/90 text-white rounded-full text-base"
               disabled={submitting}
             >
               {submitting ? (
                 <svg
-                  className="animate-spin mx-auto h-7 w-7 text-white"
+                  className="animate-spin mx-auto h-5 w-5 text-white"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
