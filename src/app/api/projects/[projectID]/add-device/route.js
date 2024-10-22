@@ -13,21 +13,21 @@ export async function POST(req, { params }) {
   const { name, serial_no, activation_code, status } = await req.json();
 
   const initialValues = {
-    MIN1: 10,
-    MAX1: 50,
+    MIN1: 0,
+    MAX1: 100,
     FAC1: 0,
-    CAL1: 0.5,
-    SNO1: "A123",
-    MIN2: 5,
-    MAX2: 30,
+    CAL1: 0.0,
+    SNO1: "Channel 1",
+    MIN2: 0,
+    MAX2: 100,
     FAC2: 0,
-    CAL2: 1.0,
-    SNO2: "B456",
-    MIN3: 20,
-    MAX3: 80,
+    CAL2: 0.0,
+    SNO2: "Channel 2",
+    MIN3: 0,
+    MAX3: 100,
     FAC3: 0,
-    CAL3: 0.8,
-    SNO3: "C789",
+    CAL3: 0.0,
+    SNO3: "Channel 3",
   };
 
   try {
