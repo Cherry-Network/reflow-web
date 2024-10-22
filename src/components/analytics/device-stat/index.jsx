@@ -183,7 +183,7 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
         <span>S.NO. - {deviceSerialNumber}</span>
         <span>
           Last Updated -{" "}
-          {lastUpdatedTime ? lastUpdatedTime.toLocaleString() : "N/A"}
+          {lastUpdatedTime ? `${lastUpdatedTime.toDateString()}, ${lastUpdatedTime.toLocaleTimeString()}` : "N/A"}
         </span>
       </div>
       <div className="bg-white border-4 border-black rounded-3xl overflow-hidden flex">
