@@ -80,6 +80,7 @@ const ProvideAccess = () => {
 
       const data = await response.json();
       console.log(data.message);
+      alert(`Project Access given to ${accessDetails.username ? accessDetails.username : ""} successfully`);
     } catch (error) {
       console.error("Error providing access:", error);
     } finally {
