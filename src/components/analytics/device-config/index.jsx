@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 
 const DeviceConfig = ({ closeFunction, deviceDetails }) => {
+
+  const [numRows, setNumRows] = useState(0);
+
   const [deviceInput, setDeviceInput] = useState({
     MIN1: "",
     MAX1: "",
@@ -33,6 +36,13 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   });
 
   useEffect(() => {
+    if (String(deviceDetails.id).startsWith("AX1")) {
+      setNumRows(1);
+    } else if (String(deviceDetails.id).startsWith("AX3")) {
+      setNumRows(3);
+    } else if (String(deviceDetails.id).startsWith("AX6")) {
+      setNumRows(6);
+    }
     const fetchDeviceData = async () => {
       try {
         const response = await fetch(
@@ -338,7 +348,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
           </div>
           <div className="bg-theme_black/10 p-6 rounded-xl flex flex-col gap-8">
             <div className="flex flex-col">
-              {deviceData.map((device, index) => (
+              {deviceData.slice(0, numRows).map((device, index) => (
                 <form
                   key={index}
                   className={`grid grid-cols-7 font-medium ${

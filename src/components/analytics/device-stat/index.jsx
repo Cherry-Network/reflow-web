@@ -22,7 +22,7 @@ const fetchConfigData = async (serialId) => {
 const calculateReadingsLevel = (rawReadings, min, max) => {
   if (rawReadings === null || rawReadings === undefined) {
     return 0;
-  } 
+  }
   if (min === null || min === undefined || max === null || max === undefined) {
     return 0;
   }
@@ -52,22 +52,67 @@ const fetchData = async (serialId, config) => {
         serialNo: config.SNO1,
         readings: dataObject.RawCH1 || "N/A",
         calibratedReadings: dataObject.CH1 || "N/A",
-        readingsLevel: calculateReadingsLevel(dataObject.RawCH1, config.MIN1, config.MAX1),
+        readingsLevel: calculateReadingsLevel(
+          dataObject.RawCH1,
+          config.MIN1,
+          config.MAX1
+        ),
         status: dataObject.ERR1 === 0 ? "Online" : "Offline",
       },
       {
         serialNo: config.SNO2,
         readings: dataObject.RawCH2 || "N/A",
         calibratedReadings: dataObject.CH2 || "N/A",
-        readingsLevel: calculateReadingsLevel(dataObject.RawCH2, config.MIN2, config.MAX2),
+        readingsLevel: calculateReadingsLevel(
+          dataObject.RawCH2,
+          config.MIN2,
+          config.MAX2
+        ),
         status: dataObject.ERR2 === 0 ? "Online" : "Offline",
       },
       {
         serialNo: config.SNO3,
         readings: dataObject.RawCH3 || "N/A",
         calibratedReadings: dataObject.CH3 || "N/A",
-        readingsLevel: calculateReadingsLevel(dataObject.RawCH3, config.MIN3, config.MAX3),
+        readingsLevel: calculateReadingsLevel(
+          dataObject.RawCH3,
+          config.MIN3,
+          config.MAX3
+        ),
         status: dataObject.ERR3 === 0 ? "Online" : "Offline",
+      },
+      {
+        serialNo: config.SNO4,
+        readings: dataObject.RawCH4 || "N/A",
+        calibratedReadings: dataObject.CH4 || "N/A",
+        readingsLevel: calculateReadingsLevel(
+          dataObject.RawCH4,
+          config.MIN4,
+          config.MAX4
+        ),
+        status: dataObject.ERR4 === 0 ? "Online" : "Offline",
+      },
+      {
+        serialNo: config.SNO5,
+        readings: dataObject.RawCH5 || "N/A",
+        calibratedReadings: dataObject.CH5 || "N/A",
+        readingsLevel: calculateReadingsLevel(
+          dataObject.RawCH5,
+          config.MIN5,
+          config.MAX5
+        ),
+        status: dataObject.ERR5 === 0 ? "Online" : "Offline",
+      },
+      {
+        serialNo: config.SNO6,
+        readings: dataObject.RawCH6 || "N/A",
+        calibratedReadings: dataObject.CH6 || "N/A",
+        readingsLevel: calculateReadingsLevel(
+          dataObject.RawCH6,
+          config.MIN6,
+          config.MAX6
+        ),
+        status: dataObject.ERR6 === 0 ? "Online" : "Offline",
       },
     ];
 
@@ -122,9 +167,22 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
   const [lastUpdatedTime, setLastUpdatedTime] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const [numRows, setNumRows] = useState(0);
+
   useEffect(() => {
     const fetchInitialData = async () => {
       setLoading(true);
+      if (deviceSerialNumber.startsWith("AX3")) {
+        setNumRows(3);
+      } else if (deviceSerialNumber.startsWith("AX6")) {
+        setNumRows(6);
+      } else if (deviceSerialNumber.startsWith("AX1")) {
+        setNumRows(1);
+      } else {
+        console.error("Invalid device serial number:", deviceSerialNumber);
+        setLoading(false);
+        return;
+      }
       const configData = await fetchConfigData(deviceSerialNumber);
       if (configData) {
         setConfig(configData);
@@ -183,17 +241,19 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
         <span>S.NO. - {deviceSerialNumber}</span>
         <span>
           Last Updated -{" "}
-          {lastUpdatedTime ? `${lastUpdatedTime.toDateString()}, ${lastUpdatedTime.toLocaleTimeString()}` : "N/A"}
+          {lastUpdatedTime
+            ? `${lastUpdatedTime.toDateString()}, ${lastUpdatedTime.toLocaleTimeString()}`
+            : "N/A"}
         </span>
       </div>
       <div className="bg-white border-4 border-black rounded-3xl overflow-hidden flex">
-        <div className="flex-grow min-w-[650px]">
+        <div className="flex-grow min-w-[650px] h-[290px] overflow-auto">
           {loading ? (
             <div className="flex justify-center items-center h-72">
               <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
             </div>
           ) : (
-            <table className="min-w-full bg-[#F0F0F0] border-collapse border-black min-h-72 text-sm">
+            <table className="min-w-full bg-[#F0F0F0] border-collapse border-black min-h-72 text-sm ">
               <thead className="bg-black text-white tracking-wider">
                 <tr>
                   {columns.map((column, index) => (
@@ -213,8 +273,11 @@ const DataTable = ({ deviceSerialNumber, deviceName }) => {
                 </tr>
               </thead>
               <tbody>
-                {data.map((row, index) => (
-                  <tr key={index} className="border-b-2 border-black font-semibold font-mono text-base">
+                {data.slice(0, numRows).map((row, index) => (
+                  <tr
+                    key={index}
+                    className="border-b-2 border-black font-semibold font-mono text-base"
+                  >
                     {columns.map((column, colIndex) => (
                       <td
                         key={column.key}
