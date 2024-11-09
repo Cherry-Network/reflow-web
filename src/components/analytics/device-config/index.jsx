@@ -5,21 +5,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   const [numRows, setNumRows] = useState(0);
 
   const [deviceInput, setDeviceInput] = useState({
-    MIN1: "",
-    MAX1: "",
-    FAC1: 0, // Set initial value as an integer
-    CAL1: "",
-    SNO1: "",
-    MIN2: "",
-    MAX2: "",
-    FAC2: 0, // Set initial value as an integer
-    CAL2: "",
-    SNO2: "",
-    MIN3: "",
-    MAX3: "",
-    FAC3: 0, // Set initial value as an integer
-    CAL3: "",
-    SNO3: "",
+    
   });
 
   const [loading, setLoading] = useState(true);
@@ -27,12 +13,18 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
     RawCH1: "",
     RawCH2: "",
     RawCH3: "",
+    RawCH4: "",
+    RawCH5: "",
+    RawCH6: "",
   });
 
   const [calibratedReadings, setCalibratedReadings] = useState({
     CalibratedCH1: "",
     CalibratedCH2: "",
     CalibratedCH3: "",
+    CalibratedCH4: "",
+    CalibratedCH5: "",
+    CalibratedCH6: "",
   });
 
   useEffect(() => {
@@ -70,6 +62,21 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
             FAC3: fetchedData.FAC3,
             CAL3: fetchedData.CAL3,
             SNO3: fetchedData.SNO3,
+            MIN4: fetchedData.MIN4,
+            MAX4: fetchedData.MAX4,
+            FAC4: fetchedData.FAC4,
+            CAL4: fetchedData.CAL4,
+            SNO4: fetchedData.SNO4,
+            MIN5: fetchedData.MIN5,
+            MAX5: fetchedData.MAX5,
+            FAC5: fetchedData.FAC5,
+            CAL5: fetchedData.CAL5,
+            SNO5: fetchedData.SNO5,
+            MIN6: fetchedData.MIN6,
+            MAX6: fetchedData.MAX6,
+            FAC6: fetchedData.FAC6,
+            CAL6: fetchedData.CAL6,
+            SNO6: fetchedData.SNO6,
           });
         }
       } catch (error) {
@@ -118,19 +125,34 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
   useEffect(() => {
     const newCalibratedReadings = {
       CalibratedCH1: calculateCalibratedReading(
-        Number(realTimeReadings.RawCH1),
-        Number(deviceInput.CAL1),
-        Number(deviceInput.FAC1)
+        Number(realTimeReadings.RawCH1 || 0),
+        Number(deviceInput.CAL1 || 0),
+        Number(deviceInput.FAC1 || 0)
       ),
       CalibratedCH2: calculateCalibratedReading(
-        Number(realTimeReadings.RawCH2),
-        Number(deviceInput.CAL2),
-        Number(deviceInput.FAC2)
+        Number(realTimeReadings.RawCH2 || 0),
+        Number(deviceInput.CAL2 || 0),
+        Number(deviceInput.FAC2 || 0)
       ),
       CalibratedCH3: calculateCalibratedReading(
-        Number(realTimeReadings.RawCH3),
-        Number(deviceInput.CAL3),
-        Number(deviceInput.FAC3)
+        Number(realTimeReadings.RawCH3 || 0),
+        Number(deviceInput.CAL3 || 0),
+        Number(deviceInput.FAC3 || 0)
+      ),
+      CalibratedCH4: calculateCalibratedReading(
+        Number(realTimeReadings.RawCH4 || 0),
+        Number(deviceInput.CAL4 || 0),
+        Number(deviceInput.FAC4 || 0)
+      ),
+      CalibratedCH5: calculateCalibratedReading(
+        Number(realTimeReadings.RawCH5 || 0),
+        Number(deviceInput.CAL5 || 0),
+        Number(deviceInput.FAC5 || 0)
+      ),
+      CalibratedCH6: calculateCalibratedReading(
+        Number(realTimeReadings.RawCH6 || 0),
+        Number(deviceInput.CAL6 || 0),
+        Number(deviceInput.FAC6 || 0)
       ),
     };
 
@@ -266,6 +288,72 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
       },
       calibratedReadings: { name: "", value: calibratedReadings.CalibratedCH3 },
     },
+    {
+      name: { name: "SNO4", value: deviceInput.SNO4 },
+      range: {
+        value: [
+          { name: "MIN4", value: deviceInput.MIN4 },
+          { name: "MAX4", value: deviceInput.MAX4 },
+        ],
+      },
+      calibration: { name: "CAL4", value: deviceInput.CAL4 },
+      factor: { name: "FAC4", value: deviceInput.FAC4 },
+      alert: {
+        value: [
+          { name: "min", value: "" },
+          { name: "max", value: "" },
+        ],
+      },
+      readings: {
+        name: realTimeReadings.RawCH4,
+        value: realTimeReadings.RawCH4,
+      },
+      calibratedReadings: { name: "", value: calibratedReadings.CalibratedCH4 },
+    },
+    {
+      name: { name: "SNO5", value: deviceInput.SNO5 },
+      range: {
+        value: [
+          { name: "MIN5", value: deviceInput.MIN5 },
+          { name: "MAX5", value: deviceInput.MAX5 },
+        ],
+      },
+      calibration: { name: "CAL5", value: deviceInput.CAL5 },
+      factor: { name: "FAC5", value: deviceInput.FAC5 },
+      alert: {
+        value: [
+          { name: "min", value: "" },
+          { name: "max", value: "" },
+        ],
+      },
+      readings: {
+        name: realTimeReadings.RawCH5,
+        value: realTimeReadings.RawCH5,
+      },
+      calibratedReadings: { name: "", value: calibratedReadings.CalibratedCH5 },
+    },
+    {
+      name: { name: "SNO6", value: deviceInput.SNO6 },
+      range: {
+        value: [
+          { name: "MIN6", value: deviceInput.MIN6 },
+          { name: "MAX6", value: deviceInput.MAX6 },
+        ],
+      },
+      calibration: { name: "CAL6", value: deviceInput.CAL6 },
+      factor: { name: "FAC6", value: deviceInput.FAC6 },
+      alert: {
+        value: [
+          { name: "min", value: "" },
+          { name: "max", value: "" },
+        ],
+      },
+      readings: {
+        name: realTimeReadings.RawCH6,
+        value: realTimeReadings.RawCH6,
+      },
+      calibratedReadings: { name: "", value: calibratedReadings.CalibratedCH6 },
+    },
   ];
 
   const displayFactorValue = (value) => {
@@ -348,7 +436,7 @@ const DeviceConfig = ({ closeFunction, deviceDetails }) => {
           </div>
           <div className="bg-theme_black/10 p-6 rounded-xl flex flex-col gap-8">
             <div className="flex flex-col">
-              {deviceData.slice(0, numRows).map((device, index) => (
+              {deviceData.slice(0, numRows+1).map((device, index) => (
                 <form
                   key={index}
                   className={`grid grid-cols-7 font-medium ${
