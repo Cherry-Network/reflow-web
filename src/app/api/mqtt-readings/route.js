@@ -113,6 +113,9 @@ export async function GET(req) {
       RawCH1: readings.RawCH1,
       RawCH2: readings.RawCH2,
       RawCH3: readings.RawCH3,
+      RawCH4: readings.RawCH4,
+      RawCH5: readings.RawCH5,
+      RawCH6: readings.RawCH6,
     };
 
     console.log("Returned readings for serialId:", serialId, "Data:", result);
