@@ -12,24 +12,70 @@ export async function POST(req, { params }) {
 
   const { name, serial_no, activation_code, status } = await req.json();
 
-  const initialValues = {
-    MIN1: 0,
-    MAX1: 100,
-    FAC1: 0,
-    CAL1: 0.0,
-    SNO1: "Channel 1",
-    MIN2: 0,
-    MAX2: 100,
-    FAC2: 0,
-    CAL2: 0.0,
-    SNO2: "Channel 2",
-    MIN3: 0,
-    MAX3: 100,
-    FAC3: 0,
-    CAL3: 0.0,
-    SNO3: "Channel 3",
-  };
+  let initialValues = {};
 
+  if (serial_no.startsWith("AX3")) {
+    initialValues = {
+      MIN1: 0,
+      MAX1: 100,
+      FAC1: 0,
+      CAL1: 0.0,
+      SNO1: "Channel 1",
+      MIN2: 0,
+      MAX2: 100,
+      FAC2: 0,
+      CAL2: 0.0,
+      SNO2: "Channel 2",
+      MIN3: 0,
+      MAX3: 100,
+      FAC3: 0,
+      CAL3: 0.0,
+      SNO3: "Channel 3",
+    };
+  } else if (serial_no.startsWith("AX6")) {
+    initialValues = {
+      MIN1: 0,
+      MAX1: 100,
+      FAC1: 0,
+      CAL1: 0.0,
+      SNO1: "Channel 1",
+      MIN2: 0,
+      MAX2: 100,
+      FAC2: 0,
+      CAL2: 0.0,
+      SNO2: "Channel 2",
+      MIN3: 0,
+      MAX3: 100,
+      FAC3: 0,
+      CAL3: 0.0,
+      SNO3: "Channel 3",
+      MIN4: 0,
+      MAX4: 100,
+      FAC4: 0,
+      CAL4: 0.0,
+      SNO4: "Channel 4",
+      MIN5: 0,
+      MAX5: 100,
+      FAC5: 0,
+      CAL5: 0.0,
+      SNO5: "Channel 5",
+      MIN6: 0,
+      MAX6: 100,
+      FAC6: 0,
+      CAL6: 0.0,
+      SNO6: "Channel 6",
+    };
+  } else if (serial_no.startsWith("AX1")) {
+    initialValues = {
+      MIN1: 0,
+      MAX1: 100,
+      FAC1: 0,
+      CAL1: 0.0,
+      SNO1: "Channel 1",
+    };
+  } else {
+    return new Response("Invalid serial number prefix", { status: 400 });
+  }
   try {
     await client.connect();
     const database = client.db("reflowdb");
@@ -48,10 +94,8 @@ export async function POST(req, { params }) {
       });
     }
 
-  
     await devices.insertOne({ serial_no: serial_no });
 
-    
     const fullDevice = {
       name,
       serial_no: serial_no,
@@ -59,7 +103,6 @@ export async function POST(req, { params }) {
       status: status || "active",
     };
 
-    
     const result = await projects.updateOne(
       { _id: new ObjectId(projectID) },
       { $push: { devices: fullDevice } }
