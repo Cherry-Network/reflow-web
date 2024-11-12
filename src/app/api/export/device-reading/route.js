@@ -4,12 +4,20 @@ import { NextResponse } from "next/server";
 import { Pool } from "pg";
 
 // Create PostgreSQL connection pool
-const pool = new Pool({
-    host: process.env.POSTGRES_HOST,
-    database: process.env.POSTGRES_DB_DEVICE_DATA,
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD_DEVICE_DATA,
-    port: process.env.POSTGRES_PORT,
+const x3_pool = new Pool({
+  host: process.env.POSTGRES_HOST,
+  database: process.env.X3_DEVICE_DATA_DB,
+  user: process.env.DEVICE_DATA_USER,
+  password: process.env.DEVICE_DATA_PASSWORD,
+  port: process.env.POSTGRES_PORT,
+});
+
+const x6_pool = new Pool({
+  host: process.env.POSTGRES_HOST,
+  database: process.env.X6_DEVICE_DATA_DB,
+  user: process.env.DEVICE_DATA_USER,
+  password: process.env.DEVICE_DATA_PASSWORD,
+  port: process.env.POSTGRES_PORT,
 });
 
 // Handler for GET requests
@@ -28,7 +36,7 @@ export async function GET(request) {
   }
 
   // SQL query to retrieve data
-  const query = `
+  const x3_query = `
         SELECT 
             timestamp, 
             ch_1 AS SNO1, 
@@ -38,16 +46,39 @@ export async function GET(request) {
         WHERE dev_id = $1
           AND timestamp BETWEEN $2 AND $3
     `;
+
+  const x6_query = `
+        SELECT 
+            timestamp, 
+            ch_1 AS SNO1, 
+            ch_2 AS SNO2, 
+            ch_3 AS SNO3,
+            ch_4 AS SNO4,
+            ch_5 AS SNO5,
+            ch_6 AS SNO6
+        FROM alpha_x6
+        WHERE dev_id = $1
+          AND timestamp BETWEEN $2 AND $3
+    `;
   const values = [dev_id, start_timestamp, end_timestamp];
 
   try {
     // Querying PostgreSQL
-    const client = await pool.connect();
-    const result = await client.query(query, values);
-    client.release(); // Release the client back to the pool
+    if (dev_id.startsWith("AX3") || dev_id.startsWith("ax3")) {
+      const client = await x3_pool.connect();
+      const result = await client.query(x3_query, values);
+      client.release(); // Release the client back to the pool
 
-    // Return the query result as JSON
-    return NextResponse.json(result.rows);
+      // Return the query result as JSON
+      return NextResponse.json(result.rows);
+    } else if (dev_id.startsWith("AX6") || dev_id.startsWith("ax6")) {
+      const client = await x6_pool.connect();
+      const result = await client.query(x6_query, values);
+      client.release(); // Release the client back to the pool
+
+      // Return the query result as JSON
+      return NextResponse.json(result.rows);
+    }
   } catch (error) {
     console.error("Error executing query:", error);
     return NextResponse.json(

@@ -84,19 +84,43 @@ const ViewProject = () => {
     } else {
       if (sessionStorage.getItem("configDeviceData")) {
         const config = JSON.parse(sessionStorage.getItem("configDeviceData"));
-        setExportedDataHeaders([
-          { label: "Timestamp", key: "timestamp" },
-          { label: config[0].SNO1 ? config[0].SNO1 : "Channel 1", key: "sno1" },
-          { label: config[0].SNO2 ? config[0].SNO2 : "Channel 2", key: "sno2" },
-          { label: config[0].SNO3 ? config[0].SNO3 : "Channel 3", key: "sno3" },
-        ]);
+        if (String(selectedDevice.serial_no).startsWith("AX6")){
+          setExportedDataHeaders([
+            { label: "Timestamp", key: "timestamp" },
+            { label: config[0].SNO1 ? config[0].SNO1 : "Channel 1", key: "sno1" },
+            { label: config[0].SNO2 ? config[0].SNO2 : "Channel 2", key: "sno2" },
+            { label: config[0].SNO3 ? config[0].SNO3 : "Channel 3", key: "sno3" },
+            { label: config[0].SNO4 ? config[0].SNO4 : "Channel 4", key: "sno4" },
+            { label: config[0].SNO5 ? config[0].SNO5 : "Channel 5", key: "sno5" },
+            { label: config[0].SNO6 ? config[0].SNO6 : "Channel 6", key: "sno6" },
+          ]);
+        } else if (String(selectedDevice.serial_no).startsWith("AX3")) {
+          setExportedDataHeaders([
+            { label: "Timestamp", key: "timestamp" },
+            { label: config[0].SNO1 ? config[0].SNO1 : "Channel 1", key: "sno1" },
+            { label: config[0].SNO2 ? config[0].SNO2 : "Channel 2", key: "sno2" },
+            { label: config[0].SNO3 ? config[0].SNO3 : "Channel 3", key: "sno3" },
+          ]);
+        }
       } else {
-        setExportedDataHeaders([
-          { label: "Timestamp", key: "timestamp" },
-          { label: "Channel 1", key: "sno1" },
-          { label: "Channel 2", key: "sno2" },
-          { label: "Channel 3", key: "sno3" },
-        ]);
+        if (String(selectedDevice.serial_no).startsWith("AX6")){
+          setExportedDataHeaders([
+            { label: "Timestamp", key: "timestamp" },
+            { label: "Channel 1", key: "sno1" },
+            { label: "Channel 2", key: "sno2" },
+            { label: "Channel 3", key: "sno3" },
+            { label: "Channel 4", key: "sno4" },
+            { label: "Channel 5", key: "sno5" },
+            { label: "Channel 6", key: "sno6" },
+          ]);
+        } else if (String(selectedDevice.serial_no).startsWith("AX3")) {
+          setExportedDataHeaders([
+            { label: "Timestamp", key: "timestamp" },
+            { label: "Channel 1", key: "sno1" },
+            { label: "Channel 2", key: "sno2" },
+            { label: "Channel 3", key: "sno3" },
+          ]);
+        }
       }
       const myHeaders = new Headers();
       myHeaders.append("dev-id", selectedDevice.serial_no);
