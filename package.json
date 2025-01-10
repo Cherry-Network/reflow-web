@@ -22,6 +22,7 @@
     "react": "^18",
     "react-csv": "^2.2.2",
     "react-dom": "^18",
+    "recharts": "^2.15.0",
     "reflow-web": "file:"
   },
   "devDependencies": {

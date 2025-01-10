@@ -30,10 +30,10 @@ const PageLayout = ({ children, pageName, routeToDashboard }) => {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen overflow-auto">
+      <div className="flex flex-col h-screen overflow-clip">
         <Navbar dashboardRoute={routeToDashboard} />
         <div className="flex w-full h-full">
-          <div className="min-h-screen">
+          <div className="min-h-screen overflow-clip">
             <div className="w-[225px] flex flex-col h-full bg-[#1B1B1B]">
               <div className="flex flex-col items-center justify-center flex-grow gap-4 px-5">
                 <div className="bg-white/95 p-5 mb-3 rounded-full">
@@ -97,7 +97,7 @@ const PageLayout = ({ children, pageName, routeToDashboard }) => {
               </div>
             </div>
           </div>
-          <div className="flex-1 mt-16">
+          <div className="flex-1 h-screen overflow-scroll mt-16">
             <div className="p-4">{children}</div>
           </div>
         </div>

@@ -10,7 +10,7 @@ const Navbar = ({ dashboardRoute }) => {
   }, []);
   return (
     <>
-      <div className="bg-white fixed w-full border-b border-stone-300 py-4 px-10 flex justify-between items-center">
+      <div className="bg-white fixed w-full border-b border-stone-300 py-4 px-10 flex justify-between items-center z-10">
         <div className="">
           <img src="/assets/nav-logo.svg" alt="logo" className="h-12 w-auto" />
         </div>

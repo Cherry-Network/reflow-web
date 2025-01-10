@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Form from "@/components/forms";
 import DataTable from "@/components/analytics/device-stat";
 import { CSVLink } from "react-csv";
-import { set } from "mongoose";
+import Link from "next/link";
 
 const ViewProject = () => {
   const router = useRouter();
@@ -15,6 +15,25 @@ const ViewProject = () => {
   const [fullName, setFullName] = useState("Loading..."); // Changed from userName to fullName
   const [loading, setLoading] = useState(false);
   const [adminUsername, setAdminUsername] = useState("");
+
+  const fetchConfigData = async (serialId) => {
+    try {
+      const response = await fetch(
+        `/api/mqtt-configTable?serialId=${serialId}`
+      );
+      const result = await response.json();
+      sessionStorage.setItem("configDeviceData", JSON.stringify(result));
+      if (result.length > 0) {
+        return result[0];
+      } else {
+        console.error("No config data found for serialId:", serialId);
+        return null;
+      }
+    } catch (error) {
+      console.error("Error fetching config data:", error);
+      return null;
+    }
+  };
 
   useEffect(() => {
     // fetch admin username from session storage
@@ -62,7 +81,9 @@ const ViewProject = () => {
     // Simulate loading delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
-    setLoading(false);
+    fetchConfigData(serialNo).then((configData) => {
+      setLoading(false);
+    });
   };
   const [startPeriod, setStartPeriod] = useState({ date: "", time: "" });
   const [endPeriod, setEndPeriod] = useState({ date: "", time: "" });
@@ -84,26 +105,53 @@ const ViewProject = () => {
     } else {
       if (sessionStorage.getItem("configDeviceData")) {
         const config = JSON.parse(sessionStorage.getItem("configDeviceData"));
-        if (String(selectedDevice.serial_no).startsWith("AX6")){
+        if (String(selectedDevice.serial_no).startsWith("AX6")) {
           setExportedDataHeaders([
             { label: "Timestamp", key: "timestamp" },
-            { label: config[0].SNO1 ? config[0].SNO1 : "Channel 1", key: "sno1" },
-            { label: config[0].SNO2 ? config[0].SNO2 : "Channel 2", key: "sno2" },
-            { label: config[0].SNO3 ? config[0].SNO3 : "Channel 3", key: "sno3" },
-            { label: config[0].SNO4 ? config[0].SNO4 : "Channel 4", key: "sno4" },
-            { label: config[0].SNO5 ? config[0].SNO5 : "Channel 5", key: "sno5" },
-            { label: config[0].SNO6 ? config[0].SNO6 : "Channel 6", key: "sno6" },
+            {
+              label: config[0].SNO1 ? config[0].SNO1 : "Channel 1",
+              key: "sno1",
+            },
+            {
+              label: config[0].SNO2 ? config[0].SNO2 : "Channel 2",
+              key: "sno2",
+            },
+            {
+              label: config[0].SNO3 ? config[0].SNO3 : "Channel 3",
+              key: "sno3",
+            },
+            {
+              label: config[0].SNO4 ? config[0].SNO4 : "Channel 4",
+              key: "sno4",
+            },
+            {
+              label: config[0].SNO5 ? config[0].SNO5 : "Channel 5",
+              key: "sno5",
+            },
+            {
+              label: config[0].SNO6 ? config[0].SNO6 : "Channel 6",
+              key: "sno6",
+            },
           ]);
         } else if (String(selectedDevice.serial_no).startsWith("AX3")) {
           setExportedDataHeaders([
             { label: "Timestamp", key: "timestamp" },
-            { label: config[0].SNO1 ? config[0].SNO1 : "Channel 1", key: "sno1" },
-            { label: config[0].SNO2 ? config[0].SNO2 : "Channel 2", key: "sno2" },
-            { label: config[0].SNO3 ? config[0].SNO3 : "Channel 3", key: "sno3" },
+            {
+              label: config[0].SNO1 ? config[0].SNO1 : "Channel 1",
+              key: "sno1",
+            },
+            {
+              label: config[0].SNO2 ? config[0].SNO2 : "Channel 2",
+              key: "sno2",
+            },
+            {
+              label: config[0].SNO3 ? config[0].SNO3 : "Channel 3",
+              key: "sno3",
+            },
           ]);
         }
       } else {
-        if (String(selectedDevice.serial_no).startsWith("AX6")){
+        if (String(selectedDevice.serial_no).startsWith("AX6")) {
           setExportedDataHeaders([
             { label: "Timestamp", key: "timestamp" },
             { label: "Channel 1", key: "sno1" },
@@ -283,7 +331,11 @@ const ViewProject = () => {
         </div>
 
         {/* Dropdown for selecting device */}
-        <div className={currentProject?.devices.length > 0 ? "px-10 pb-6" : "hidden"}>
+        <div
+          className={
+            currentProject?.devices.length > 0 ? "px-10 pb-6" : "hidden"
+          }
+        >
           <div className="text-base font-bold text-theme_black/60 mb-2">
             Select Device:
           </div>
@@ -305,7 +357,7 @@ const ViewProject = () => {
           <div className="relative px-5 mx-10 rounded-2xl bg-black/10">
             {loading && (
               <div className="absolute inset-0 flex justify-center items-center bg-white bg-opacity-70">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+                <div className=""></div>
               </div>
             )}
             <div className="flex justify-center items-end">
@@ -322,7 +374,29 @@ const ViewProject = () => {
                 />
               </div>
               <div className="pb-7">
-                <div className="flex w-full justify-end pt-1 pb-4">
+                <div className="flex w-full justify-between pt-1 pb-4">
+                  <Link
+                    href={{
+                      pathname: "/viewproject/trend",
+                      query: {
+                        device: selectedDevice.serial_no,
+                      },
+                    }}
+                    className="ml-2"
+                    name="Graphical Analysis"
+                    title="Graphical Analysis"
+                    disabled={loading}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      height="32px"
+                      viewBox="0 -960 960 960"
+                      width="32px"
+                      fill="#000000"
+                    >
+                      <path d="M107-107v-98.09l103.17-103.17V-107H107Zm160.56 0v-258.65L371.3-469.39V-107H267.56Zm161.14 0v-362.39l103.17 103.61V-107H428.7Zm160.56 0v-259.91l103.18-103.18V-107H589.26Zm160.57 0v-420.91L853-631.09V-107H749.83ZM107-299.87v-149.74l293-293 160 160 293-293v149.74l-293 293-160-160-293 293Z" />
+                    </svg>
+                  </Link>
                   <button
                     className="mr-2"
                     onClick={() => {

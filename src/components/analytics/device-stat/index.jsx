@@ -46,7 +46,6 @@ const fetchData = async (serialId, config) => {
     const dataObject = result[0];
     const lastUpdatedTime = parseUpdateTime(dataObject.UpdateTimeStamp);
     console.log(config);
-
     const formattedData = [
       {
         serialNo: config.SNO1,
