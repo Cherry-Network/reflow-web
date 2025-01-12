@@ -4,7 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LineGraph from "@/components/analytics/line-graph";
-import { set } from "mongoose";
+import { getFromDateIST, getToDateIST } from "@/functions/get-date";
 
 const DisplayGraph = ({
   channelName,
@@ -12,13 +12,15 @@ const DisplayGraph = ({
   dataKey,
   minValue,
   maxValue,
+  fromDateTime,
+  toDateTime,
 }) => {
   return (
     <div className="flex flex-col w-full rounded-lg bg-yellow-50/20 py-6 h-[500px] overflow-auto px-1 gap-2 shadow-md border border-black/10">
       <span className="text-blue-800 text-xl font-mono font-semibold tracking-wide px-3 py-2">
-        Channel - {channelName} Trend
+        Channel - {channelName} Trend <span className="font-medium text-lg">{"("}{fromDateTime} - {toDateTime}{")"}</span>
       </span>
-      {graphData.length > 0 ? (
+      {graphData?.length > 0 ? (
         <>
           <LineGraph
             data={graphData}
@@ -53,16 +55,18 @@ const DeviceTrend = () => {
     return now.toISOString().split("T")[1].split(":").slice(0, 2).join(":"); // Format HH:MM:SS
   };
 
+  
+
   const [configOptions, setConfigOptions] = useState({
-    fromDate: new Date().toISOString().split("T")[0],
-    fromTime: twoHoursPrior(),
-    toDate: new Date().toISOString().split("T")[0],
-    toTime: new Date()
-      .toISOString()
-      .split("T")[1]
-      .split(":")
-      .slice(0, 2)
-      .join(":"),
+    fromDate: `${getFromDateIST().year}-${getFromDateIST().month}-${getFromDateIST().day}`,
+    fromTime: "07:00",
+    toDate: `${getToDateIST().year}-${getToDateIST().month}-${getToDateIST().day}`,
+    toTime: new Intl.DateTimeFormat("en-Us", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: "Asia/Kolkata",
+    }).format(new Date()),
     period: "1_min",
   });
 
@@ -132,7 +136,7 @@ const DeviceTrend = () => {
 
   useEffect(() => {
     setLoading(true);
-    if (data.length > 0) {
+    if (data?.length > 0) {
       const period = configOptions.period;
       const periodInMinutes = parseInt(period.split("_")[0]);
       try {
@@ -152,9 +156,8 @@ const DeviceTrend = () => {
       } catch (error) {
         console.error(error);
       }
-      
     } else {
-        setLoading(false);
+      setLoading(false);
     }
   }, [configOptions.period, data]);
 
@@ -320,22 +323,22 @@ const DeviceTrend = () => {
             <div className="flex justify-between items-center gap-3 mt-5 w-full px-4">
               <button className="text-green-800 min-w-36 px-5 py-2 rounded-full text-lg font-semibold font-mono tracking-wide">
                 {loading
-                  ? "...Calculating Records"
-                  : `${filteredData.length} Records Found`}
+                  ? "...Calculating Data-Points"
+                  : `${filteredData?.length} Data-Points Found`}
               </button>
               <button
                 className="bg-red-950 text-lg text-white min-w-28 px-5 py-2 rounded-full font-medium font-mono tracking-wide"
                 onClick={() => {
                   setConfigOptions({
-                    fromDate: new Date().toISOString().split("T")[0],
-                    fromTime: twoHoursPrior(),
-                    toDate: new Date().toISOString().split("T")[0],
-                    toTime: new Date()
-                      .toISOString()
-                      .split("T")[1]
-                      .split(":")
-                      .slice(0, 2)
-                      .join(":"),
+                    fromDate: `${getFromDateIST().year}-${getFromDateIST().month}-${getFromDateIST().day}`,
+                    fromTime: "07:00",
+                    toDate: `${getToDateIST().year}-${getToDateIST().month}-${getToDateIST().day}`,
+                    toTime: new Intl.DateTimeFormat("en-Us", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                      timeZone: "Asia/Kolkata",
+                    }).format(new Date()),
                     period: "1_min",
                   });
                 }}
@@ -362,6 +365,8 @@ const DeviceTrend = () => {
                         dataKey="sno1"
                         minValue={deviceInfo?.configInfo?.MIN1}
                         maxValue={deviceInfo?.configInfo?.MAX1}
+                        fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
+                        toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
                     </>
                   )}
@@ -373,6 +378,8 @@ const DeviceTrend = () => {
                         dataKey="sno2"
                         minValue={deviceInfo?.configInfo?.MIN2}
                         maxValue={deviceInfo?.configInfo?.MAX2}
+                        fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
+                        toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
                     </>
                   )}
@@ -384,6 +391,8 @@ const DeviceTrend = () => {
                         dataKey="sno3"
                         minValue={deviceInfo?.configInfo?.MIN3}
                         maxValue={deviceInfo?.configInfo?.MAX3}
+                        fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
+                        toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
                     </>
                   )}
@@ -395,6 +404,8 @@ const DeviceTrend = () => {
                         dataKey="sno4"
                         minValue={deviceInfo?.configInfo?.MIN4}
                         maxValue={deviceInfo?.configInfo?.MAX4}
+                        fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
+                        toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
                     </>
                   )}
@@ -406,6 +417,8 @@ const DeviceTrend = () => {
                         dataKey="sno5"
                         minValue={deviceInfo?.configInfo?.MIN5}
                         maxValue={deviceInfo?.configInfo?.MAX5}
+                        fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
+                        toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
                     </>
                   )}
@@ -417,6 +430,8 @@ const DeviceTrend = () => {
                         dataKey="sno6"
                         minValue={deviceInfo?.configInfo?.MIN6}
                         maxValue={deviceInfo?.configInfo?.MAX6}
+                        fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
+                        toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
                     </>
                   )}
