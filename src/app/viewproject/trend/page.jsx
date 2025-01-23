@@ -294,13 +294,13 @@ const DeviceTrend = () => {
                       name="period"
                       value="1_min"
                       className="mr-2"
-                      defaultChecked
                       onChange={(e) => {
                         setConfigOptions({
                           ...configOptions,
                           period: e.target.value,
                         });
                       }}
+                      checked={configOptions.period === "1_min"}
                     />
                     1 Min Interval
                   </label>
@@ -316,6 +316,7 @@ const DeviceTrend = () => {
                           period: e.target.value,
                         });
                       }}
+                      checked={configOptions.period === "15_min"}
                     />
                     15 Min Interval
                   </label>
@@ -331,6 +332,7 @@ const DeviceTrend = () => {
                           period: e.target.value,
                         });
                       }}
+                      checked={configOptions.period === "30_min"}
                     />
                     30 Min Interval
                   </label>
@@ -346,6 +348,7 @@ const DeviceTrend = () => {
                           period: e.target.value,
                         });
                       }}
+                      checked={configOptions.period === "60_min"}
                     />
                     1 Hour Interval
                   </label>
