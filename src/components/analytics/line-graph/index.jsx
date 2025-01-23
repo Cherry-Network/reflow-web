@@ -17,6 +17,7 @@ const LineGraph = ({ data, LinedataKey, YMinValue, YMaxValue, XdataKey }) => {
     // Format as DD/MM/YY
     return `${day}/${month}/${year.slice(-2)}`;
   }
+  
   return (
     <>
       <ResponsiveContainer width="100%" height="100%">
@@ -48,7 +49,7 @@ const LineGraph = ({ data, LinedataKey, YMinValue, YMaxValue, XdataKey }) => {
               );
             }}
           />
-          <YAxis />
+          <YAxis domain={[YMinValue, YMaxValue]} />
           <Tooltip />
 
           <Line

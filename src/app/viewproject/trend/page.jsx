@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LineGraph from "@/components/analytics/line-graph";
 import { getFromDateIST, getToDateIST } from "@/functions/get-date";
+import { set } from "mongoose";
 
 const DisplayGraph = ({
   channelName,
@@ -18,7 +19,12 @@ const DisplayGraph = ({
   return (
     <div className="flex flex-col w-full rounded-lg bg-yellow-50/20 py-6 h-[500px] overflow-auto px-1 gap-2 shadow-md border border-black/10">
       <span className="text-blue-800 text-xl font-mono font-semibold tracking-wide px-3 py-2">
-        Channel - {channelName} Trend <span className="font-medium text-lg">{"("}{fromDateTime} - {toDateTime}{")"}</span>
+        Channel - {channelName} Trend{" "}
+        <span className="font-medium text-lg">
+          {"("}
+          {fromDateTime} - {toDateTime}
+          {")"}
+        </span>
       </span>
       {graphData?.length > 0 ? (
         <>
@@ -55,12 +61,14 @@ const DeviceTrend = () => {
     return now.toISOString().split("T")[1].split(":").slice(0, 2).join(":"); // Format HH:MM:SS
   };
 
-  
-
   const [configOptions, setConfigOptions] = useState({
-    fromDate: `${getFromDateIST().year}-${getFromDateIST().month}-${getFromDateIST().day}`,
+    fromDate: `${getFromDateIST().year}-${getFromDateIST().month}-${
+      getFromDateIST().day
+    }`,
     fromTime: "07:00",
-    toDate: `${getToDateIST().year}-${getToDateIST().month}-${getToDateIST().day}`,
+    toDate: `${getToDateIST().year}-${getToDateIST().month}-${
+      getToDateIST().day
+    }`,
     toTime: new Intl.DateTimeFormat("en-Us", {
       hour: "2-digit",
       minute: "2-digit",
@@ -69,6 +77,28 @@ const DeviceTrend = () => {
     }).format(new Date()),
     period: "1_min",
   });
+
+  const [graphValueRange, setGraphValueRange] = useState({});
+
+  const calculateSensorMinMax = (data) => {
+    // Initialize an object to store min and max values for each sensor
+    const results = {};
+
+    // List of sensor names
+    const sensorNames = ["sno1", "sno2", "sno3", "sno4", "sno5", "sno6"];
+
+    // Calculate min and max for each sensor
+    sensorNames.forEach((sensorName) => {
+      const values = data.map((entry) => entry[sensorName]);
+
+      results[sensorName] = {
+        min: Math.min(...values),
+        max: Math.max(...values),
+      };
+    });
+
+    return results;
+  }
 
   const fetchData = async () => {
     const myHeaders = new Headers();
@@ -125,6 +155,7 @@ const DeviceTrend = () => {
     fetchData().then((result) => {
       setData(result);
       setFilteredData(result);
+      setGraphValueRange(calculateSensorMinMax(result));
       setLoading(false);
     });
   }, [
@@ -152,6 +183,7 @@ const DeviceTrend = () => {
           return diffInMinutes % periodInMinutes === 0;
         });
         setFilteredData(filteredDataGaps);
+        setGraphValueRange(calculateSensorMinMax(filteredDataGaps));
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -330,9 +362,13 @@ const DeviceTrend = () => {
                 className="bg-red-950 text-lg text-white min-w-28 px-5 py-2 rounded-full font-medium font-mono tracking-wide"
                 onClick={() => {
                   setConfigOptions({
-                    fromDate: `${getFromDateIST().year}-${getFromDateIST().month}-${getFromDateIST().day}`,
+                    fromDate: `${getFromDateIST().year}-${
+                      getFromDateIST().month
+                    }-${getFromDateIST().day}`,
                     fromTime: "07:00",
-                    toDate: `${getToDateIST().year}-${getToDateIST().month}-${getToDateIST().day}`,
+                    toDate: `${getToDateIST().year}-${getToDateIST().month}-${
+                      getToDateIST().day
+                    }`,
                     toTime: new Intl.DateTimeFormat("en-Us", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -363,8 +399,8 @@ const DeviceTrend = () => {
                         channelName={deviceInfo?.configInfo?.SNO1}
                         graphData={filteredData}
                         dataKey="sno1"
-                        minValue={deviceInfo?.configInfo?.MIN1}
-                        maxValue={deviceInfo?.configInfo?.MAX1}
+                        minValue={graphValueRange?.sno1?.min - 1}
+                        maxValue={graphValueRange?.sno1?.max + 1}
                         fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
                         toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
@@ -376,8 +412,8 @@ const DeviceTrend = () => {
                         channelName={deviceInfo?.configInfo?.SNO2}
                         graphData={filteredData}
                         dataKey="sno2"
-                        minValue={deviceInfo?.configInfo?.MIN2}
-                        maxValue={deviceInfo?.configInfo?.MAX2}
+                        minValue={graphValueRange?.sno2?.min - 1}
+                        maxValue={graphValueRange?.sno2?.max + 1}
                         fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
                         toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
@@ -389,8 +425,8 @@ const DeviceTrend = () => {
                         channelName={deviceInfo?.configInfo?.SNO3}
                         graphData={filteredData}
                         dataKey="sno3"
-                        minValue={deviceInfo?.configInfo?.MIN3}
-                        maxValue={deviceInfo?.configInfo?.MAX3}
+                        minValue={graphValueRange?.sno3?.min - 1}
+                        maxValue={graphValueRange?.sno3?.max + 1}
                         fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
                         toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
@@ -402,8 +438,8 @@ const DeviceTrend = () => {
                         channelName={deviceInfo?.configInfo?.SNO4}
                         graphData={filteredData}
                         dataKey="sno4"
-                        minValue={deviceInfo?.configInfo?.MIN4}
-                        maxValue={deviceInfo?.configInfo?.MAX4}
+                        minValue={graphValueRange?.sno4?.min - 1}
+                        maxValue={graphValueRange?.sno4?.max + 1}
                         fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
                         toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
@@ -415,8 +451,8 @@ const DeviceTrend = () => {
                         channelName={deviceInfo?.configInfo?.SNO5}
                         graphData={filteredData}
                         dataKey="sno5"
-                        minValue={deviceInfo?.configInfo?.MIN5}
-                        maxValue={deviceInfo?.configInfo?.MAX5}
+                        minValue={graphValueRange?.sno5?.min - 1}
+                        maxValue={graphValueRange?.sno5?.max + 1}
                         fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
                         toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
@@ -428,8 +464,8 @@ const DeviceTrend = () => {
                         channelName={deviceInfo?.configInfo?.SNO6}
                         graphData={filteredData}
                         dataKey="sno6"
-                        minValue={deviceInfo?.configInfo?.MIN6}
-                        maxValue={deviceInfo?.configInfo?.MAX6}
+                        minValue={graphValueRange?.sno6?.min - 1}
+                        maxValue={graphValueRange?.sno6?.max + 1}
                         fromDateTime={`${configOptions.fromDate} ${configOptions.fromTime}`}
                         toDateTime={`${configOptions.toDate} ${configOptions.toTime}`}
                       />
