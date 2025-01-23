@@ -48,7 +48,7 @@ const LineGraph = ({ data, LinedataKey, YMinValue, YMaxValue, XdataKey }) => {
               );
             }}
           />
-          <YAxis domain={[YMinValue, YMaxValue]} />
+          <YAxis />
           <Tooltip />
 
           <Line
