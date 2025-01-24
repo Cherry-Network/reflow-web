@@ -75,7 +75,7 @@ const DeviceTrend = () => {
       hour12: false,
       timeZone: "Asia/Kolkata",
     }).format(new Date()),
-    period: "1_min",
+    period: "15_min",
   });
 
   const [graphValueRange, setGraphValueRange] = useState({});
