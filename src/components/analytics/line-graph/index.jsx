@@ -37,17 +37,9 @@ const LineGraph = ({ data, LinedataKey, YMinValue, YMaxValue, XdataKey }) => {
             dataKey={XdataKey}
             angle={90}
             textAnchor="start"
-            height={100}
+            height={150}
             tick={{ fontSize: 13 }}
-            tickFormatter={(value) => {
-              return (
-                formatDateToDDMMYY(value.split("T")[0]) +
-                " " +
-                value.split("T")[1].split(":")[0] +
-                ":" +
-                value.split("T")[1].split(":")[1]
-              );
-            }}
+            
           />
           <YAxis domain={[Math.floor(YMinValue), Math.ceil(YMaxValue)]} />
           <Tooltip />
