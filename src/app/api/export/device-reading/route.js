@@ -20,6 +20,12 @@ const x6_pool = new Pool({
   port: process.env.POSTGRES_PORT,
 });
 
+const sortData = (data) => {
+  return data.sort((a, b) => {
+    return new Date(a.timestamp) - new Date(b.timestamp);
+  });
+};
+
 // Handler for GET requests
 export async function GET(request) {
   // Extracting data from headers
@@ -77,7 +83,7 @@ export async function GET(request) {
       client.release(); // Release the client back to the pool
 
       // Return the query result as JSON
-      return NextResponse.json(result.rows);
+      return NextResponse.json(sortData(result.rows));
     }
   } catch (error) {
     console.error("Error executing query:", error);

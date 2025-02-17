@@ -18,13 +18,15 @@ const LineGraph = ({ data, LinedataKey, YMinValue, YMaxValue, XdataKey }) => {
     return `${day}/${month}/${year.slice(-2)}`;
   }
   
+  const dataLimit = data?.length > 1000 ? data.filter((_, index) => index % 5 === 0) : data;
+
   return (
     <>
       <ResponsiveContainer width="100%" height="100%">
         <LineChart
           width={500}
           height={300}
-          data={data}
+          data={dataLimit}
           margin={{
             top: 5,
             right: 30,
@@ -39,6 +41,15 @@ const LineGraph = ({ data, LinedataKey, YMinValue, YMaxValue, XdataKey }) => {
             textAnchor="start"
             height={150}
             tick={{ fontSize: 13 }}
+            tickFormatter={(value) => {
+              return (
+                formatDateToDDMMYY(value.split("T")[0]) +
+                " " +
+                value.split("T")[1].split(":")[0] +
+                ":" +
+                value.split("T")[1].split(":")[1]
+              );
+            }}
             
           />
           <YAxis domain={[Math.floor(YMinValue), Math.ceil(YMaxValue)]} />
