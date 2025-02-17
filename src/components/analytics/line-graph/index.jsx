@@ -17,8 +17,9 @@ const LineGraph = ({ data, LinedataKey, YMinValue, YMaxValue, XdataKey }) => {
     // Format as DD/MM/YY
     return `${day}/${month}/${year.slice(-2)}`;
   }
-  
-  const dataLimit = data?.length > 1000 ? data.filter((_, index) => index % 5 === 0) : data;
+
+  const dataLimit =
+    data?.length > 1000 ? data.filter((_, index) => index % 5 === 0) : data;
 
   return (
     <>
@@ -50,10 +51,19 @@ const LineGraph = ({ data, LinedataKey, YMinValue, YMaxValue, XdataKey }) => {
                 value.split("T")[1].split(":")[1]
               );
             }}
-            
           />
           <YAxis domain={[Math.floor(YMinValue), Math.ceil(YMaxValue)]} />
-          <Tooltip />
+          <Tooltip
+            labelFormatter={(value) => {
+              return (
+                formatDateToDDMMYY(value.split("T")[0]) +
+                " " +
+                value.split("T")[1].split(":")[0] +
+                ":" +
+                value.split("T")[1].split(":")[1]
+              );
+            }}
+          />
 
           <Line
             type="monotone"
