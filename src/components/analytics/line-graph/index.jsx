@@ -18,8 +18,15 @@ const LineGraph = ({ data, LinedataKey, YMinValue, YMaxValue, XdataKey }) => {
     return `${day}/${month}/${year.slice(-2)}`;
   }
 
+  const sortData = (data) => {
+    return data.sort((a, b) => {
+      return new Date(a.timestamp) - new Date(b.timestamp);
+    });
+  };
   const dataLimit =
-    data?.length > 1000 ? data.filter((_, index) => index % 5 === 0) : data;
+    sortData(data)?.length > 1000
+      ? sortData(data).filter((_, index) => index % 5 === 0)
+      : sortData(data);
 
   return (
     <>
