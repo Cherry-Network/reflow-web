@@ -182,8 +182,6 @@ const DeviceTrend = () => {
             (currentTimestamp - firstTimestamp) / (1000 * 60);
           return diffInMinutes % periodInMinutes === 0;
         });
-        setFilteredData(filteredDataGaps);
-        setGraphValueRange(calculateSensorMinMax(filteredDataGaps));
         filteredDataGaps.length > 10000 &&
           alert(
             "The data is too large to display. Please select a smaller range."
@@ -205,6 +203,9 @@ const DeviceTrend = () => {
             }).format(new Date()),
             period: "15_min",
           });
+        setFilteredData(filteredDataGaps);
+        setGraphValueRange(calculateSensorMinMax(filteredDataGaps));
+
         setLoading(false);
       } catch (error) {
         console.error(error);
