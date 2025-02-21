@@ -98,7 +98,7 @@ const DeviceTrend = () => {
     });
 
     return results;
-  }
+  };
 
   const fetchData = async () => {
     const myHeaders = new Headers();
@@ -184,6 +184,27 @@ const DeviceTrend = () => {
         });
         setFilteredData(filteredDataGaps);
         setGraphValueRange(calculateSensorMinMax(filteredDataGaps));
+        filteredDataGaps.length > 10000 &&
+          alert(
+            "The data is too large to display. Please select a smaller range."
+          );
+        filteredDataGaps.length > 10000 &&
+          setConfigOptions({
+            fromDate: `${getFromDateIST().year}-${getFromDateIST().month}-${
+              getFromDateIST().day
+            }`,
+            fromTime: "07:00",
+            toDate: `${getToDateIST().year}-${getToDateIST().month}-${
+              getToDateIST().day
+            }`,
+            toTime: new Intl.DateTimeFormat("en-Us", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+              timeZone: "Asia/Kolkata",
+            }).format(new Date()),
+            period: "15_min",
+          });
         setLoading(false);
       } catch (error) {
         console.error(error);
@@ -195,7 +216,7 @@ const DeviceTrend = () => {
 
   return (
     <>
-      <PageLayout pageName={"My Projects"} routeToDashboard={false}>
+      <PageLayout pageName={"My Projects"} routeToDashboard={true}>
         <div className="flex flex-col items-center h-full w-full gap-5 pb-5">
           <div className="bg-black/10 p-6 rounded-lg mt-5 w-full">
             <div className="flex justify-between items-center w-full">
@@ -378,7 +399,7 @@ const DeviceTrend = () => {
                       hour12: false,
                       timeZone: "Asia/Kolkata",
                     }).format(new Date()),
-                    period: "1_min",
+                    period: "15_min",
                   });
                 }}
               >

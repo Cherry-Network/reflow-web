@@ -18,12 +18,6 @@ const PageLayout = ({ children, pageName, routeToDashboard }) => {
       icon_dark: "/icons/access-black.svg",
       path: "/provide-access",
     },
-    {
-      name: "Settings",
-      icon: "/icons/settings.svg",
-      icon_dark: "/icons/settings-black.svg",
-      path: "/",
-    },
   ];
 
   const [activeButton, setActiveButton] = useState(pageName);
@@ -35,14 +29,7 @@ const PageLayout = ({ children, pageName, routeToDashboard }) => {
         <div className="flex w-full h-full">
           <div className="min-h-screen overflow-clip">
             <div className="w-[225px] flex flex-col h-full bg-[#1B1B1B]">
-              <div className="flex flex-col items-center justify-center flex-grow gap-4 px-5">
-                <div className="bg-white/95 p-5 mb-3 rounded-full">
-                  <img
-                    src="/assets/company-logo.svg"
-                    alt="logo"
-                    className="h-14 w-14"
-                  />
-                </div>
+              <div className="flex flex-col items-center flex-grow gap-4 px-5 mt-28 h-screen">
                 {sidebarItems.map((item, index) => (
                   <button
                     className={`${

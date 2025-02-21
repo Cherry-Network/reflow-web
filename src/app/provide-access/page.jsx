@@ -37,8 +37,6 @@ const ProvideAccess = () => {
         }
 
         const data = await response.json();
-        console.log("Fetched Project Data:", data);
-
         if (data && data.ownProjects) {
           setProjectData(data.ownProjects);
         } else {

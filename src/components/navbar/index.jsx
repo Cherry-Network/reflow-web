@@ -28,44 +28,6 @@ const Navbar = ({ dashboardRoute }) => {
           >
             {dashboardRoute ? "Back to Dashboard" : "Back to Home"}
           </button>
-
-          {currentUser && (
-            <div>
-              <button
-                className="flex items-center gap-3 cursor-pointer"
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                <div className="rounded-full p-3 bg-[#D2D2D2]">
-                  <img
-                    alt="user image"
-                    src="/icons/user.svg"
-                    className="h-5 w-auto"
-                  />
-                </div>
-                {isOpen ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 -960 960 960"
-                    width="24px"
-                    fill="#1B1B1B"
-                  >
-                    <path d="M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z" />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    height="24px"
-                    viewBox="0 -960 960 960"
-                    width="24px"
-                    fill="#1B1B1B"
-                  >
-                    <path d="M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </>
