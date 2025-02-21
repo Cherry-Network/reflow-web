@@ -190,7 +190,14 @@ const ViewProject = () => {
           requestOptions
         );
         const result = await response.json();
-        setExportedData(result);
+        let sortedData = result.sort((a, b) => {
+          return new Date(a.timestamp) - new Date(b.timestamp);
+        });
+        let processedData = sortedData.map((data) => {
+          data.timestamp = new Date(data.timestamp).toISOString();
+          return data;
+        });
+        setExportedData(processedData);
         setReadyToDownload(true);
       } catch (error) {
         console.error(error);
