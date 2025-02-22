@@ -114,13 +114,16 @@ export default function Home() {
     fetchProjects();
   }, [username]);
 
-
   return (
     <PageLayout pageName={"My Projects"}>
       <div className="p-10 flex flex-wrap gap-4 justify-start items-stretch">
         {loading ? (
-          <div className="flex justify-center items-center h-40">
+          <div className="flex flex-col justify-center items-center h-[500px] w-full">
             <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+            <span className="text-xl font-semibold text-gray-500 mt-10 tracking-widest">
+              Loading Projects
+              <span className="animate-pulse tracking-widest"> . . .</span>
+            </span>
           </div>
         ) : (
           <>
