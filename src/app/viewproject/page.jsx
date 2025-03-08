@@ -373,8 +373,79 @@ const ViewProject = () => {
                 <div className=""></div>
               </div>
             )}
-            <div className="flex justify-center items-end">
-              <div>
+            <div className="flex justify-stretch items-end h-full">
+              <div className="h-full flex flex-col justify-center items-stretch border-4 border-black rounded-2xl mb-5">
+                <div className="bg-black text-white font-sans font-bold text-center p-3 tracking-wide rounded-t-xl">
+                  Panel
+                </div>
+                <Link
+                  href={{
+                    pathname: "/viewproject/trend",
+                    query: {
+                      device: selectedDevice.serial_no,
+                    },
+                  }}
+                  className="flex flex-col justify-center items-center gap-2 text-black bg-white font-mono font-semibold tracking-wide text-lg px-4 py-3 border-b-2 border-black"
+                  name="Graphical Analysis"
+                  title="Graphical Analysis"
+                  disabled={loading}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="22px"
+                    viewBox="0 -960 960 960"
+                    width="22px"
+                    fill="#000000"
+                  >
+                    <path d="M107-107v-98.09l103.17-103.17V-107H107Zm160.56 0v-258.65L371.3-469.39V-107H267.56Zm161.14 0v-362.39l103.17 103.61V-107H428.7Zm160.56 0v-259.91l103.18-103.18V-107H589.26Zm160.57 0v-420.91L853-631.09V-107H749.83ZM107-299.87v-149.74l293-293 160 160 293-293v149.74l-293 293-160-160-293 293Z" />
+                  </svg>
+                  <span className="text-center">Graph</span>
+                </Link>
+                <button
+                  className="flex flex-col justify-center items-center gap-2 text-black bg-white font-mono font-semibold tracking-wide text-lg px-4 py-3 border-b-2 border-black"
+                  onClick={() => {
+                    deviceConfig({
+                      serialNumber: selectedDevice.serial_no,
+                      name: selectedDevice.name,
+                    });
+                  }}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="22px"
+                    viewBox="0 -960 960 960"
+                    width="22px"
+                    fill="#000000"
+                  >
+                    <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" />
+                  </svg>
+                  <span className="text-center">Config</span>
+                </button>
+                <Link
+                  href={{
+                    pathname: "/viewproject/schedule-reports",
+                    query: {
+                      device: selectedDevice.serial_no,
+                    },
+                  }}
+                  className="flex flex-col justify-center items-center gap-2 text-black bg-white font-mono font-semibold tracking-wide text-lg px-4 py-3 rounded-b-xl"
+                  name="Graphical Analysis"
+                  title="Graphical Analysis"
+                  disabled={loading}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    height="24px"
+                    viewBox="0 -960 960 960"
+                    width="24px"
+                    fill="#000000"
+                  >
+                    <path d="M320-480v-80h320v80H320Zm0-160v-80h320v80H320Zm-80 240h300q29 0 54 12.5t42 35.5l84 110v-558H240v400Zm0 240h442L573-303q-6-8-14.5-12.5T540-320H240v160Zm480 80H240q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h480q33 0 56.5 23.5T800-800v640q0 33-23.5 56.5T720-80Zm-480-80v-640 640Zm0-160v-80 80Z" />
+                  </svg>
+                  <span className="text-center">Schedule Reports</span>
+                </Link>
+              </div>
+              <div className="flex-1 custom-scrollbar">
                 <DataTable
                   editFunction={() => {
                     deviceConfig({
@@ -387,51 +458,6 @@ const ViewProject = () => {
                 />
               </div>
               <div className="pb-6">
-                <div className="grid grid-cols-2 gap-[2px] w-full pt-1 pb-2">
-                  <Link
-                    href={{
-                      pathname: "/viewproject/trend",
-                      query: {
-                        device: selectedDevice.serial_no,
-                      },
-                    }}
-                    className="flex justify-center items-center gap-2 bg-black/90 text-white rounded-md font-mono font-semibold tracking-wide text-lg px-4 py-2 rounded-l-2xl"
-                    name="Graphical Analysis"
-                    title="Graphical Analysis"
-                    disabled={loading}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="22px"
-                      viewBox="0 -960 960 960"
-                      width="22px"
-                      fill="#ffffff"
-                    >
-                      <path d="M107-107v-98.09l103.17-103.17V-107H107Zm160.56 0v-258.65L371.3-469.39V-107H267.56Zm161.14 0v-362.39l103.17 103.61V-107H428.7Zm160.56 0v-259.91l103.18-103.18V-107H589.26Zm160.57 0v-420.91L853-631.09V-107H749.83ZM107-299.87v-149.74l293-293 160 160 293-293v149.74l-293 293-160-160-293 293Z" />
-                    </svg>
-                    <span>Graph</span>
-                  </Link>
-                  <button
-                    className="flex justify-center items-center gap-2 bg-black/90 text-white rounded-md font-mono font-semibold tracking-wide text-lg px-4 py-2 rounded-r-2xl"
-                    onClick={() => {
-                      deviceConfig({
-                        serialNumber: selectedDevice.serial_no,
-                        name: selectedDevice.name,
-                      });
-                    }}
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      height="22px"
-                      viewBox="0 -960 960 960"
-                      width="22px"
-                      fill="#ffffff"
-                    >
-                      <path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm112-260q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Z" />
-                    </svg>
-                    <span>Config</span>
-                  </button>
-                </div>
                 <div className="flex flex-col text-sm h-72 bg-white border-2 border-black rounded-2xl">
                   <div className="bg-black text-base rounded-t-xl text-white text-center flex w-full justify-evenly items-center py-6 font-bold">
                     <span>Export Data</span>

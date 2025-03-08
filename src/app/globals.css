@@ -41,3 +41,28 @@ body {
     url("/assets/project-card-bg.jpeg");
 }
 
+
+/* Scrollbar Styling for .custom-scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 100, 100, 0.9);
+  border-radius: 10px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 100, 100, 0.7);
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(200, 200, 200, 0.2);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(100, 100, 100, 0.9);
+}

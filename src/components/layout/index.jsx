@@ -17,7 +17,7 @@ const PageLayout = ({ children, pageName, routeToDashboard }) => {
       icon: "/icons/access.svg",
       icon_dark: "/icons/access-black.svg",
       path: "/provide-access",
-    },
+    }
   ];
 
   const [activeButton, setActiveButton] = useState(pageName);
