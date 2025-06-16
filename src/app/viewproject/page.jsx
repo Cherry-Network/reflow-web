@@ -99,10 +99,10 @@ const ViewProject = () => {
     }`;
   };
 
-  const formatTimeStampForDisplay = (timestamp) => {
-    const dateString = new Date(timestamp).toISOString().replace('T', ' ').replace('Z', '');
-    return dateString;
-  }
+  const formatTimeStampForDisplay = (isoTimestamp) => {
+    const date = new Date(isoTimestamp);
+    return date.toISOString().replace("T", " ").replace("Z", "").split(".")[0];
+  };
 
   const exportDeviceData = async () => {
     setLoadingExport(true);
@@ -206,7 +206,7 @@ const ViewProject = () => {
           return new Date(a.timestamp) - new Date(b.timestamp);
         });
         sortedData?.forEach((data) => {
-          data.timestamp =  formatTimeStamp(data.timestamp);
+          data.timestamp = formatTimeStampForDisplay(data.timestamp);
         });
         setExportedData(sortedData);
         setReadyToDownload(true);
