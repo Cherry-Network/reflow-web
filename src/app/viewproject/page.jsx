@@ -379,7 +379,7 @@ const ViewProject = () => {
               </div>
             )}
             <div className="flex justify-stretch items-end h-full">
-              <div className="h-full flex flex-col justify-stretch items-stretch border-4 border-black rounded-2xl mb-5">
+              <div className="min-h-full h-72 flex flex-col justify-stretch items-stretch border-4 border-black rounded-2xl mb-5">
                 <div className="bg-black text-white font-sans font-bold text-center p-3 tracking-wide rounded-t-xl">
                   Panel
                 </div>
