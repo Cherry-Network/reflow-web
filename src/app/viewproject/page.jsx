@@ -99,6 +99,11 @@ const ViewProject = () => {
     }`;
   };
 
+  const formatTimeStampForDisplay = (timestamp) => {
+    const dateString = new Date(timestamp).toISOString().replace('T', ' ').replace('Z', '');
+    return dateString;
+  }
+
   const exportDeviceData = async () => {
     setLoadingExport(true);
     if (
@@ -201,7 +206,7 @@ const ViewProject = () => {
           return new Date(a.timestamp) - new Date(b.timestamp);
         });
         sortedData?.forEach((data) => {
-          data.timestamp = formatTimeStamp(data.timestamp);
+          data.timestamp =  formatTimeStampForDisplay(data.timestamp);
         });
         setExportedData(sortedData);
         setReadyToDownload(true);
