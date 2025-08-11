@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import LineGraph from "@/components/analytics/line-graph";
 import { getFromDateIST, getToDateIST } from "@/functions/get-date";
-import { set } from "mongoose";
+import html2canvas from "html2canvas";
 
 const DisplayGraph = ({
   channelName,
@@ -215,10 +215,41 @@ const DeviceTrend = () => {
     }
   }, [configOptions.period, data]);
 
+  const downloadImage = async (elementToPrintId) => {
+    const element = document.getElementById(elementToPrintId);
+    if (!element) {
+      throw new Error(`Element with id ${elementToPrintId} not found`);
+    }
+    const canvas = await html2canvas(element, {
+      scale: 2,
+      backgroundColor: "#ffffff",
+      margin: 0,
+    });
+    const data = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = data;
+    link.download = "trend_analysis.png";
+    link.click();
+  };
+
+  useEffect(() => {
+    const handleCtrlP = (e) => {
+      if (e.ctrlKey && e.key.toLowerCase() === "p") {
+        e.preventDefault();
+        downloadImage("device-trend-page");
+      }
+    };
+    window.addEventListener("keydown", handleCtrlP);
+    return () => window.removeEventListener("keydown", handleCtrlP);
+  }, []);
+
   return (
     <>
       <PageLayout pageName={"My Projects"} routeToDashboard={true}>
-        <div className="flex flex-col items-center h-full w-full gap-5 pb-5">
+        <div
+          className="flex flex-col items-center h-full w-full gap-5 pb-5"
+          id="device-trend-page"
+        >
           <div className="bg-black/10 p-6 rounded-lg mt-5 w-full">
             <div className="flex justify-between items-center w-full">
               <div className="font-bold text-xl text-black">
