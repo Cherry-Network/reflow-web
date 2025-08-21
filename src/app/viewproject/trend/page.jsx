@@ -17,7 +17,7 @@ const DisplayGraph = ({
   toDateTime,
 }) => {
   return (
-    <div className="flex flex-col w-full rounded-lg bg-yellow-50/20 py-6 h-[500px] overflow-auto px-1 gap-2 shadow-md border border-black/10">
+    <div className="flex flex-col w-full rounded-lg bg-yellow-50/20 py-6 h-[500px] px-1 gap-2 shadow-md border border-black/10 overflow-hidden">
       <span className="text-blue-800 text-xl font-mono font-semibold tracking-wide px-3 py-2">
         Channel - {channelName} Trend{" "}
         <span className="font-medium text-lg">
