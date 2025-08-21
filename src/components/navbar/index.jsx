@@ -19,14 +19,14 @@ const Navbar = ({ dashboardRoute }) => {
             className="bg-[#1B1B1B] text-white text-sm font-medium tracking-wide rounded-full px-5 py-3"
             onClick={() => {
               if (dashboardRoute) {
-                router.push('/');
+                router.back();
               } else {
                 sessionStorage.removeItem("username");
                 router.push("https://reflowtech.in/loginned");
               }
             }}
           >
-            {dashboardRoute ? "Back to Dashboard" : "Back to Home"}
+            {dashboardRoute ? "Back" : "Back to Home"}
           </button>
         </div>
       </div>
