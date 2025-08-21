@@ -292,6 +292,7 @@ const DeviceTrend = () => {
       }
     };
     window.addEventListener("keydown", handleCtrlP);
+    window.print = () => generatePDF("device-trend-page");
     return () => window.removeEventListener("keydown", handleCtrlP);
   }, []);
 
