@@ -311,24 +311,14 @@ const DeviceTrend = () => {
     const script = document.createElement("script");
     script.src = "https://reflow-backend.fly.dev/api/v1/bot";
     script.async = true;
-    document.body.appendChild(script);
 
-    let chatbotInstance = null;
-
-    function initializeChatbot() {
-      // Destroy existing instance
-      if (chatbotInstance) {
-        chatbotInstance.destroy();
-      }
-
-      // Get configuration values
-      const title = "Device Assistant" + " - " + searchParams.get("device");
-      const theme = "light";
-      const position = "bottom-right";
-
-      // Initialize new chatbot instance
+    script.onload = () => {
+      // Wait for the widget to be available before initializing
       if (window.ChatbotWidget) {
-        chatbotInstance = window.ChatbotWidget.init({
+        const title = "Device Assistant" + " - " + searchParams.get("device");
+        const theme = "light";
+        const position = "bottom-right";
+        window.ChatbotWidget.init({
           title: title,
           theme: theme,
           position: position,
@@ -338,36 +328,22 @@ const DeviceTrend = () => {
           primaryColor: "#4f46e5",
           primaryHover: "#3730a3",
         });
-
-        console.log("Chatbot initialized with config:", {
-          title,
-          theme,
-          position,
-        });
       }
-    }
+    };
 
-    function destroyChatbot() {
-      if (chatbotInstance) {
-        chatbotInstance.destroy();
-        chatbotInstance = null;
-        console.log("Chatbot destroyed");
-      }
-    }
-
-    // Wait for script to load before initializing chatbot
-    const timer = setTimeout(initializeChatbot, 500);
+    document.body.appendChild(script);
 
     // Cleanup on unmount to remove chatbot from other pages
     return () => {
-      destroyChatbot();
+      if (window.ChatbotWidget && window.ChatbotWidget.destroy) {
+        window.ChatbotWidget.destroy();
+      }
       const scriptTag = document.querySelector('script[src="https://reflow-backend.fly.dev/api/v1/bot"]');
       if (scriptTag) {
         scriptTag.parentNode.removeChild(scriptTag);
       }
-      clearTimeout(timer);
     };
-  }, []);
+  }, [searchParams]);
 
   return (
     <>
