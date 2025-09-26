@@ -298,9 +298,19 @@ const DeviceTrend = () => {
   }, []);
 
   useEffect(() => {
+    // Remove any existing chatbot script and instance from previous pages
+    const existingScript = document.querySelector('script[src="https://reflow-backend.fly.dev/api/v1/bot"]');
+    if (existingScript) {
+      existingScript.parentNode.removeChild(existingScript);
+    }
+    if (window.ChatbotWidget && window.ChatbotWidget.destroy) {
+      window.ChatbotWidget.destroy();
+    }
+
     // Dynamically inject the chatbot script
     const script = document.createElement("script");
     script.src = "https://reflow-backend.fly.dev/api/v1/bot";
+    script.async = true;
     document.body.appendChild(script);
 
     let chatbotInstance = null;
@@ -346,7 +356,17 @@ const DeviceTrend = () => {
     }
 
     // Wait for script to load before initializing chatbot
-    setTimeout(initializeChatbot, 500);
+    const timer = setTimeout(initializeChatbot, 500);
+
+    // Cleanup on unmount to remove chatbot from other pages
+    return () => {
+      destroyChatbot();
+      const scriptTag = document.querySelector('script[src="https://reflow-backend.fly.dev/api/v1/bot"]');
+      if (scriptTag) {
+        scriptTag.parentNode.removeChild(scriptTag);
+      }
+      clearTimeout(timer);
+    };
   }, []);
 
   return (
