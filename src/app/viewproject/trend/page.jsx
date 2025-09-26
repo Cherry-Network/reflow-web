@@ -1,7 +1,7 @@
 "use client";
 import PageLayout from "@/components/layout";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import LineGraph from "@/components/analytics/line-graph";
 import { getFromDateIST, getToDateIST } from "@/functions/get-date";
@@ -146,6 +146,7 @@ const DeviceTrend = () => {
     const device = deviceArray.find(
       (device) => device.serial_no === searchParams.get("device")
     );
+    sessionStorage.setItem("chatbot_device_id", searchParams.get("device"));
     const deviceConfig = JSON.parse(sessionStorage.getItem("configDeviceData"));
     setDeviceInfo({
       id: searchParams.get("device"),
@@ -294,6 +295,58 @@ const DeviceTrend = () => {
     window.addEventListener("keydown", handleCtrlP);
     window.print = () => generatePDF("device-trend-page");
     return () => window.removeEventListener("keydown", handleCtrlP);
+  }, []);
+
+  useEffect(() => {
+    // Dynamically inject the chatbot script
+    const script = document.createElement("script");
+    script.src = "https://reflow-backend.fly.dev/api/v1/bot";
+    document.body.appendChild(script);
+
+    let chatbotInstance = null;
+
+    function initializeChatbot() {
+      // Destroy existing instance
+      if (chatbotInstance) {
+        chatbotInstance.destroy();
+      }
+
+      // Get configuration values
+      const title = "Device Assistant" + " - " + searchParams.get("device");
+      const theme = "light";
+      const position = "bottom-right";
+
+      // Initialize new chatbot instance
+      if (window.ChatbotWidget) {
+        chatbotInstance = window.ChatbotWidget.init({
+          title: title,
+          theme: theme,
+          position: position,
+          welcomeMessage:
+            "Hello! I'm your device assistant. I can help you with device monitoring, sensor data analysis, and answer questions about your device. How can I assist you today?",
+          placeholder: "Ask me about your device data...",
+          primaryColor: "#4f46e5",
+          primaryHover: "#3730a3",
+        });
+
+        console.log("Chatbot initialized with config:", {
+          title,
+          theme,
+          position,
+        });
+      }
+    }
+
+    function destroyChatbot() {
+      if (chatbotInstance) {
+        chatbotInstance.destroy();
+        chatbotInstance = null;
+        console.log("Chatbot destroyed");
+      }
+    }
+
+    // Wait for script to load before initializing chatbot
+    setTimeout(initializeChatbot, 500);
   }, []);
 
   return (
