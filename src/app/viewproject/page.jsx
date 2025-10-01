@@ -161,6 +161,14 @@ const ViewProject = () => {
               key: "sno3",
             },
           ]);
+        } else if (String(selectedDevice.serial_no).startsWith("AX1")) {
+          setExportedDataHeaders([
+            { label: "Timestamp", key: "timestamp" },
+            {
+              label: config[0].SNO1 ? config[0].SNO1 : "Channel 1",
+              key: "sno1",
+            },
+          ]);
         }
       } else {
         if (String(selectedDevice.serial_no).startsWith("AX6")) {
@@ -179,6 +187,11 @@ const ViewProject = () => {
             { label: "Channel 1", key: "sno1" },
             { label: "Channel 2", key: "sno2" },
             { label: "Channel 3", key: "sno3" },
+          ]);
+        } else if (String(selectedDevice.serial_no).startsWith("AX1")) {
+          setExportedDataHeaders([
+            { label: "Timestamp", key: "timestamp" },
+            { label: "Channel 1", key: "sno1" },
           ]);
         }
       }
