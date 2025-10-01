@@ -20,6 +20,14 @@ const x6_pool = new Pool({
   port: process.env.POSTGRES_PORT,
 });
 
+const x1_pool = new Pool({
+  host: process.env.POSTGRES_HOST,
+  database: process.env.X1_DEVICE_DATA_DB,
+  user: process.env.DEVICE_DATA_USER,
+  password: process.env.DEVICE_DATA_PASSWORD,
+  port: process.env.POSTGRES_PORT,
+});
+
 const sortData = (data) => {
   return data.sort((a, b) => {
     return new Date(a.timestamp) - new Date(b.timestamp);
@@ -66,6 +74,14 @@ export async function GET(request) {
         WHERE dev_id = $1
           AND timestamp BETWEEN $2 AND $3
     `;
+  const x1_query = `
+        SELECT 
+            timestamp,
+            ch_1 AS SNO1
+        FROM alpha_x1
+        WHERE dev_id = $1
+          AND timestamp BETWEEN $2 AND $3
+    `;
   const values = [dev_id, start_timestamp, end_timestamp];
 
   try {
@@ -80,6 +96,13 @@ export async function GET(request) {
     } else if (dev_id.startsWith("AX6") || dev_id.startsWith("ax6")) {
       const client = await x6_pool.connect();
       const result = await client.query(x6_query, values);
+      client.release(); // Release the client back to the pool
+
+      // Return the query result as JSON
+      return NextResponse.json(sortData(result.rows));
+    } else if (dev_id.startsWith("AX1") || dev_id.startsWith("ax1")) {
+      const client = await x1_pool.connect();
+      const result = await client.query(x1_query, values);
       client.release(); // Release the client back to the pool
 
       // Return the query result as JSON
