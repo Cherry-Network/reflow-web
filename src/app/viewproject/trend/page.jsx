@@ -315,7 +315,7 @@ const DeviceTrend = () => {
     script.onload = () => {
       // Wait for the widget to be available before initializing
       if (window.ChatbotWidget) {
-        const title = "Device Assistant" + " - " + searchParams.get("device");
+        const title = "Bob" + " - " + searchParams.get("device");
         const theme = "light";
         const position = "bottom-right";
         window.ChatbotWidget.init({
@@ -323,7 +323,7 @@ const DeviceTrend = () => {
           theme: theme,
           position: position,
           welcomeMessage:
-            "Hello! I'm your device assistant. I can help you with device monitoring, sensor data analysis, and answer questions about your device. How can I assist you today?",
+            "Hello! I'm your device assistant, Bob. I can help you with device monitoring, sensor data analysis, and answer questions about your device. How can I assist you today?",
           placeholder: "Ask me about your device data...",
           primaryColor: "#4f46e5",
           primaryHover: "#3730a3",

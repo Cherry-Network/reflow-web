@@ -106,7 +106,7 @@ export async function GET(request) {
       client.release(); // Release the client back to the pool
 
       // Return the query result as JSON
-      return NextResponse.json(sortData(result.rows));
+      return NextResponse.json(result.rows);
     }
   } catch (error) {
     console.error("Error executing query:", error);
